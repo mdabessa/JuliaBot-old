@@ -1,11 +1,18 @@
 from exfunc import *
 from random import randint
 from os import environ
+from environs import Env
+
+
+env = Env()
+env.read_env()
+
+masterid = int(environ['master_id'])
 
 
 roulettechance = 25 #x/100
-masterid = int(environ['master_id'])
 mutes = []
+
 
 async def bhelp(message, commandpar, connection):
     text = '=================== \n'
@@ -87,11 +94,11 @@ async def mute(message, commandpar, connection):
     if commandpar !=None:
         time = 15
         for user in message.mentions:
-            if str(user.id) in mutes:
+            if str(message.author.id)+str(message.channel.id) in mutes:
                 await message.channel.send(f'{user.name} ja esta silenciado! :zipper_mouth:')
                 return
-            timer(str(user.id),time)
-            mutes.append(str(user.id))
+            timer(str(message.author.id)+str(message.channel.id),time)
+            mutes.append(str(message.author.id)+str(message.channel.id))
             await message.channel.send(f'{user.name} foi silenciado por {time} segundos! :mute:')
     else:
         raise Exception('Falta algo nesse comando!')
@@ -179,11 +186,11 @@ async def mastermute(message, commandpar, connection):
             raise Exception('Quanto tempo?')
 
         for user in message.mentions:
-            if str(user.id) in mutes:
+            if str(message.author.id)+str(message.channel.id) in mutes:
                 await message.channel.send(f'{user.name} ja esta silenciado :zipper_mouth:')
                 return
-            timer(str(user.id),time)
-            mutes.append(str(user.id))
+            timer(str(message.author.id)+str(message.channel.id),time)
+            mutes.append(str(message.author.id)+str(message.channel.id))
             await message.channel.send(f'{user.name} foi silenciado por {time} segundos :mute: ')
     else:
         raise Exception('Falta algo!')
@@ -226,9 +233,3 @@ async def cmdsay(message, commandpar, connection):
     else:
         raise('Falta algo nesse comando')
 command(name='say', func=cmdsay , desc=f'Fazer o bot dizer algo.', perm=1)
-
-async def activity(message, commandpar, connection):
-    await client.change_presence(activity=discord.Game(commandpar))
-    await message.channel.send(f'Atividade definida para "{commandpar}"')
-command(name='activity', func=activity , desc=f'Mudar o status do bot.', perm=1)
-

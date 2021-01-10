@@ -1,10 +1,15 @@
 import discord
-from random import randint, choice
 import psycopg2
+from random import randint, choice
 from os import environ
 from exfunc import * 
 from commands import *
 from events import *
+from environs import Env
+
+
+env = Env()
+env.read_env()
 
 db_url = environ['DATABASE_URL']
 token = environ['DiscordToken']
@@ -52,8 +57,8 @@ class MyClient(discord.Client):
 
 
         if str(message.author.id)+str(message.channel.id) in mutes:
-            if timer(str(message.author.id),0):
-                mutes.remove(str(message.author.id))
+            if timer(str(message.author.id)+str(message.channel.id),0):
+                mutes.remove(str(message.author.id)+str(message.channel.id))
             else:
                 await message.delete()
                 return
