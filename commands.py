@@ -2,25 +2,29 @@ from exfunc import *
 from random import randint
 from os import environ
 from environs import Env
-
-
-env = Env()
-env.read_env()
-
-masterid = int(environ['master_id'])
-
-
-roulettechance = 25 #x/100
-mutes = []
+from discord import Embed
 
 
 async def bhelp(message, commandpar, connection):
-    text = '=================== \n'
-    for cmd in command.commands:
-        text += f'{cmd.name}: \n'
-        text += f'{cmd.desc} \n'
-    text += '==================='
-    await message.channel.send(text)
+    emb = Embed(title='Lista de Comandos', description='Comandos e Descrições', color=0xe6dc56)
+    cmds =  sorted(command.commands, key=lambda x: x.cost, reverse=False)
+
+    for cmd in cmds:
+        if cmd.perm == 1:
+            continue
+
+        desc = f'{cmd.desc}'
+        
+        if cmd.cost == 0:
+            value = 'Grátis'
+        else:
+            value = f'{cmd.cost}c' 
+
+        emb.add_field(name=f'{prefix}{cmd.name}', value=desc, inline=True)
+        emb.add_field(name=f':coin:Custo', value=value, inline=True)
+        emb.add_field(name='\u200b', value='\u200b', inline=True)
+    
+    await message.channel.send(embed=emb)
 command(name='help', func=bhelp, desc='Listar todos os comandos e suas descrições.')
 
 async def coins(message, commandpar, connection):
@@ -87,7 +91,14 @@ async def spam(message, commandpar, connection):
             raise Exception('Falta algo nesse comando!')
     else:
         raise Exception('Quantas vezes? Spam do que?')
-command(name='spam', func=spam , desc=f'Spam de mensagens.', cost=500)
+command(name='spam', func=spam , desc=f'Spam de mensagens.', cost=2500)
+
+async def cmdsay(message, commandpar, connection):
+    if commandpar != None:
+        await message.channel.send(commandpar)
+    else:
+        raise('Falta algo nesse comando')
+command(name='say', func=cmdsay , desc=f'Fazer o bot dizer algo.', cost=500)
 
 async def mute(message, commandpar, connection):
     global mutes
@@ -226,10 +237,3 @@ async def exe(message, commandpar, connection):
     else:
         raise('Falta algo nesse comando')
 command(name='exec', func=exe , desc=f'Executar um comando através do bot.', perm=1)
-
-async def cmdsay(message, commandpar, connection):
-    if commandpar != None:
-        await message.channel.send(commandpar)
-    else:
-        raise('Falta algo nesse comando')
-command(name='say', func=cmdsay , desc=f'Fazer o bot dizer algo.', perm=1)

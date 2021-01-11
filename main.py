@@ -1,27 +1,12 @@
 import discord
 import psycopg2
 from random import randint, choice
-from os import environ
 from exfunc import * 
 from commands import *
 from events import *
-from environs import Env
 
-
-env = Env()
-env.read_env()
-
-db_url = environ['DATABASE_URL']
-token = environ['DiscordToken']
-masterid = int(environ['master_id'])
-
-
-prefix = 'j!'
-pointstime = 300
-pointsqt = 100
 
 connection = psycopg2.connect(db_url, sslmode='require')
-
 
 
 class MyClient(discord.Client):

@@ -1,5 +1,26 @@
+from os import environ
+from environs import Env
 import psycopg2
 import time
+
+
+
+env = Env()
+env.read_env()
+
+db_url = environ['DATABASE_URL']
+token = environ['DiscordToken']
+masterid = int(environ['master_id'])
+
+
+prefix = 'j!'
+pointstime = 300
+pointsqt = 100
+
+
+roulettechance = 25 #x/100
+mutes = []
+
 
 
 class command():
