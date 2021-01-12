@@ -5,9 +5,6 @@ from modules.commands import *
 from modules.events import *
 
 
-connection = psycopg2.connect(db_url, sslmode='require')
-
-
 class botclient(discord.Client):
     async def on_ready(self):
         await self.change_presence(activity=discord.Game(f'{prefix}help para ajuda!'))
@@ -31,8 +28,11 @@ class botclient(discord.Client):
             return
         
 
-        #add points com o tempo
-        if timer('pointsloop', pointstime, recreate=True):
+        #add (pointsqt) points every (pointstime) seconds
+        pointstime = 300
+        pointsqt = 100
+
+        if timer.timer('point_time_'+str(message.guild.id), pointstime, recreate=1):
             for member in message.guild.members:
                 if member.status == 'offline':
                     continue
@@ -41,14 +41,14 @@ class botclient(discord.Client):
 
 
         if str(message.author.id)+str(message.channel.id) in mutes:
-            if timer(str(message.author.id)+str(message.channel.id),0):
+            if timer.timer(str(message.author.id)+str(message.channel.id),0):
                 mutes.remove(str(message.author.id)+str(message.channel.id))
             else:
                 await message.delete()
                 return
         
 
-        if timer('event', randint(1000,10000), recreate=1) == True:
+        if timer.timer('event_time_'+str(message.guild.id), randint(1000,10000), recreate=1) == True:
             eve = choice(event.events)
             eve.clear()
             await eve.create([message.channel])
@@ -91,6 +91,10 @@ class botclient(discord.Client):
             else:
                 await guild.me.edit(nick=None)
                 
+
+
+connection = psycopg2.connect(db_url, sslmode='require')
+
 
 intents = discord.Intents.all()
 bot = botclient(intents=intents)

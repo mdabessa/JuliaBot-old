@@ -13,14 +13,9 @@ masterid = int(environ['master_id'])
 
 
 prefix = 'j!'
-pointstime = 300
-pointsqt = 100
 
 
-roulettechance = 25 #x/100
 mutes = []
-
-
 
 class command():
     commands = []
@@ -111,28 +106,30 @@ class event():
         self.cache = None
 
 
-timers = []
-def timer(ind, segs, recreate=False):
-    global timers
-    timenow = time.time()
+class timer():
+    timers = []
 
-    check = 0
-    for i in timers:
-        if i[0] == ind:
-            check = 1
-            if (timenow - i[1]) >= i[2]:
-                timers.remove(i)
-                if recreate:
-                    timers.append([ind,timenow,segs])
+    @classmethod
+    def timer(cls, ind, segs, recreate=False):
+        timenow = time.time()
 
-                return True
-            else:
-                return False
-    
-    if check == 0:
-        if segs > 0:
-            timers.append([ind,timenow,segs])
-        return False
+        check = 0
+        for i in cls.timers:
+            if i[0] == ind:
+                check = 1
+                if (timenow - i[1]) >= i[2]:
+                    cls.timers.remove(i)
+                    if recreate:
+                        cls.timers.append([ind,timenow,segs])
+
+                    return True
+                else:
+                    return False
+        
+        if check == 0:
+            if segs > 0:
+                cls.timers.append([ind,timenow,segs])
+            return False
 
 
 def getpoints(userid, guildid, connection):

@@ -58,6 +58,7 @@ command(name='coins', func=coins, desc='Verificar os pontos.')
 
 async def roulette(message, commandpar, connection):
     if commandpar != None:
+        roulettechance = 25 #x/100
         p = getpoints(message.author.id, message.guild.id, connection)
 
         if commandpar == 'all':
@@ -126,7 +127,7 @@ async def mute(message, commandpar, connection):
             if str(message.author.id)+str(message.channel.id) in mutes:
                 await message.channel.send(f'{user.name} ja esta silenciado! :zipper_mouth:')
                 return
-            timer(str(message.author.id)+str(message.channel.id),time)
+            timer.timer(str(message.author.id)+str(message.channel.id),time)
             mutes.append(str(message.author.id)+str(message.channel.id))
             await message.channel.send(f'{user.name} foi silenciado por {time} segundos! :mute:')
     else:
@@ -218,7 +219,7 @@ async def mastermute(message, commandpar, connection):
             if str(message.author.id)+str(message.channel.id) in mutes:
                 await message.channel.send(f'{user.name} ja esta silenciado :zipper_mouth:')
                 return
-            timer(str(message.author.id)+str(message.channel.id),time)
+            timer.timer(str(message.author.id)+str(message.channel.id),time)
             mutes.append(str(message.author.id)+str(message.channel.id))
             await message.channel.send(f'{user.name} foi silenciado por {time} segundos :mute: ')
     else:
