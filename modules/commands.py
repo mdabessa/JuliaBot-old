@@ -1,12 +1,12 @@
-from exfunc import *
+from modules.base import *
 from random import randint
 from os import environ
 from environs import Env
 from discord import Embed
 
 
-async def bhelp(message, commandpar, connection):
-    emb = Embed(title='Lista de Comandos', description='Comandos e Descrições', color=0xe6dc56)
+async def _help(message, commandpar, connection):
+    emb = Embed(title='COMANDOS GERAIS', description='', color=0xe6dc56)
     cmds =  sorted(command.commands, key=lambda x: x.cost, reverse=False)
 
     for cmd in cmds:
@@ -24,8 +24,26 @@ async def bhelp(message, commandpar, connection):
         emb.add_field(name=f':coin:Custo', value=value, inline=True)
         emb.add_field(name='\u200b', value='\u200b', inline=True)
     
+    emb.set_footer(text=f'{prefix}mhelp para os comandos de mods.')
+    
     await message.channel.send(embed=emb)
-command(name='help', func=bhelp, desc='Listar todos os comandos e suas descrições.')
+command(name='help', func=_help, desc='Listar todos os comandos e suas descrições.')
+
+async def modhelp(message, commandpar, connection):
+    emb = Embed(title='COMANDOS DE MODS', description='', color=0xe6dc56)
+    for cmd in command.commands:
+        if cmd.perm == 0:
+            continue
+
+        desc = f'{cmd.desc}'
+
+        emb.add_field(name=f'{prefix}{cmd.name}', value=desc, inline=False)
+
+    emb.set_footer(text=f'{prefix}help para os comandos gerais.')
+    
+    await message.channel.send(embed=emb)
+command(name='mhelp', func=modhelp, desc='Listar todos os comandos de mods e suas descrições.')
+
 
 async def coins(message, commandpar, connection):
     if len(message.mentions) == 1:
@@ -56,7 +74,7 @@ async def roulette(message, commandpar, connection):
                 await message.channel.send(f'{message.author.mention} Ganhou [+{points}] coins! :money_mouth:')
             else:
                 subpoints(message.author.id, message.guild.id, points, connection)
-                await message.channel.send(f'{message.author.mention} Perdeu [{points}] coins! :sob:')
+                await message.channel.send(f'{message.author.mention} Perdeu [-{points}] coins! :sob:')
 
         if points == p:
             if randint(0,100) < roulettechance:
@@ -64,11 +82,11 @@ async def roulette(message, commandpar, connection):
                 await message.channel.send(f'{message.author.mention} roletou tudo e ganhou [+{points}] coins, dobrando sua fortuna! :sunglasses:')
             else:
                 subpoints(message.author.id, message.guild.id, points, connection)
-                await message.channel.send(f'{message.author.mention} roletou tudo e perdeu [{points}] zerando seus pontos! :rofl: :rofl: :rofl:')
+                await message.channel.send(f'{message.author.mention} roletou tudo e perdeu [-{points}] zerando seus pontos! :rofl: :rofl: :rofl:')
         if points > p:
             raise Exception('Voce não possui pontos suficiente!')
     else:
-        raise Exception('Quantos coins voçe quer roletar? :thinking:')
+        raise Exception('Quantos coins você quer roletar? :thinking:')
 command(name='roulette', func=roulette, desc=f'Roletar pontos.')
 
 async def spam(message, commandpar, connection):

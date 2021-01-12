@@ -1,6 +1,5 @@
 from os import environ
 from environs import Env
-import psycopg2
 import time
 
 
@@ -185,3 +184,4 @@ def subpoints(userid, guildid, points, connection):
         setpoints(userid,guildid, 0, connection)
     else:
         setpoints(userid, guildid, (p - points), connection)
+

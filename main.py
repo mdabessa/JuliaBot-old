@@ -1,15 +1,14 @@
-import discord
-import psycopg2
+import psycopg2, discord
 from random import randint, choice
-from exfunc import * 
-from commands import *
-from events import *
+from modules.base import *
+from modules.commands import *
+from modules.events import *
 
 
 connection = psycopg2.connect(db_url, sslmode='require')
 
 
-class MyClient(discord.Client):
+class botclient(discord.Client):
     async def on_ready(self):
         await self.change_presence(activity=discord.Game(f'{prefix}help para ajuda!'))
         print(f'{self.user} logou em {len(self.guilds)} grupos!')
@@ -58,10 +57,12 @@ class MyClient(discord.Client):
         try:
             print(f'{message.guild} #{message.channel} //{message.author} : {message.content}')
 
+        
             if message.content[0:len(prefix)] == prefix:
                 content = message.content[len(prefix):]
                 await command.trycommand(message, content, connection, masterid)
-                
+ 
+
             for eve in event.events:
                 if eve.att == 'message':
                     await eve.execute([message, connection])
@@ -92,5 +93,5 @@ class MyClient(discord.Client):
                 
 
 intents = discord.Intents.all()
-client = MyClient(intents=intents)
-client.run(token)
+bot = botclient(intents=intents)
+bot.run(token)

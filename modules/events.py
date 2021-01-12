@@ -1,4 +1,4 @@
-from exfunc import *
+from modules.base import *
 from random import randint, shuffle
 
 async def gift(par):
