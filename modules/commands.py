@@ -2,11 +2,11 @@ from modules.base import *
 from random import randint
 from os import environ
 from environs import Env
-from discord import Embed
+import discord
 
 
-async def _help(message, commandpar, connection):
-    emb = Embed(title='COMANDOS GERAIS', description='', color=0xe6dc56)
+async def _help(message, commandpar, connection, bot):
+    emb = discord.Embed(title='COMANDOS GERAIS', description='', color=0xe6dc56)
     cmds =  sorted(command.commands, key=lambda x: x.cost, reverse=False)
 
     for cmd in cmds:
@@ -20,32 +20,32 @@ async def _help(message, commandpar, connection):
         else:
             value = f'{cmd.cost}c' 
 
-        emb.add_field(name=f'{prefix}{cmd.name}', value=desc, inline=True)
+        emb.add_field(name=f'{command.prefix}{cmd.name}', value=desc, inline=True)
         emb.add_field(name=f':coin:Custo', value=value, inline=True)
         emb.add_field(name='\u200b', value='\u200b', inline=True)
     
-    emb.set_footer(text=f'{prefix}mhelp para os comandos de mods.')
+    emb.set_footer(text=f'{command.prefix}mhelp para os comandos de mods.')
     
     await message.channel.send(embed=emb)
 command(name='help', func=_help, desc='Listar todos os comandos e suas descrições.')
 
-async def modhelp(message, commandpar, connection):
-    emb = Embed(title='COMANDOS DE MODS', description='', color=0xe6dc56)
+async def modhelp(message, commandpar, connection, bot):
+    emb = discord.Embed(title='COMANDOS DE MODS', description='', color=0xe6dc56)
     for cmd in command.commands:
         if cmd.perm == 0:
             continue
 
         desc = f'{cmd.desc}'
 
-        emb.add_field(name=f'{prefix}{cmd.name}', value=desc, inline=False)
+        emb.add_field(name=f'{command.prefix}{cmd.name}', value=desc, inline=False)
 
-    emb.set_footer(text=f'{prefix}help para os comandos gerais.')
+    emb.set_footer(text=f'{command.prefix}help para os comandos gerais.')
     
     await message.channel.send(embed=emb)
 command(name='mhelp', func=modhelp, desc='Listar todos os comandos de mods e suas descrições.')
 
 
-async def coins(message, commandpar, connection):
+async def coins(message, commandpar, connection, bot):
     if len(message.mentions) == 1:
         for mentioned in message.mentions:
             points = getpoints(mentioned.id, message.guild.id, connection)
@@ -56,9 +56,9 @@ async def coins(message, commandpar, connection):
         await message.channel.send(f'{message.author.mention}, você possui {points}')
 command(name='coins', func=coins, desc='Verificar os pontos.')
 
-async def roulette(message, commandpar, connection):
+async def roulette(message, commandpar, connection, bot):
     if commandpar != None:
-        roulettechance = 25 #x/100
+        roulettechance = 33 #x/100
         p = getpoints(message.author.id, message.guild.id, connection)
 
         if commandpar == 'all':
@@ -90,7 +90,7 @@ async def roulette(message, commandpar, connection):
         raise Exception('Quantos coins você quer roletar? :thinking:')
 command(name='roulette', func=roulette, desc=f'Roletar pontos.')
 
-async def spam(message, commandpar, connection):
+async def spam(message, commandpar, connection, bot):
     if commandpar !=None:
         cmdpar = commandpar.split()
         if len(cmdpar) >= 2:
@@ -112,14 +112,14 @@ async def spam(message, commandpar, connection):
         raise Exception('Quantas vezes? Spam do que?')
 command(name='spam', func=spam , desc=f'Spam de mensagens.', cost=2500)
 
-async def cmdsay(message, commandpar, connection):
+async def cmdsay(message, commandpar, connection, bot):
     if commandpar != None:
         await message.channel.send(commandpar)
     else:
         raise('Falta algo nesse comando')
 command(name='say', func=cmdsay , desc=f'Fazer o bot dizer algo.', cost=500)
 
-async def mute(message, commandpar, connection):
+async def mute(message, commandpar, connection, bot):
     global mutes
     if commandpar !=None:
         time = 15
@@ -134,7 +134,7 @@ async def mute(message, commandpar, connection):
         raise Exception('Falta algo nesse comando!')
 command(name='mute', func=mute , desc=f'Silenciar alguem por alguns segundos.', cost=500)
 
-async def setcoins(message, commandpar, connection):
+async def setcoins(message, commandpar, connection, bot):
     if commandpar != None:
         try:
             pointspar = int(commandpar.split()[0])
@@ -159,7 +159,7 @@ async def setcoins(message, commandpar, connection):
         raise Exception('Quantos coins ???')
 command(name='setcoins', func=setcoins , desc=f'Definir os seus pontos, ou os dos usuarios marcados.', perm=1)
 
-async def addcoins(message, commandpar, connection):
+async def addcoins(message, commandpar, connection, bot):
     if commandpar != None:
         try:
             pointspar = int(commandpar.split()[0])
@@ -183,7 +183,7 @@ async def addcoins(message, commandpar, connection):
         raise Exception('Quantos pontos?')
 command(name='addcoins', func=addcoins , desc=f'Adicionar pontos.', perm=1)
 
-async def subcoins(message, commandpar, connection):
+async def subcoins(message, commandpar, connection, bot):
     if commandpar != None:
         try:
             pointspar = int(commandpar.split()[0])
@@ -207,7 +207,7 @@ async def subcoins(message, commandpar, connection):
         raise Exception('Quantos pontos?')
 command(name='subcoins', func=subcoins , desc=f'Remover pontos.', perm=1)
 
-async def mastermute(message, commandpar, connection):
+async def mastermute(message, commandpar, connection, bot):
     global mutes
     if commandpar !=None:
         try:
@@ -226,7 +226,7 @@ async def mastermute(message, commandpar, connection):
         raise Exception('Falta algo!')
 command(name='mastermute', func=mastermute , desc=f'Silenciar alguem, sem limite de tempo.', perm=1)
 
-async def c_event(message, commandpar, connection):
+async def c_event(message, commandpar, connection, bot):
     if commandpar != None:
         marc = 0
         for eve in event.events:
@@ -242,7 +242,7 @@ async def c_event(message, commandpar, connection):
         raise Exception('Falta algo!')
 command(name='c_event', func=c_event , desc=f'Criar um evento.', perm=1)
 
-async def exe(message, commandpar, connection):
+async def exe(message, commandpar, connection, bot):
     if commandpar != None:
         cont = commandpar.split()
         text = f'Executando: {cont[0]}'
@@ -251,8 +251,19 @@ async def exe(message, commandpar, connection):
             text += ' [' + ' '.join(cont[1:]) + ']'
 
         m = await message.channel.send(text)
-        await command.trycommand(m, commandpar, connection, masterid)
+        await command.trycommand(m, commandpar, connection, masterid, bot)
 
     else:
-        raise('Falta algo nesse comando')
+        raise Exception('Falta algo nesse comando!')
 command(name='exec', func=exe , desc=f'Executar um comando através do bot.', perm=1)
+
+async def setprefix(message, commandpar, connection, bot):
+    if commandpar != None:
+        cont = commandpar.split()
+        command.prefix = cont[0]
+        await bot.change_presence(activity=discord.Game(f'{command.prefix}help'))
+        await message.channel.send(f'Prefixo de comandos mudado para {command.prefix}')
+
+    else:
+        raise Exception('Falta os parametros do comando!')
+command(name='setprefix', func=setprefix , desc=f'Mude o prefixo de comandos do bot.', perm=1)

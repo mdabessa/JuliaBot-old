@@ -7,7 +7,7 @@ from modules.events import *
 
 class botclient(discord.Client):
     async def on_ready(self):
-        await self.change_presence(activity=discord.Game(f'{prefix}help para ajuda!'))
+        await self.change_presence(activity=discord.Game(f'{command.prefix}help'))
         print(f'{self.user} logou em {len(self.guilds)} grupos!')
         #Acessar arquivos da guild e funcoes especificas a logar nelas
         for guild in self.guilds:
@@ -58,9 +58,9 @@ class botclient(discord.Client):
             print(f'{message.guild} #{message.channel} //{message.author} : {message.content}')
 
         
-            if message.content[0:len(prefix)] == prefix:
-                content = message.content[len(prefix):]
-                await command.trycommand(message, content, connection, masterid)
+            if message.content[0:len(command.prefix)] == command.prefix:
+                content = message.content[len(command.prefix):]
+                await command.trycommand(message, content, connection, masterid, self)
  
 
             for eve in event.events:

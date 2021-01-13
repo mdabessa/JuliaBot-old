@@ -12,13 +12,11 @@ token = environ['DiscordToken']
 masterid = int(environ['master_id'])
 
 
-prefix = 'j!'
-
-
 mutes = []
 
 class command():
     commands = []
+    prefix = 'j!'
     def __init__(self, name, func, desc='Nothing', cost=0, perm=0):
         self.name = name
         self.func = func
@@ -28,11 +26,11 @@ class command():
 
         command.commands.append(self)
 
-    async def execute(self, message, param, connection):
-        await self.func(message, param, connection)
+    async def execute(self, message, param, connection, bot):
+        await self.func(message, param, connection, bot)
 
     @classmethod
-    async def trycommand(cls, message, content, connection, masterid):
+    async def trycommand(cls, message, content, connection, masterid, bot):
         contlist = content.split()
         contcommand = contlist[0]
 
@@ -59,7 +57,7 @@ class command():
                         subpoints(message.author.id, message.guild.id, cmd.cost, connection)
 
                 try:
-                    await cmd.execute(message, commandpar, connection)
+                    await cmd.execute(message, commandpar, connection, bot)
                 except Exception as e:
                     await message.channel.send(e)
                     if cmd.cost > 0:
