@@ -180,3 +180,20 @@ def subpoints(userid, guildid, points, connection):
     else:
         setpoints(userid, guildid, (p - points), connection)
 
+
+def rankpoints(guildid, connection):
+    cursor = connection.cursor()
+    try:
+        cursor.execute(
+        """
+        SELECT * FROM Users
+        WHERE ServerId = '{sid}'
+        ORDER BY Points DESC
+        LIMIT 5
+        """.format(sid=str(guildid))
+        )
+        result = cursor.fetchall()
+
+        return result
+    except:
+        return None
