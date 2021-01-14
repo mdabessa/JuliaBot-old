@@ -295,3 +295,8 @@ async def setprefix(message, commandpar, connection, bot):
     else:
         raise Exception('Falta os parametros do comando!')
 command(name='setprefix', func=setprefix , desc=f'Mude o prefixo de comandos do bot.', perm=1)
+
+async def ping(message, commandpar, connection, bot):
+    lt = int(round(bot.latency, 3)*1000)
+    await message.channel.send(f'Pong! {lt}')
+command(name='ping', func=ping , desc=f'Pong!')
