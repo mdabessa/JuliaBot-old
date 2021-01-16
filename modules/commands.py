@@ -1,17 +1,21 @@
 from modules.base import *
 from random import randint
-from os import environ
-from environs import Env
 import discord
 
 
 async def _help(message, commandpar, connection, bot):
-    emb = discord.Embed(title='COMANDOS GERAIS', description='', color=0xe6dc56)
     cmds =  sorted(command.commands, key=lambda x: x.cost, reverse=False)
-
     for cmd in cmds:
         if cmd.perm == 1:
-            continue
+            cmds.remove(cmd)
+    
+    embs = []
+    for i in range(0, (int(len(cmds)/8)+1)):
+        embs.append(discord.Embed(title='COMANDOS GERAIS', description=f'Página - {i+1}', color=0xe6dc56))
+
+    for ind, cmd in enumerate(cmds):
+
+        embed_index = int(ind/8)
 
         desc = f'{cmd.desc}'
         
@@ -20,13 +24,14 @@ async def _help(message, commandpar, connection, bot):
         else:
             value = f'{cmd.cost}c' 
 
-        emb.add_field(name=f'{command.prefix}{cmd.name}', value=desc, inline=True)
-        emb.add_field(name=f':coin:Custo', value=value, inline=True)
-        emb.add_field(name='\u200b', value='\u200b', inline=True)
+        embs[embed_index].add_field(name=f'{command.prefix}{cmd.name}', value=desc, inline=True)
+        embs[embed_index].add_field(name=f':coin:Custo', value=value, inline=True)
+        embs[embed_index].add_field(name='\u200b', value='\u200b', inline=True)
     
-    emb.set_footer(text=f'{command.prefix}mhelp para os comandos de mods.')
+    embs[int(len(cmds)/8)].set_footer(text=f'{command.prefix}mhelp para os comandos de mods.')
     
-    await message.channel.send(embed=emb)
+    for emb in embs:
+        await message.channel.send(embed=emb)
 command(name='help', func=_help, desc='Listar todos os comandos e suas descrições.')
 
 async def modhelp(message, commandpar, connection, bot):
