@@ -157,11 +157,11 @@ async def mute(message, commandpar, connection, bot):
     if commandpar !=None:
         time = 15
         for user in message.mentions:
-            if str(message.author.id)+str(message.channel.id) in mutes:
+            if str(user.id)+str(message.channel.id) in mutes:
                 await message.channel.send(f'{user.name} ja esta silenciado! :zipper_mouth:')
                 return
-            timer.timer(str(message.author.id)+str(message.channel.id),time)
-            mutes.append(str(message.author.id)+str(message.channel.id))
+            timer.timer(str(user.id)+str(message.channel.id),time)
+            mutes.append(str(user.id)+str(message.channel.id))
             await message.channel.send(f'{user.name} foi silenciado por {time} segundos! :mute:')
     else:
         raise Exception('Falta algo nesse comando!')
@@ -249,11 +249,11 @@ async def mastermute(message, commandpar, connection, bot):
             raise Exception('Quanto tempo?')
 
         for user in message.mentions:
-            if str(message.author.id)+str(message.channel.id) in mutes:
+            if str(user.id)+str(message.channel.id) in mutes:
                 await message.channel.send(f'{user.name} ja esta silenciado :zipper_mouth:')
                 return
-            timer.timer(str(message.author.id)+str(message.channel.id),time)
-            mutes.append(str(message.author.id)+str(message.channel.id))
+            timer.timer(str(user.id)+str(message.channel.id),time)
+            mutes.append(str(user.id)+str(message.channel.id))
             await message.channel.send(f'{user.name} foi silenciado por {time} segundos :mute: ')
     else:
         raise Exception('Falta algo!')
