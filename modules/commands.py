@@ -3,52 +3,31 @@ from random import randint
 import discord
 
 
-async def _help(message, commandpar, connection, bot):
-    cmds =  sorted(command.commands, key=lambda x: x.cost, reverse=False)
-    for cmd in cmds:
-        if cmd.perm == 1:
-            cmds.remove(cmd)
+async def _help(message, commandpar, connection, bot): 
+    if commandpar == None:
     
-    embs = []
-    for i in range(0, (int(len(cmds)/8)+1)):
-        embs.append(discord.Embed(title='COMANDOS GERAIS', description=f'Página - {i+1}', color=0xe6dc56))
-
-    for ind, cmd in enumerate(cmds):
-
-        embed_index = int(ind/8)
-
-        desc = f'{cmd.desc}'
+        cmds = [cmd for cmd in command.commands if cmd.perm == 0]
+        mod_cmds = [cmd for cmd in command.commands if cmd.perm == 1] 
         
-        if cmd.cost == 0:
-            value = 'Grátis'
-        else:
-            value = f'{cmd.cost}c' 
+        emb = discord.Embed(title='Lista de Comandos', description=f'{command.prefix}help [comando]', color=0xe6dc56)
 
-        embs[embed_index].add_field(name=f'{command.prefix}{cmd.name}', value=desc, inline=True)
-        embs[embed_index].add_field(name=f':coin:Custo', value=value, inline=True)
-        embs[embed_index].add_field(name='\u200b', value='\u200b', inline=True)
-    
-    embs[int(len(cmds)/8)].set_footer(text=f'{command.prefix}mhelp para os comandos de mods.')
-    
-    for emb in embs:
+        emb.add_field(name=f'Comandos Gerais', value=f'{", ".join([cmd.name for cmd in cmds])}', inline=False)
+        emb.add_field(name=f'Comandos de Admin', value=f'{", ".join([cmd.name for cmd in mod_cmds])}', inline=False)
+
         await message.channel.send(embed=emb)
-command(name='help', func=_help, desc='Listar todos os comandos e suas descrições.')
-
-async def modhelp(message, commandpar, connection, bot):
-    emb = discord.Embed(title='COMANDOS DE MODS', description='', color=0xe6dc56)
-    for cmd in command.commands:
-        if cmd.perm == 0:
-            continue
-
-        desc = f'{cmd.desc}'
-
-        emb.add_field(name=f'{command.prefix}{cmd.name}', value=desc, inline=False)
-
-    emb.set_footer(text=f'{command.prefix}help para os comandos gerais.')
     
-    await message.channel.send(embed=emb)
-command(name='mhelp', func=modhelp, desc='Listar todos os comandos de mods e suas descrições.')
+    else:
+        c = 0
+        for cmd in command.commands:
+            if cmd.name == commandpar:
+                await message.channel.send(f'Comando: {cmd.name} | Descrição: {cmd.desc} | Valor: {cmd.cost}c')
+                c = 1
 
+        if c == 0:
+            raise Exception('Nenhum comando encontrado.')
+
+
+command(name='help', func=_help, desc='Listar todos os comandos e suas descrições.')
 
 async def coins(message, commandpar, connection, bot):
     if len(message.mentions) == 1:
