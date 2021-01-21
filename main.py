@@ -32,7 +32,7 @@ class botclient(discord.Client):
 
         if timer.timer('point_time_'+str(message.guild.id), pointstime, recreate=1):
             for member in message.guild.members:
-                if member.status == 'offline':
+                if member.status == 'offline' or (member.bot == True and member.id != self.user.id):
                     continue
                 
                 addpoints(member.id,message.guild.id,pointsqt, connection)
