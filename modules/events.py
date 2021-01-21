@@ -82,9 +82,9 @@ async def quiz(par):
     num1 = randint(1,100)
     num2 = randint(1,100)
 
-    res = num1*num2
+    res = num1+num2
     channel = par[0]
-    m = await channel.send(f'O quiz chegou!, Qual resultado de {num1} multiplicado por {num2} ?')
+    m = await channel.send(f'O quiz chegou!, Qual resultado entre a soma de {num1} e {num2} ?')
 
     return [m, points, res]
 async def exequiz(param, cache):
