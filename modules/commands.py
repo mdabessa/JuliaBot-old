@@ -66,7 +66,35 @@ async def coinsrank(message, commandpar, connection, bot):
         emb.add_field(name=f'{medal}{user.name}', value=f':coin:{points}c', inline=False)
     
     await message.channel.send(embed=emb)
-command(name='rank', func=coinsrank, desc='Rank top pontos.')
+command(name='rank', func=coinsrank, desc='Top coins do servidor.')
+
+
+async def coinsglobalrank(message, commandpar, connection, bot):
+    rank = globalrankpoints(connection)
+    if rank == None:   
+        raise Exception('Não foi possivel execultar esta ação!')
+
+    emb = discord.Embed(title='Rank Global', color=0xe6dc56)
+    for num, i in enumerate(rank):
+        user = bot.get_user(int(i[1]))
+        points = i[2]
+
+        if num == 0:
+            medal = ':first_place:'
+        if num == 1:
+            medal = ':second_place:'
+        if num == 2:
+            medal = ':third_place:'
+        if num == 3:
+            medal = ':four:'
+        if num == 4:
+            medal = ':five:'
+        
+
+        emb.add_field(name=f'{medal}{user.name}', value=f':coin:{points}c', inline=False)
+    
+    await message.channel.send(embed=emb)
+command(name='globalrank', func=coinsglobalrank, desc='Top coins global.')
 
 async def roulette(message, commandpar, connection, bot):
     if commandpar != None:

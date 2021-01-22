@@ -197,3 +197,20 @@ def rankpoints(guildid, connection):
         return result
     except:
         return None
+
+
+def globalrankpoints(connection):
+    cursor = connection.cursor()
+    try:
+        cursor.execute(
+        """
+        SELECT * FROM Users
+        ORDER BY Points DESC
+        LIMIT 5
+        """
+        )
+        result = cursor.fetchall()
+
+        return result
+    except:
+        return None
