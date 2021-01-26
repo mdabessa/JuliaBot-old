@@ -312,3 +312,60 @@ async def ping(message, commandpar, connection, bot):
     lt = int(round(bot.latency, 3)*1000)
     await message.channel.send(f'Pong! {lt}')
 command(name='ping', func=ping , desc=f'Pong!')
+
+
+async def shop(message, commandpar, connection, bot):
+    items = getshop(message.guild.id, connection)
+
+    if len(items) == 0:
+        await message.channel.send('Esse servidor não possui itens a venda!')
+
+    else:
+        emb = discord.Embed(title='Loja', color=0xe6dc56)
+
+        for i in items:
+            emb.add_field(name=f'{i[2]}', value=f':coin:{i[3]}c', inline=True)
+        
+        await message.channel.send(embed=emb)
+command(name='shop', func=shop, desc=f'Loja de itens')
+
+async def shopadditem(message, commandpar, connection, bot):
+    if commandpar == None:
+        raise Exception('Falta parametros!')
+
+    cmdpar = commandpar.split()
+    if len(cmdpar) < 2:
+        raise Exception('Falta parametros!')
+
+    try:
+        price = int(cmdpar[0])
+    except:
+        raise Exception('Qual é o preco do item?')
+    
+    item_name = ' '.join(cmdpar[1:])
+
+    additem(message.guild.id, item_name, price, connection)
+    await message.channel.send(f'Item: {item_name} foi adicionado a loja por {price} coins!')
+command(name='additem', func=shopadditem, desc=f'Adicionar um item a loja!', perm=1)
+
+async def buyitem(message, commandpar, connection, bot):
+    if commandpar == None:
+        raise Exception('Qual item ira comprar ?')
+    
+    items = getshop(message.guild.id, connection)
+    
+    marc = 0
+    for i in items:
+        if i[2] == commandpar:
+            marc = 1
+            points = getpoints(message.author.id, message.guild.id, connection)
+
+            if i[3] > points:
+                raise Exception('Coins insuficientes!')
+
+            subpoints(message.author.id, message.guild.id, i[3], connection)
+            await message.channel.send(f'{message.author.mention} comprou {i[2]} por {i[3]}c.')
+
+    if marc == 0:
+        raise Exception(f'{message.author.mention} o item {commandpar} não existe.')
+command(name='buy', func=buyitem, desc=f'Comprar um item.')

@@ -214,3 +214,33 @@ def globalrankpoints(connection):
         return result
     except:
         return None
+
+
+def getshop(guildid, connection):
+    cursor = connection.cursor()
+    try:
+        cursor.execute(
+        """
+        SELECT * FROM Shop
+        WHERE ServerId = '{sid}'
+        ORDER BY Price Desc
+        """.format(sid=str(guildid))
+        )
+        result = cursor.fetchall()
+
+        return result
+    except:
+        return []
+
+
+def additem(guildid, item_name, price, connection):
+    cursor = connection.cursor()
+    cursor.execute(
+    '''
+
+        INSERT INTO Shop(ServerId, name, price)
+        VALUES('{sid}', '{n}', '{p}')
+                
+    '''.format(sid=str(guildid), n=item_name, p=price)
+    )
+    connection.commit()
