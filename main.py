@@ -7,7 +7,11 @@ from modules.events import *
 
 class botclient(discord.Client):
     async def on_ready(self):
-        await self.change_presence(activity=discord.Game(f'{command.prefix}help'))
+        if debug == 1:
+            await self.change_presence(activity=discord.Game(f'Debug Mode'))
+        else:
+            await self.change_presence(activity=discord.Game(f'{command.prefix}help'))
+        
         print(f'{self.user} logou em {len(self.guilds)} grupos!')
 
         for guild in self.guilds:

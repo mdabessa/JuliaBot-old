@@ -10,6 +10,7 @@ env.read_env()
 db_url = environ['DATABASE_URL']
 token = environ['DiscordToken']
 masterid = int(environ['master_id'])
+debug = bool(int(environ['debug']))
 
 
 mutes = []
