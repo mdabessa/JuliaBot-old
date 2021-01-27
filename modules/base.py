@@ -237,10 +237,21 @@ def additem(guildid, item_name, price, connection):
     cursor = connection.cursor()
     cursor.execute(
     '''
-
         INSERT INTO Shop(ServerId, name, price)
         VALUES('{sid}', '{n}', '{p}')
                 
     '''.format(sid=str(guildid), n=item_name, p=price)
+    )
+    connection.commit()
+
+
+def delitem(guildid, itemid, connection):
+    cursor = connection.cursor()
+    cursor.execute(
+    '''
+        DELETE FROM Shop
+        WHERE itemid = {iid} AND serverid = '{sid}';
+                
+    '''.format(sid=str(guildid), iid=itemid)
     )
     connection.commit()

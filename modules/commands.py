@@ -324,8 +324,9 @@ async def shop(message, commandpar, connection, bot):
         emb = discord.Embed(title='Loja', color=0xe6dc56)
 
         for i in items:
-            emb.add_field(name=f'{i[2]}', value=f':coin:{i[3]}c', inline=True)
+            emb.add_field(name=f'{i[1]} - {i[2]}', value=f':coin:{i[3]}c', inline=True)
         
+        emb.set_footer(text=f'{command.prefix}buy [id]')
         await message.channel.send(embed=emb)
 command(name='shop', func=shop, desc=f'Loja de itens')
 
@@ -352,11 +353,16 @@ async def buyitem(message, commandpar, connection, bot):
     if commandpar == None:
         raise Exception('Qual item ira comprar ?')
     
+    try:
+        item = int(commandpar)
+    except:
+        raise Exception('O item tem que ser referenciado com o um ID.')
+
     items = getshop(message.guild.id, connection)
     
     marc = 0
     for i in items:
-        if i[2] == commandpar:
+        if i[1] == item:
             marc = 1
             points = getpoints(message.author.id, message.guild.id, connection)
 
@@ -364,8 +370,30 @@ async def buyitem(message, commandpar, connection, bot):
                 raise Exception('Coins insuficientes!')
 
             subpoints(message.author.id, message.guild.id, i[3], connection)
-            await message.channel.send(f'{message.author.mention} comprou {i[2]} por {i[3]}c.')
+            await message.channel.send(f'{message.author.mention} comprou [{i[1]} - {i[2]}] por {i[3]}c.')
 
     if marc == 0:
         raise Exception(f'{message.author.mention} o item {commandpar} não existe.')
 command(name='buy', func=buyitem, desc=f'Comprar um item.')
+
+async def shopdelitem(message, commandpar, connection, bot):
+    if commandpar == None:
+        raise Exception('Qual item irá deletar?')
+
+    try:
+        item = int(commandpar)
+    except:
+        raise Exception('O item tem que ser referenciado com o um ID.')
+
+    items = getshop(message.guild.id, connection)
+
+    marc = 0
+    for i in items:
+        if i[1] == item:
+            marc = 1
+            delitem(message.guild.id, item, connection)
+            await message.channel.send(f'{message.author.mention} removeu o item [{i[1]} - {i[2]}] da loja!')
+
+    if marc == 0:
+        raise Exception(f'{message.author.mention} o item {commandpar} não existe.')
+command(name='delitem', func=shopdelitem, desc=f'Deletar itens da loja.')
