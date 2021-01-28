@@ -97,8 +97,6 @@ async def exequiz(param, cache):
 
     msg = param[0]
     connection = param[1]
-    print(r)
-    print(msg.content)
     if str(msg.content) == r and msg.channel.id == m.channel.id:
         await m.channel.send(f'{msg.author.mention} acertou e ganhou [+{p}] coins')
         addpoints(msg.author.id, msg.guild.id, p, connection)
@@ -106,4 +104,5 @@ async def exequiz(param, cache):
 
     else:
         return cache
-event(name='quiz', createfunc=quiz, executefunc=exequiz, desc='Responda certo a pergunta para ganhar coins!', att='message')
+event(name='quiz', createfunc=quiz, executefunc=exequiz, desc='Responda certo a pergunta para ganhar coins!', trigger='message')
+

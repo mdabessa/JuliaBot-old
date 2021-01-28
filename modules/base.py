@@ -67,12 +67,14 @@ class command():
 
 class event():
     events = []
-    def __init__(self, name:str, createfunc, executefunc, att='react' , desc='Nothing'):
+    def __init__(self, name:str, createfunc, executefunc, trigger='react', desc='Nothing', command_create=True, loop_event_create=True):
         self.name = name
         self.createfunc = createfunc
         self.exec = executefunc
         self.desc = desc
-        self.att = att
+        self.trigger = trigger
+        self.command_create = command_create
+        self.loop_event_create = loop_event_create
         self.cache = None
         event.events.append(self)
 
@@ -86,6 +88,7 @@ class event():
         
         if self.cache == True:
             self.clear()
+            return
 
         self.cache = await self.exec(par, self.cache)
 

@@ -270,6 +270,8 @@ async def c_event(message, commandpar, connection, bot):
     if commandpar != None:
         marc = 0
         for eve in event.events:
+            if eve.command_create == False:
+                continue
             if eve.name == commandpar:
                 eve.clear()
                 await message.channel.send(f'{message.author.mention} evento {eve.name} criado com sucesso!')
@@ -396,4 +398,4 @@ async def shopdelitem(message, commandpar, connection, bot):
 
     if marc == 0:
         raise Exception(f'{message.author.mention} o item {commandpar} não existe.')
-command(name='delitem', func=shopdelitem, desc=f'Deletar itens da loja.')
+command(name='delitem', func=shopdelitem, desc=f'Deletar itens da loja.', perm=1)

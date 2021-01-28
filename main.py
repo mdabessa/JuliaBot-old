@@ -51,7 +51,7 @@ class botclient(discord.Client):
         
 
         if timer.timer('event_time_'+str(message.guild.id), randint(1000,10000), recreate=1) == True:
-            eve = choice(event.events)
+            eve = choice([i for i in event.events if i.loop_event_create])
             eve.clear()
             await eve.create([message.channel])
                      
@@ -66,7 +66,7 @@ class botclient(discord.Client):
  
 
             for eve in event.events:
-                if eve.att == 'message':
+                if eve.trigger == 'message':
                     await eve.execute([message, connection])
 
         except Exception as e:
@@ -78,7 +78,7 @@ class botclient(discord.Client):
             return
 
         for eve in event.events:
-            if eve.msgvalidation(reaction.message) and eve.att == 'react':
+            if eve.msgvalidation(reaction.message) and eve.trigger == 'react':
                 await eve.execute([user,reaction.emoji, connection])
 
 
