@@ -106,3 +106,43 @@ async def exequiz(param, cache):
         return cache
 event(name='quiz', createfunc=quiz, executefunc=exequiz, desc='Responda certo a pergunta para ganhar coins!', trigger='message')
 
+async def duel(par):
+    msg = par[0]
+    points = par[1]
+    vs = msg.mentions[0]
+
+    m = await msg.channel.send(f'{msg.author.mention} desafia {vs.mention} para um duelo valendo {points} coins!')
+
+    await m.add_reaction('👍')
+    await m.add_reaction('👎')
+
+    return [m, points, msg.author, vs]
+async def exeduel(param, cache):
+    m = cache[0]
+    points = cache[1]
+    author = cache[2]
+    vs = cache[3]
+
+    react = param[0]
+    emoji = param[1]
+    connection = param[2]
+
+    if emoji == '👍' and vs == react:
+        if randint(0,1) == 1:
+            await m.channel.send(f'{vs.mention} aceitou o duelo e venceu! [+{points}]c // {author.mention} perdeu [-{points}]c :sob:')
+            subpoints(author.id, m.guild.id, points, connection)
+            addpoints(vs.id, m.guild.id, points, connection)
+
+        else:
+            await m.channel.send(f'{author.mention} aceitou o duelo e venceu! [+{points}]c // {vs.mention} perdeu [-{points}]c :sob:')
+            subpoints(vs.id, m.guild.id, points, connection)
+            addpoints(author.id, m.guild.id, points, connection)
+
+        return True
+    elif emoji == '👎' and react in [vs, author]:
+        await m.channel.send(f'{react.mention} recusou o duelo!')
+
+        return True
+    else:
+        return cache
+event(name='duel', createfunc=duel, executefunc=exeduel, desc='Duele com alguem apostando coins!', trigger='react', command_create=False, loop_event_create=False)

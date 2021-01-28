@@ -399,3 +399,36 @@ async def shopdelitem(message, commandpar, connection, bot):
     if marc == 0:
         raise Exception(f'{message.author.mention} o item {commandpar} não existe.')
 command(name='delitem', func=shopdelitem, desc=f'Deletar itens da loja.', perm=1)
+
+
+async def _duel(message, commandpar, connection, bot):
+    if commandpar == None:
+        raise Exception('Falta parametros!')
+
+    if len(message.mentions) == 0:
+        raise Exception('Contra quem?')
+
+    try:
+        points = int(commandpar.split()[0])
+    except:
+        points = 0
+
+    vs = message.mentions[0]
+
+    if getpoints(vs.id, message.guild.id, connection) < points:
+        raise Exception(f'{vs.name} não possui pontos suficientes!')
+
+    if getpoints(message.author.id, message.guild.id, connection) < points:
+        raise Exception(f'{message.author.mention} Você não possui pontos suficientes!')
+
+    for eve in event.events:
+        if eve.name == 'duel':
+            if eve.cache != None:
+                if eve.cache == True:
+                    eve.clear()
+                else:
+                    raise Exception('Ja existe um duelo em andamento!')
+            
+
+            await eve.create([message, points])
+command(name='duel', func=_duel, desc=f'Duele contra alguem valendo coins!')
