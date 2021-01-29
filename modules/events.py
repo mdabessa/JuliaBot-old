@@ -134,7 +134,7 @@ async def exeduel(param, cache):
             addpoints(vs.id, m.guild.id, points, connection)
 
         else:
-            await m.channel.send(f'{author.mention} aceitou o duelo e venceu! [+{points}]c // {vs.mention} perdeu [-{points}]c :sob:')
+            await m.channel.send(f'{vs.mention} aceitou o duelo e perdeu! [-{points}]c // {author.mention} ganhou [+{points}]c :sunglasses:')
             subpoints(vs.id, m.guild.id, points, connection)
             addpoints(author.id, m.guild.id, points, connection)
 
