@@ -1,6 +1,6 @@
 from os import environ
 from environs import Env
-import time
+import time, discord
 
 
 
@@ -12,8 +12,8 @@ token = environ['DiscordToken']
 masterid = int(environ['master_id'])
 debug = bool(int(environ['debug']))
 
-
 mutes = []
+
 
 class command():
     commands = []
@@ -43,9 +43,14 @@ class command():
 
         for cmd in command.commands:
             if cmd.name == contcommand:
-                if cmd.perm == 1:
+                if cmd.perm == 2:
                     if message.author.id != masterid:
-                        await message.channel.send('Voce não possui permissão para isto :sob: ')
+                        await message.channel.send('Voce não possui permissão para isto :sob:')
+                        return
+
+                if cmd.perm == 1:
+                    if not message.author.guild_permissions.administrator:
+                        await message.channel.send('Voce não possui permissão para isto :sob:')
                         return
 
                 if cmd.cost > 0:

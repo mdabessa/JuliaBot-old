@@ -269,7 +269,7 @@ async def exe(message, commandpar, connection, bot):
 
     else:
         raise Exception('Falta algo nesse comando!')
-command(name='exec', func=exe , desc=f'Executar um comando através do bot.', perm=1)
+command(name='exec', func=exe , desc=f'Executar um comando através do bot.', perm=2)
 
 async def setprefix(message, commandpar, connection, bot):
     if commandpar != None:
