@@ -28,8 +28,10 @@ class botclient(discord.Client):
         global mutes
         if message.author == self.user:
             return
-        
 
+        if debug == 1 and message.author.id != masterid:
+            return
+    
         #add (pointsqt) points every (pointstime) seconds
         pointstime = 300
         pointsqt = 100
