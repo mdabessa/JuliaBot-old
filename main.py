@@ -12,16 +12,17 @@ class botclient(discord.Client):
         else:
             await self.change_presence(activity=discord.Game(f'{command.prefix}help'))
         
-        print(f'{self.user} logou em {len(self.guilds)} grupos!')
+        print(f'{self.user} esta logado em {len(self.guilds)} grupos!')
 
+        print('Carregando comandos...')
         for guild in self.guilds:
-            nick = guild.me.nick
-            if nick == None:
-                continue
-            else:
-                await guild.me.edit(nick=None)
+            for cmd in command.commands:
+                if getcommand(guild.id, cmd.name, connection) == None:
+                    addcommand(guild.id, connection, name=cmd.name, description=cmd.desc, permission=cmd.perm, price=cmd.cost, overwritten=0)
         
-        print('Ready!')
+
+        print('Comandos Carregado!')
+        print('Pronto!')
 
 
     async def on_message(self, message):
@@ -83,17 +84,7 @@ class botclient(discord.Client):
             if eve.msgvalidation(reaction.message) and eve.trigger == 'react':
                 await eve.execute([user,reaction.emoji, connection])
 
-
-
-    async def on_member_update(self, before, after):
-        for guild in self.guilds:
-            nick = guild.me.nick
-            if nick == None:
-                continue
-            else:
-                await guild.me.edit(nick=None)
                 
-
 
 connection = psycopg2.connect(db_url, sslmode='require')
 

@@ -41,34 +41,43 @@ class command():
             commandpar = None
 
 
-        for cmd in command.commands:
-            if cmd.name == contcommand:
-                if cmd.perm == 2:
-                    if message.author.id != masterid:
-                        await message.channel.send('Voce não possui permissão para isto :sob:')
-                        return
+        cmd = getcommand(message.guild.id, contcommand,connection)
+        if cmd == None:
+            return
 
-                if cmd.perm == 1:
-                    if not message.author.guild_permissions.administrator:
-                        await message.channel.send('Voce não possui permissão para isto :sob:')
-                        return
+        if cmd['active'] == 0:
+            return
 
-                if cmd.cost > 0:
-                    points = getpoints(message.author.id, message.guild.id, connection)
-                    if points < cmd.cost:
-                        await message.channel.send(f'{message.author.mention}, Voce não possui coins suficiente, custo do comando é de {cmd.cost}')
-                        return
-                    else:
-                        await message.channel.send(f'{message.author.mention} comprou {cmd.name} [-{cmd.cost}]')
-                        subpoints(message.author.id, message.guild.id, cmd.cost, connection)
+        if cmd['permission'] == 2:
+            if message.author.id != masterid:
+                await message.channel.send('Voce não possui permissão para isto! :sob:')
+                return
 
-                try:
-                    await cmd.execute(message, commandpar, connection, bot)
-                except Exception as e:
-                    await message.channel.send(e)
-                    if cmd.cost > 0:
-                        addpoints(message.author.id, message.guild.id, cmd.cost, connection)
-                    
+        if cmd['permission'] >= 1:
+            if not message.author.guild_permissions.administrator:
+                await message.channel.send('Voce não possui permissão para isto! :sob:')
+                return
+
+        if cmd['price'] > 0:
+            points = getpoints(message.author.id, message.guild.id, connection)
+            if points < cmd['price']:
+                await message.channel.send(f'{message.author.mention}, Voce não possui coins suficiente, custo do comando é de {cmd["price"]}')
+                return
+            else:
+                await message.channel.send(f'{message.author.mention} comprou {cmd["name"]} [-{cmd["price"]}]')
+                subpoints(message.author.id, message.guild.id, cmd['price'], connection)
+
+        if cmd['overwritten'] == 0:
+            try:
+                _cmd = [x for x in command.commands if x.name == cmd['name']][0]
+                await _cmd.execute(message, commandpar, connection, bot)
+            except Exception as e:
+                await message.channel.send(e)
+                if cmd['price'] > 0:
+                    addpoints(message.author.id, message.guild.id, cmd['price'], connection)
+        else:
+            await message.channel.send(cmd['message'])
+
 
 class event():
     events = []
@@ -246,4 +255,56 @@ def delitem(guildid, itemid, connection):
                 
     '''.format(sid=str(guildid), iid=itemid)
     )
+    connection.commit()
+
+
+def getcommand(guildid, name, connection):
+    cursor = connection.cursor()
+    cursor.execute(
+    '''
+        SELECT * FROM Commands
+        WHERE ServerId = '{sid}' AND Name = '{n}' 
+
+    '''.format(sid=str(guildid), n=str(name))
+    )
+    leg = ['serverid', 'name', 'message', 'description', 'permission', 'price', 'active', 'overwritten']
+    r = cursor.fetchone()
+    try:
+        result = dict(zip(leg, r))
+        return result
+    except:
+        return None
+
+
+def getallcommands(guildid, connection):
+    cursor = connection.cursor()
+    cursor.execute(
+    '''
+        SELECT * FROM Commands
+        WHERE ServerId = '{gid}'
+
+    '''.format(gid=str(guildid))
+    )
+
+    r = cursor.fetchall()
+    leg = ['serverid', 'name', 'message', 'description', 'permission', 'price', 'active', 'overwritten']
+    result = []
+    
+    for i in r:
+        result.append(dict(zip(leg, i)))
+
+    return result
+
+
+def addcommand(guildid, connection, name, message='', description='', permission=0, price=0, active=1, overwritten=1):
+    cursor = connection.cursor()
+
+    cursor.execute(
+    """
+    INSERT INTO Commands(ServerId, Name, Message, Description, Permission, Price, Active, Overwritten)
+    VALUES(%s, %s, %s, %s, %s, %s, %s, %s)
+    """,
+    (str(guildid), str(name), str(message), str(description), int(permission), int(price), int(active), int(overwritten))
+    )
+    
     connection.commit()

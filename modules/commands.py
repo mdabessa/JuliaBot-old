@@ -404,3 +404,21 @@ async def _duel(message, commandpar, connection, bot):
 
             await eve.create([message, points])
 command(name='duel', func=_duel, desc=f'Duele contra alguem valendo coins!')
+
+async def addcmd(message, commandpar, connection, bot):
+    if commandpar == None:
+        raise Exception('Falta parametros!')
+
+    if len(commandpar.split(',')) != 3:
+        raise Exception('Parametros invalidos!')
+
+    commandpar = commandpar.split(',')
+
+    if getcommand(message.guild.id, commandpar[0], connection) != None:
+        raise Exception('Um comando com esse nome ja existe!')
+
+    addcommand(message.guild.id, connection, commandpar[0], commandpar[1], commandpar[2])
+    await message.channel.send(f'Comando adicionado com sucesso!\nComando: {commandpar[0]}\nMensagem: {commandpar[1]}\nDescrição: {commandpar[2]}')
+
+
+command(name='addcmd', func=addcmd, desc=f'Adicione um comando personalizado! // {command.prefix}addcmd [nome,mensagem,desrição]')
