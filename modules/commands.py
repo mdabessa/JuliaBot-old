@@ -5,26 +5,43 @@ import discord
 
 async def _help(message, commandpar, connection, bot): 
     if commandpar == None:
-    
-        cmds = [cmd for cmd in command.commands if cmd.perm == 0]
-        mod_cmds = [cmd for cmd in command.commands if cmd.perm == 1] 
+        
+        cmds = getallcommands(message.guild.id, connection)
+
+        general_cmds = [cmd for cmd in cmds if cmd['permission'] == 0]
+        mod_cmds = [cmd for cmd in cmds if cmd['permission'] == 1] 
         
         emb = discord.Embed(title='Lista de Comandos', description=f'{command.prefix}help [comando]', color=0xe6dc56)
 
-        emb.add_field(name=f'Comandos Gerais', value=f'{", ".join([cmd.name for cmd in cmds])}', inline=False)
-        emb.add_field(name=f'Comandos de Admin', value=f'{", ".join([cmd.name for cmd in mod_cmds])}', inline=False)
+        emb.add_field(name=f'Comandos Gerais', value=f'{", ".join([cmd["name"] for cmd in general_cmds])}', inline=False)
+        emb.add_field(name=f'Comandos de Admin', value=f'{", ".join([cmd["name"] for cmd in mod_cmds])}', inline=False)
 
         await message.channel.send(embed=emb)
     
     else:
-        c = 0
-        for cmd in command.commands:
-            if cmd.name == commandpar:
-                await message.channel.send(f'Comando: {cmd.name} | Descrição: {cmd.desc} | Valor: {cmd.cost}c')
-                c = 1
+        cmd = getcommand(message.guild.id, commandpar, connection)
+        if cmd != None:
+            if cmd['price'] == 0:
+                valor = 'Grátis'
+            else:
+                valor = cmd['price']
 
-        if c == 0:
-            raise Exception('Nenhum comando encontrado.')
+            if cmd['permission'] == 0:
+                perm = 'Livre'
+            elif cmd['permission'] == 1:
+                perm = 'Apenas admins'
+            else:
+                perm = 'DEBUG'
+
+            emb = discord.Embed(title=cmd['name'], color=0xe6dc56)
+
+            emb.add_field(name='Descrição:', value=cmd['description'], inline=False)
+            emb.add_field(name='Valor:', value=valor, inline=False)
+            emb.add_field(name='Nivel de Permissão:', value=perm, inline=False)
+
+            await message.channel.send(embed=emb)
+        else:
+            raise Exception(f'Nenhum comando com o nome {commandpar} existe!')
 
 
 command(name='help', func=_help, desc='Listar todos os comandos e suas descrições.')
@@ -421,4 +438,4 @@ async def addcmd(message, commandpar, connection, bot):
     await message.channel.send(f'Comando adicionado com sucesso!\nComando: {commandpar[0]}\nMensagem: {commandpar[1]}\nDescrição: {commandpar[2]}')
 
 
-command(name='addcmd', func=addcmd, desc=f'Adicione um comando personalizado! // {command.prefix}addcmd [nome,mensagem,desrição]')
+command(name='addcmd', func=addcmd, desc=f'Adicione um comando personalizado! // {command.prefix}addcmd [nome,mensagem,desrição]', perm=1)

@@ -86,14 +86,14 @@ class botclient(discord.Client):
 
     
     async def on_guild_join(self, guild):
-         print('Registrando novo servidor...')
-         for cmd in command.commands:
-                if getcommand(guild.id, cmd.name, connection) == None:
-                    addcommand(guild.id, connection, name=cmd.name, description=cmd.desc, permission=cmd.perm, price=cmd.cost, overwritten=0)
+        print('Registrando novo servidor...')
+        for cmd in command.commands:
+            if getcommand(guild.id, cmd.name, connection) == None:
+                addcommand(guild.id, connection, name=cmd.name, description=cmd.desc, permission=cmd.perm, price=cmd.cost, overwritten=0)
+        print('Novo servidor registrado!')
 
 
 connection = psycopg2.connect(db_url, sslmode='require')
-
 
 intents = discord.Intents.all()
 bot = botclient(intents=intents)
