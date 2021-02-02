@@ -273,7 +273,16 @@ def getcommand(guildid, name, connection):
         result = dict(zip(leg, r))
         return result
     except:
-        return None
+        c = 0
+        for cmd in command.commands:
+            if cmd.name == name:
+                c=1
+                _cmd = ['', cmd.name, '', cmd.desc, cmd.perm, cmd.cost, 1, 0]
+                result = dict(zip(leg, _cmd))
+                return result
+        
+        if c == 0:
+            return None
 
 
 def getallcommands(guildid, connection):
@@ -288,10 +297,21 @@ def getallcommands(guildid, connection):
 
     r = cursor.fetchall()
     leg = ['serverid', 'name', 'message', 'description', 'permission', 'price', 'active', 'overwritten']
-    result = []
-    
-    for i in r:
-        result.append(dict(zip(leg, i)))
+    result = [dict(zip(leg, i)) for i in r]
+
+    for cmd in command.commands:
+        c = 0
+        for i in result:
+            if i['name'] == cmd.name:
+                c = 1
+
+        if c == 1:
+            continue
+
+        _cmd = ['', cmd.name, '', cmd.desc, cmd.perm, cmd.cost, 1, 0] 
+        result.append(dict(zip(leg, _cmd)))
+        
+
 
     return result
 
