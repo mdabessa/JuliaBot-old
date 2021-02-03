@@ -33,7 +33,7 @@ class command():
     @classmethod
     async def trycommand(cls, message, content, connection, masterid, bot):
         contlist = content.split()
-        contcommand = contlist[0]
+        contcommand = str(contlist[0]).lower()
 
         if len(contlist) > 1:
             commandpar = ' '.join(contlist[1:])
@@ -324,7 +324,17 @@ def addcommand(guildid, connection, name, message='', description='', permission
     INSERT INTO Commands(ServerId, Name, Message, Description, Permission, Price, Active, Overwritten)
     VALUES(%s, %s, %s, %s, %s, %s, %s, %s)
     """,
-    (str(guildid), str(name), str(message), str(description), int(permission), int(price), int(active), int(overwritten))
+    (str(guildid), str(name).lower(), str(message), str(description), int(permission), int(price), int(active), int(overwritten))
     )
     
+    connection.commit()
+
+
+def delcommand(guildid, connection, name):
+    cursor = connection.cursor()
+    cursor.execute(
+    '''
+    DELETE FROM Commands WHERE ServerId='{gid}' AND Name='{n}'
+    '''.format(gid=str(guildid), n=name)
+    )
     connection.commit()

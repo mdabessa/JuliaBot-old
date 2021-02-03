@@ -431,11 +431,27 @@ async def addcmd(message, commandpar, connection, bot):
 
     commandpar = commandpar.split(',')
 
+    if ' ' in commandpar[0] or ':' in commandpar[0]:
+        raise Exception('O nome do comando não pode conter nenhum espaço ou dois pontos ":".')
+
     if getcommand(message.guild.id, commandpar[0], connection) != None:
         raise Exception('Um comando com esse nome ja existe!')
 
     addcommand(message.guild.id, connection, commandpar[0], commandpar[1], commandpar[2])
     await message.channel.send(f'Comando adicionado com sucesso!\nComando: {commandpar[0]}\nMensagem: {commandpar[1]}\nDescrição: {commandpar[2]}')
-
-
 command(name='addcmd', func=addcmd, desc=f'Adicione um comando personalizado! // {command.prefix}addcmd [nome,mensagem,desrição]', perm=1)
+
+async def delcmd(message, commandpar, connection, bot):
+    if commandpar == None:
+        raise Exception('Falta parametros!')
+
+    cmd = getcommand(message.guild.id, commandpar, connection)
+    if cmd == None:
+        raise Exception(f'O comando com o nome {commandpar} não existe!')
+
+    if cmd['overwritten'] == 0:
+        await message.channel.send(f'O comando {commandpar} é um comando próprio da {bot.mention}, ele não pode ser deletado!')
+    else:
+        delcommand(message.guild.id, connection, commandpar)
+        await message.channel.send(f'O comando {commandpar} foi deletado com sucesso!')
+command(name='delcmd', func=delcmd, desc=f'Delete um comando personalizado!', perm=1)
