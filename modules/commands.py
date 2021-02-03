@@ -450,7 +450,7 @@ async def delcmd(message, commandpar, connection, bot):
         raise Exception(f'O comando com o nome {commandpar} não existe!')
 
     if cmd['overwritten'] == 0:
-        await message.channel.send(f'O comando {commandpar} é um comando próprio da {bot.mention}, ele não pode ser deletado!')
+        await message.channel.send(f'O comando {commandpar} é um comando próprio da {bot.user.mention}, ele não pode ser deletado!')
     else:
         delcommand(message.guild.id, connection, commandpar)
         await message.channel.send(f'O comando {commandpar} foi deletado com sucesso!')
