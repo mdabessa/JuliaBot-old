@@ -262,9 +262,9 @@ async def c_event(message, commandpar, connection, bot):
             if eve.command_create == False:
                 continue
             if eve.name == commandpar:
-                eve.clear()
+                eve.clear(str(message.guild.id))
                 await message.channel.send(f'{message.author.mention} evento {eve.name} criado com sucesso!')
-                await eve.create([message.channel])
+                await eve.create([message.channel], str(message.guild.id))
                 marc = 1
 
         if marc == 0:
@@ -412,14 +412,15 @@ async def _duel(message, commandpar, connection, bot):
 
     for eve in event.events:
         if eve.name == 'duel':
-            if eve.cache != None:
-                if eve.cache == True:
-                    eve.clear()
+            cache = eve.getcache(str(message.guild.id))
+            if cache != None:
+                if cache == True:
+                    eve.clear(str(message.guild.id))
                 else:
                     raise Exception('Ja existe um duelo em andamento!')
             
 
-            await eve.create([message, points])
+            await eve.create([message, points], str(message.guild.id))
 command(name='duel', func=_duel, desc=f'Duele contra alguem valendo coins!')
 
 async def addcmd(message, commandpar, connection, bot):

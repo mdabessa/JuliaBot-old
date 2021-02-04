@@ -1,7 +1,7 @@
 from os import environ
 from environs import Env
 import time, discord
-
+import traceback
 
 
 env = Env()
@@ -72,6 +72,7 @@ class command():
                 _cmd = [x for x in command.commands if x.name == cmd['name']][0]
                 await _cmd.execute(message, commandpar, connection, bot)
             except Exception as e:
+                traceback.print_exc()
                 await message.channel.send(e)
                 if cmd['price'] > 0:
                     addpoints(message.author.id, message.guild.id, cmd['price'], connection)
@@ -89,37 +90,58 @@ class event():
         self.trigger = trigger
         self.command_create = command_create
         self.loop_event_create = loop_event_create
-        self.cache = None
+        self.cache = dict()
         event.events.append(self)
 
-    async def create(self, par:list):
-        if self.cache == None:
-            self.cache = await self.createfunc(par)
-    
-    async def execute(self, par):
-        if self.cache == None:
+    async def create(self, par, ind:str):
+        cache = self.getcache(ind)
+
+        if cache == None:
+            cache = await self.createfunc(par)
+            self.cache[ind] = cache
+
+
+    async def execute(self, par, ind:str):
+        cache = self.getcache(ind)
+
+        if cache == None:
             return
         
-        if self.cache == True:
-            self.clear()
+        if cache == True:
+            self.clear(ind)
             return
 
-        self.cache = await self.exec(par, self.cache)
+        cache = await self.exec(par, cache)
+        self.cache[ind] = cache
 
-    def msgvalidation(self, msg):#Validação generica de mensagem, validaçoes mais complexas, apenas dentro da funcão execute
-        if self.cache == None:
+
+    def msgvalidation(self, msg, ind:str):
+        cache = self.getcache(ind)
+        if cache == None:
             return False
         
-        if self.cache == True:
+        if cache == True:
             return False
 
-        if self.cache[0] == msg:
+        if cache[0] == msg:
             return True
         else:
             return False
 
-    def clear(self):
-        self.cache = None
+
+    def getcache(self, ind):
+        ind = str(ind)
+        try:
+            cache = self.cache[ind]
+        except:
+            cache = None
+
+        return cache
+
+
+    def clear(self, ind:str):
+        if self.getcache(ind) != None:
+            self.cache.pop(ind)
 
 
 class timer():
