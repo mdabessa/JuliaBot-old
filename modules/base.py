@@ -15,6 +15,10 @@ debug = bool(int(environ['debug']))
 mutes = []
 
 
+class CommandError(Exception):
+    pass
+
+
 class command():
     commands = []
     prefix = 'j!'
@@ -71,11 +75,12 @@ class command():
             try:
                 _cmd = [x for x in command.commands if x.name == cmd['name']][0]
                 await _cmd.execute(message, commandpar, connection, bot)
-            except Exception as e:
-                traceback.print_exc()
+            except CommandError as e:
                 await message.channel.send(e)
                 if cmd['price'] > 0:
                     addpoints(message.author.id, message.guild.id, cmd['price'], connection)
+            except Exception:
+                traceback.print_exc()
         else:
             await message.channel.send(cmd['message'])
 
