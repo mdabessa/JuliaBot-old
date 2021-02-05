@@ -1,5 +1,5 @@
 from modules.base import *
-from random import randint, shuffle
+from random import randint, shuffle, choice
 
 async def gift(par):
     points = randint(1,10)*100
@@ -77,14 +77,29 @@ async def execards(param, cache):
 event(name='cards', createfunc=cards, executefunc=execards, desc='Escolha cartinhas para ganhar coins (ou perder :D)')
 
 async def quiz(par):
+    channel = par[0]
+
     points = randint(5,15)*100
 
     num1 = randint(1,100)
     num2 = randint(1,100)
 
-    res = num1+num2
-    channel = par[0]
-    m = await channel.send(f'O quiz chegou!, Qual resultado entre a soma de {num1} e {num2} ?')
+    operation = ['Soma', 'Multiplicação', 'Divisão', 'Subtração']
+    operator = choice(operation)
+
+    if operator == 'Soma':
+        m = await channel.send(f'O quiz chegou!, Qual resultado da soma entre [{num1}] e [{num2}] ?')
+        res = num1+num2
+    if operator == 'Multiplicação':
+        m = await channel.send(f'O quiz chegou!, Qual resultado da multiplicação entre [{num1}] e [{num2}] ?')
+        res = num1*num2
+    if operator == 'Divisão':
+        m = await channel.send(f'O quiz chegou!, Qual resultado da divisão entre [{num1}] e [{num2}] ?')
+        res = num1/num2
+    if operator == 'Subtração':
+        m = await channel.send(f'O quiz chegou!, Qual resultado da subtrção entre [{num1}] e [{num2}] ?')
+        res = num1-num2
+
 
     return [m, points, res]
 async def exequiz(param, cache):
