@@ -1,5 +1,6 @@
 from modules.base import *
 from random import randint, shuffle, choice
+from math import floor
 
 async def gift(par):
     points = randint(1,10)*100
@@ -88,16 +89,17 @@ async def quiz(par):
     operator = choice(operation)
 
     if operator == 'Soma':
-        m = await channel.send(f'O quiz chegou!, Qual resultado da soma entre [{num1}] e [{num2}] ?')
+        m = await channel.send(f'O quiz chegou!, Qual resultado da soma entre [{num1}] e [{num2}] ? // ex: 5+5 -> 10')
         res = num1+num2
     if operator == 'Multiplicação':
-        m = await channel.send(f'O quiz chegou!, Qual resultado da multiplicação entre [{num1}] e [{num2}] ?')
+        m = await channel.send(f'O quiz chegou!, Qual resultado da multiplicação entre [{num1}] e [{num2}] ? // ex: 5x5 -> 25')
         res = num1*num2
     if operator == 'Divisão':
-        m = await channel.send(f'O quiz chegou!, Qual resultado da divisão entre [{num1}] e [{num2}] ?')
+        m = await channel.send(f'O quiz chegou!, Qual resultado da divisão entre [{num1}] e [{num2}] ? // ex: 1/16 -> 0.0625 -> 0.062')
         res = num1/num2
+        res = round(res - 0.5/10**3, 3)
     if operator == 'Subtração':
-        m = await channel.send(f'O quiz chegou!, Qual resultado da subtrção entre [{num1}] e [{num2}] ?')
+        m = await channel.send(f'O quiz chegou!, Qual resultado da subtração entre [{num1}] e [{num2}] ? // ex: 2-4 -> -2')
         res = num1-num2
 
 
