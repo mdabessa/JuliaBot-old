@@ -11,7 +11,8 @@ async def _help(message, commandpar, connection, bot):
         general_cmds = [cmd for cmd in cmds if cmd['permission'] == 0]
         mod_cmds = [cmd for cmd in cmds if cmd['permission'] == 1] 
         
-        emb = discord.Embed(title='Lista de Comandos', description=f'{command.prefix}help [comando]', color=0xe6dc56)
+        prefix = getserver(message.guild.id, connection)['prefix']
+        emb = discord.Embed(title='Lista de Comandos', description=f'{prefix}help [comando]', color=0xe6dc56)
 
         emb.add_field(name=f'Comandos Gerais', value=f'{", ".join([cmd["name"] for cmd in general_cmds])}', inline=False)
         emb.add_field(name=f'Comandos de Admin', value=f'{", ".join([cmd["name"] for cmd in mod_cmds])}', inline=False)
@@ -291,13 +292,18 @@ command(name='exec', func=exe , desc=f'Executar um comando através do bot.', pe
 async def setprefix(message, commandpar, connection, bot):
     if commandpar != None:
         cont = commandpar.split()
-        command.prefix = cont[0]
-        await bot.change_presence(activity=discord.Game(f'{command.prefix}help'))
-        await message.channel.send(f'Prefixo de comandos mudado para {command.prefix}')
+        prefix = cont[0]
+        editserver(message.guild.id, connection, 'prefix', prefix)
+        await message.channel.send(f'Prefixo de comandos mudado para {prefix}')
 
     else:
         raise CommandError('Falta os parametros do comando!')
 command(name='setprefix', func=setprefix , desc=f'Mude o prefixo de comandos do bot.', perm=1)
+
+async def getprefix(message, commandpar, connection, bot):
+    prefix = getserver(message.guild.id, connection)['prefix']
+    await message.channel.send(f'O prefixo do server é: {prefix}')
+command(name='prefix', func=getprefix , desc=f'Retorna o prefixo do bot no servidor.')
 
 async def ping(message, commandpar, connection, bot):
     lt = int(round(bot.latency, 3)*1000)
@@ -317,7 +323,7 @@ async def shop(message, commandpar, connection, bot):
         for i in items:
             emb.add_field(name=f'{i[1]} - {i[2]}', value=f':coin:{i[3]}c', inline=True)
         
-        emb.set_footer(text=f'{command.prefix}buy [id]')
+        emb.set_footer(text=f'{getserver(message.guild.id, connection)["prefix"]}buy [id]')
         await message.channel.send(embed=emb)
 command(name='shop', func=shop, desc=f'Loja de itens')
 
@@ -440,7 +446,7 @@ async def addcmd(message, commandpar, connection, bot):
 
     addcommand(message.guild.id, connection, commandpar[0], commandpar[1], commandpar[2])
     await message.channel.send(f'Comando adicionado com sucesso!\nComando: {commandpar[0]}\nMensagem: {commandpar[1]}\nDescrição: {commandpar[2]}')
-command(name='addcmd', func=addcmd, desc=f'Adicione um comando personalizado! // {command.prefix}addcmd [nome,mensagem,desrição]', perm=1)
+command(name='addcmd', func=addcmd, desc=f'Adicione um comando personalizado! // [prefixo]addcmd [nome,mensagem,desrição]', perm=1)
 
 async def delcmd(message, commandpar, connection, bot):
     if commandpar == None:

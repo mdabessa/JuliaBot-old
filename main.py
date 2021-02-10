@@ -10,8 +10,12 @@ class botclient(discord.Client):
         if debug == 1:
             await self.change_presence(activity=discord.Game(f'Debug Mode'))
         else:
-            await self.change_presence(activity=discord.Game(f'{command.prefix}help'))
+            await self.change_presence(activity=discord.Game(f'{len(self.guilds)} servers!'))
         
+        for guild in self.guilds:
+            if getserver(guild.id, connection) == None:
+                addserver(guild.id, connection)
+
         print(f'{self.user} esta logado em {len(self.guilds)} grupos!')
 
         print('Pronto!')
@@ -54,9 +58,15 @@ class botclient(discord.Client):
         try:
             print(f'{message.guild} #{message.channel} //{message.author} : {message.content}')
 
-        
-            if message.content[0:len(command.prefix)] == command.prefix:
-                content = message.content[len(command.prefix):]
+            prefix = getserver(message.guild.id, connection)['prefix']
+
+            if message.content == f'<@!{self.user.id}>':
+                await message.channel.send(f'{prefix}help para lista de comandos.')
+                return
+
+
+            if message.content[0:len(prefix)] == prefix:
+                content = message.content[len(prefix):]
                 await command.trycommand(message, content, connection, masterid, self)
  
 
@@ -76,6 +86,9 @@ class botclient(discord.Client):
             if eve.msgvalidation(reaction.message, str(reaction.message.guild.id)) and eve.trigger == 'react':
                 await eve.execute([user,reaction.emoji, connection], str(reaction.message.guild.id))
 
+    async def on_guild_join(self, guild):
+        if getserver(guild.id, connection) == None:
+                addserver(guild.id, connection)
 
 
 connection = psycopg2.connect(db_url, sslmode='require')
