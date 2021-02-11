@@ -1,4 +1,4 @@
-import psycopg2, discord
+import psycopg2, discord, traceback
 from random import randint, choice
 from modules.base import *
 from modules.commands import *
@@ -58,14 +58,35 @@ class botclient(discord.Client):
         try:
             print(f'{message.guild} #{message.channel} //{message.author} : {message.content}')
 
-            prefix = getserver(message.guild.id, connection)['prefix']
+            server = getserver(message.guild.id, connection)
+            
+            prefix = server['prefix']
+            channel = server['commandchannel']
+
+
+            if channel == None:
+                pass
+            elif self.get_channel(int(channel)) == None:
+                editserver(message.guild.id, connection, 'commandchannel', None)
+                channel = None
 
             if message.content == f'<@!{self.user.id}>':
-                await message.channel.send(f'{prefix}help para lista de comandos.')
+                helpstr = f'{prefix}help para lista de comandos.'
+                
+
+                if channel != None:
+                    helpstr += f'\nCanal de comandos: <#{channel}>'
+
+                await message.channel.send(helpstr)
                 return
 
 
             if message.content[0:len(prefix)] == prefix:
+                if channel == None:
+                    pass
+                elif int(channel) != message.channel.id:
+                    return
+
                 content = message.content[len(prefix):]
                 await command.trycommand(message, content, connection, masterid, self)
  
@@ -76,6 +97,7 @@ class botclient(discord.Client):
 
         except Exception as e:
             print(e)
+            traceback.print_exc()
         
 
     async def on_reaction_add(self, reaction, user):

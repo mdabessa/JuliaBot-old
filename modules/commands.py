@@ -462,3 +462,43 @@ async def delcmd(message, commandpar, connection, bot):
         delcommand(message.guild.id, connection, commandpar)
         await message.channel.send(f'O comando {commandpar} foi deletado com sucesso!')
 command(name='delcmd', func=delcmd, desc=f'Delete um comando personalizado!', perm=1)
+
+
+async def commandchannel(message, commandpar, connection, bot):
+    if commandpar == None:
+        server = getserver(message.guild.id, connection)
+        channel = server['commandchannel']
+        prefix = server['prefix']
+
+        if channel == None:
+            await message.channel.send(f'O servidor {message.guild} permite comandos em qualquer canal!\n' +
+            f'Para mudar o canal de comandos, utilize [{prefix}cmdchannel #canal] ou [{prefix}cmdchannel .] para poder utilizar comandos em todos os canais.')
+        else:
+            channel = bot.get_channel(int(channel))
+            await message.channel.send(f'Canal de comandos: <#{channel.id}>\n' +
+            f'Para mudar o canal de comandos, utilize [{prefix}cmdchannel #canal] ou [{prefix}cmdchannel .] para poder utilizar comandos em todos os canais.'
+            )
+    else:
+        if commandpar == '.':
+            editserver(message.guild.id, connection, 'commandchannel', None)
+            await message.channel.send(f'Comandos agora podem ser utilizados em qualquer canal.')
+
+        else:
+            channel = commandpar
+            rep = ['<','#','>']
+            for r in rep:
+                channel = channel.replace(r, '')
+
+            try:
+                channel = bot.get_channel(int(channel))
+            except:
+               raise CommandError(f'Nenhum canal com esse nome, marque o canal com # para selecionar o canal desejado.')
+
+            if channel == None:
+                raise CommandError(f'Nenhum canal com esse nome, marque o canal com # para selecionar o canal desejado.')
+            
+            editserver(message.guild.id, connection, 'commandchannel', str(channel.id))
+            await message.channel.send(f'O canal de comandos foi definido para <#{channel.id}>')
+
+
+command(name='cmdchannel', func=commandchannel, desc=f'Modifique o canal de comandos!', perm=1)
