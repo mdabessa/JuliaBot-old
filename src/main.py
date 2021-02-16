@@ -1,20 +1,23 @@
+import sys
+sys.path.insert(0, '/src')
+
 import psycopg2, discord, traceback
+from os import environ
+from environs import Env
 from random import randint, choice
-from modules.base import *
-from modules.commands import *
-from modules.events import *
+import modules.database as db
+import modules.entity as entity
+from commands import *
+from events import *
 
 
 class botclient(discord.Client):
     async def on_ready(self):
-        if debug == 1:
-            await self.change_presence(activity=discord.Game(f'Debug Mode'))
-        else:
-            await self.change_presence(activity=discord.Game(f'{len(self.guilds)} servers!'))
+        await self.change_presence(activity=discord.Game(f'{len(self.guilds)} servers!'))
         
         for guild in self.guilds:
-            if getserver(guild.id, connection) == None:
-                addserver(guild.id, connection)
+            if db.getserver(guild.id, connection) == None:
+                db.db.addserver(guild.id, connection)
 
         print(f'{self.user} esta logado em {len(self.guilds)} grupos!')
 
@@ -22,35 +25,31 @@ class botclient(discord.Client):
 
 
     async def on_message(self, message):
-        global mutes
         if message.author == self.user:
             return
 
-        if debug == 1 and message.author.id != masterid:
-            return
-    
         #add (pointsqt) points every (pointstime) seconds
         pointstime = 300
         pointsqt = 100
 
-        if timer.timer('point_time_'+str(message.guild.id), pointstime, recreate=1):
+        if entity.timer.timer('point_time_'+str(message.guild.id), pointstime, recreate=1):
             for member in message.guild.members:
                 if member.status == 'offline' or (member.bot == True and member.id != self.user.id):
                     continue
                 
-                addpoints(member.id,message.guild.id,pointsqt, connection)
+                db.addpoints(member.id,message.guild.id,pointsqt, connection)
 
 
-        if str(message.author.id)+str(message.channel.id) in mutes:
-            if timer.timer(str(message.author.id)+str(message.channel.id),0):
-                mutes.remove(str(message.author.id)+str(message.channel.id))
+        if str(message.author.id)+str(message.channel.id) in entity.mutes:
+            if entity.timer.timer(str(message.author.id)+str(message.channel.id),0):
+                entity.mutes.remove(str(message.author.id)+str(message.channel.id))
             else:
                 await message.delete()
                 return
         
 
-        if timer.timer('event_time_'+str(message.guild.id), randint(1000,10000), recreate=1) == True:
-            eve = choice([i for i in event.events if i.loop_event_create])
+        if entity.timer.timer('event_time_'+str(message.guild.id), randint(1000,10000), recreate=1) == True:
+            eve = choice([i for i in entity.event.events if i.loop_event_create])
             eve.clear(str(message.guild.id))
             await eve.create([message.channel], str(message.guild.id))
                      
@@ -58,7 +57,7 @@ class botclient(discord.Client):
         try:
             print(f'{message.guild} #{message.channel} //{message.author} : {message.content}')
 
-            server = getserver(message.guild.id, connection)
+            server = db.getserver(message.guild.id, connection)
             
             prefix = server['prefix']
             channel = server['commandchannel']
@@ -67,7 +66,7 @@ class botclient(discord.Client):
             if channel == None:
                 pass
             elif self.get_channel(int(channel)) == None:
-                editserver(message.guild.id, connection, 'commandchannel', None)
+                db.editserver(message.guild.id, connection, 'commandchannel', None)
                 channel = None
 
             if message.content == f'<@!{self.user.id}>':
@@ -88,10 +87,10 @@ class botclient(discord.Client):
                     return
 
                 content = message.content[len(prefix):]
-                await command.trycommand(message, content, connection, masterid, self)
+                await entity.command.trycommand(message, content, connection, masterid, self)
  
 
-            for eve in event.events:
+            for eve in entity.event.events:
                 if eve.trigger == 'message':
                     await eve.execute([message, connection], str(message.guild.id))
 
@@ -104,14 +103,21 @@ class botclient(discord.Client):
         if user == self.user:
             return
 
-        for eve in event.events:
+        for eve in entity.event.events:
             if eve.msgvalidation(reaction.message, str(reaction.message.guild.id)) and eve.trigger == 'react':
                 await eve.execute([user,reaction.emoji, connection], str(reaction.message.guild.id))
 
     async def on_guild_join(self, guild):
-        if getserver(guild.id, connection) == None:
-                addserver(guild.id, connection)
+        if db.getserver(guild.id, connection) == None:
+                db.addserver(guild.id, connection)
 
+
+env = Env()
+env.read_env()
+
+db_url = environ['DATABASE_URL']
+token = environ['DiscordToken']
+masterid = int(environ['master_id'])
 
 connection = psycopg2.connect(db_url, sslmode='require')
 

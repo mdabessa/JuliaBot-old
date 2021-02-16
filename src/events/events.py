@@ -1,4 +1,5 @@
-from modules.base import *
+import modules.database as db
+import modules.entity as entity
 from random import randint, shuffle, choice
 from math import floor
 
@@ -18,10 +19,10 @@ async def exegift(param, cache):
     points = cache[1]
     user = param[0]
     connection = param[2]
-    addpoints(user.id, message.guild.id, points, connection)
+    db.addpoints(user.id, message.guild.id, points, connection)
     await message.channel.send(f'{user.mention} ganhou {points} coins, :partying_face:')
     return True
-event(name='gift', createfunc=gift, executefunc=exegift, desc='Quem pegar o presente primeiro leva os coins!')
+entity.event(name='gift', createfunc=gift, executefunc=exegift, desc='Quem pegar o presente primeiro leva os coins!')
 
 async def cards(par):
     points = [(randint(1,10)*100), (randint(1,10)*100), (randint(1,5)*(-100))]
@@ -68,14 +69,14 @@ async def execards(param, cache):
         pts = points[choice-1]
         if pts > 0:
             await message.channel.send(f'{user.mention} pegou uma das cartas boas e ganhou [+{pts}] coins! :moneybag:')
-            addpoints(user.id, message.guild.id, pts, connection)
+            db.addpoints(user.id, message.guild.id, pts, connection)
         else:
             await message.channel.send(f'{user.mention} escolheu a pior carta e perdeu [{pts}] coins! :money_with_wings:')
-            subpoints(user.id, message.guild.id, (pts*(-1)), connection)
+            db.subpoints(user.id, message.guild.id, (pts*(-1)), connection)
         return [message, points, usercache, choicecache]
     else:
         return [message, points, usercache, choicecache]
-event(name='cards', createfunc=cards, executefunc=execards, desc='Escolha cartinhas para ganhar coins (ou perder :D)')
+entity.event(name='cards', entity=cards, executefunc=execards, desc='Escolha cartinhas para ganhar coins (ou perder :D)')
 
 async def quiz(par):
     channel = par[0]
@@ -116,12 +117,12 @@ async def exequiz(param, cache):
     connection = param[1]
     if str(msg.content) == r and msg.channel.id == m.channel.id:
         await m.channel.send(f'{msg.author.mention} acertou e ganhou [+{p}] coins')
-        addpoints(msg.author.id, msg.guild.id, p, connection)
+        db.addpoints(msg.author.id, msg.guild.id, p, connection)
         return True
 
     else:
         return cache
-event(name='quiz', createfunc=quiz, executefunc=exequiz, desc='Responda certo a pergunta para ganhar coins!', trigger='message')
+entity.event(entity='quiz', createfunc=quiz, executefunc=exequiz, desc='Responda certo a pergunta para ganhar coins!', trigger='message')
 
 async def duel(par):
     msg = par[0]
@@ -147,13 +148,13 @@ async def exeduel(param, cache):
     if emoji == '👍' and vs == react:
         if randint(0,1) == 1:
             await m.channel.send(f'{vs.mention} aceitou o duelo e venceu! [+{points}]c // {author.mention} perdeu [-{points}]c :sob:')
-            subpoints(author.id, m.guild.id, points, connection)
-            addpoints(vs.id, m.guild.id, points, connection)
+            db.subpoints(author.id, m.guild.id, points, connection)
+            db.addpoints(vs.id, m.guild.id, points, connection)
 
         else:
             await m.channel.send(f'{vs.mention} aceitou o duelo e perdeu! [-{points}]c // {author.mention} ganhou [+{points}]c :sunglasses:')
-            subpoints(vs.id, m.guild.id, points, connection)
-            addpoints(author.id, m.guild.id, points, connection)
+            db.subpoints(vs.id, m.guild.id, points, connection)
+            db.addpoints(author.id, m.guild.id, points, connection)
 
         return True
     elif emoji == '👎' and react in [vs, author]:
@@ -162,4 +163,4 @@ async def exeduel(param, cache):
         return True
     else:
         return cache
-event(name='duel', createfunc=duel, executefunc=exeduel, desc='Duele com alguem apostando coins!', trigger='react', command_create=False, loop_event_create=False)
+entity.event(entity='duel', createfunc=duel, executefunc=exeduel, desc='Duele com alguem apostando coins!', trigger='react', command_create=False, loop_event_create=False)
