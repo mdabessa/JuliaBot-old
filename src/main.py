@@ -17,7 +17,7 @@ class botclient(discord.Client):
         
         for guild in self.guilds:
             if db.getserver(guild.id, connection) == None:
-                db.db.addserver(guild.id, connection)
+                db.addserver(guild.id, connection)
 
         print(f'{self.user} esta logado em {len(self.guilds)} grupos!')
 

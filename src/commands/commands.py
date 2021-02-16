@@ -7,7 +7,7 @@ import modules.entity as entity
 async def _help(message, commandpar, connection, bot): 
     if commandpar == None:
         
-        cmds = db.getallcommands(message.guild.id, connection)
+        cmds = entity.command.getallcommands(message.guild.id, connection)
 
         general_cmds = [cmd for cmd in cmds if cmd['permission'] == 0]
         mod_cmds = [cmd for cmd in cmds if cmd['permission'] == 1] 
@@ -21,7 +21,7 @@ async def _help(message, commandpar, connection, bot):
         await message.channel.send(embed=emb)
     
     else:
-        cmd = db.entity.getcommand(message.guild.id, commandpar, connection)
+        cmd = entity.command.getcommand(message.guild.id, commandpar, connection)
         if cmd != None:
             if cmd['price'] == 0:
                 valor = 'Grátis'
@@ -438,10 +438,10 @@ async def addcmd(message, commandpar, connection, bot):
     if ' ' in commandpar[0] or ':' in commandpar[0]:
         raise entity.CommandError('O nome do comando não pode conter nenhum espaço ou dois pontos ":".')
 
-    if db.entity.getcommand(message.guild.id, commandpar[0], connection) != None:
+    if entity.command.getcommand(message.guild.id, commandpar[0], connection) != None:
         raise entity.CommandError('Um comando com esse nome ja existe!')
 
-    entity.addcommand(message.guild.id, connection, commandpar[0], commandpar[1], commandpar[2])
+    db.addcommand(message.guild.id, connection, commandpar[0], commandpar[1], commandpar[2])
     await message.channel.send(f'Comando adicionado com sucesso!\nComando: {commandpar[0]}\nMensagem: {commandpar[1]}\nDescrição: {commandpar[2]}')
 entity.command(name='addcmd', func=addcmd, desc=f'Adicione um comando personalizado! // [prefixo]addcmd [nome,mensagem,desrição]', perm=1)
 
@@ -449,14 +449,14 @@ async def delcmd(message, commandpar, connection, bot):
     if commandpar == None:
         raise entity.CommandError('Falta parametros!')
 
-    cmd = db.entity.getcommand(message.guild.id, commandpar, connection)
+    cmd = entity.command.getcommand(message.guild.id, commandpar, connection)
     if cmd == None:
         raise entity.CommandError(f'O comando com o nome {commandpar} não existe!')
 
     if cmd['overwritten'] == 0:
         await message.channel.send(f'O comando {commandpar} é um comando próprio da {bot.user.mention}, ele não pode ser deletado!')
     else:
-        entity.delcommand(message.guild.id, connection, commandpar)
+        db.delcommand(message.guild.id, connection, commandpar)
         await message.channel.send(f'O comando {commandpar} foi deletado com sucesso!')
 entity.command(name='delcmd', func=delcmd, desc=f'Delete um comando personalizado!', perm=1)
 

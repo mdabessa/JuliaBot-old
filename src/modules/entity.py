@@ -23,6 +23,7 @@ class command():
     async def execute(self, message, param, connection, bot):
         await self.func(message, param, connection, bot)
 
+
     @classmethod
     async def trycommand(cls, message, content, connection, masterid, bot):
         contlist = content.split()
@@ -34,7 +35,7 @@ class command():
             commandpar = None
 
 
-        cmd = db.getcommand(message.guild.id, contcommand,connection)
+        cmd = command.getcommand(message.guild.id, contcommand,connection)
         if cmd == None:
             return
 
@@ -72,6 +73,39 @@ class command():
                 traceback.print_exc()
         else:
             await message.channel.send(cmd['message'])
+
+
+    @classmethod
+    def getcommand(cls, guildid, name, connection):
+        _command = db.getservercommand(guildid, name, connection)
+        if _command == None:
+            for cmd in command.commands:
+                if cmd.name == name:
+                    _cmd = ['', cmd.name, '', cmd.desc, cmd.perm, cmd.cost, 1, 0]
+                    leg = ['serverid', 'name', 'message', 'description', 'permission', 'price', 'active', 'overwritten']
+                    result = dict(zip(leg, _cmd))
+                    return result
+        else:
+            return _command
+
+    @classmethod
+    def getallcommands(cls, guildid, connection):
+        _commands = db.getallserverscommands(guildid, connection)
+
+        for cmd in command.commands:
+            c = 0
+            for i in _commands:
+                if i['name'] == cmd.name:
+                    c = 1
+
+            if c == 1:
+                continue
+
+            _cmd = ['', cmd.name, '', cmd.desc, cmd.perm, cmd.cost, 1, 0]
+            leg = ['serverid', 'name', 'message', 'description', 'permission', 'price', 'active', 'overwritten']
+            _commands.append(dict(zip(leg, _cmd)))
+
+        return _commands
 
 
 class event():

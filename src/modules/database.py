@@ -1,5 +1,3 @@
-import modules.entity as entity
-
 def getpoints(userid, guildid, connection):
     cursor = connection.cursor()
     try:
@@ -110,7 +108,7 @@ def delitem(guildid, itemid, connection):
     connection.commit()
 
 
-def getcommand(guildid, name, connection):
+def getservercommand(guildid, name, connection):
     cursor = connection.cursor()
     cursor.execute(
     '''
@@ -124,20 +122,11 @@ def getcommand(guildid, name, connection):
     try:
         result = dict(zip(leg, r))
         return result
-    except:
-        c = 0
-        for cmd in entity.command.commands:
-            if cmd.name == name:
-                c=1
-                _cmd = ['', cmd.name, '', cmd.desc, cmd.perm, cmd.cost, 1, 0]
-                result = dict(zip(leg, _cmd))
-                return result
-        
-        if c == 0:
-            return None
+    except:    
+        return None
 
 
-def getallcommands(guildid, connection):
+def getallserverscommands(guildid, connection):
     cursor = connection.cursor()
     cursor.execute(
     '''
@@ -149,22 +138,9 @@ def getallcommands(guildid, connection):
 
     r = cursor.fetchall()
     leg = ['serverid', 'name', 'message', 'description', 'permission', 'price', 'active', 'overwritten']
+    
+    
     result = [dict(zip(leg, i)) for i in r]
-
-    for cmd in entity.command.commands:
-        c = 0
-        for i in result:
-            if i['name'] == cmd.name:
-                c = 1
-
-        if c == 1:
-            continue
-
-        _cmd = ['', cmd.name, '', cmd.desc, cmd.perm, cmd.cost, 1, 0] 
-        result.append(dict(zip(leg, _cmd)))
-        
-
-
     return result
 
 
