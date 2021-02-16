@@ -76,7 +76,7 @@ async def execards(param, cache):
         return [message, points, usercache, choicecache]
     else:
         return [message, points, usercache, choicecache]
-entity.event(name='cards', entity=cards, executefunc=execards, desc='Escolha cartinhas para ganhar coins (ou perder :D)')
+entity.event(name='cards', createfunc=cards, executefunc=execards, desc='Escolha cartinhas para ganhar coins (ou perder :D)')
 
 async def quiz(par):
     channel = par[0]
@@ -122,7 +122,7 @@ async def exequiz(param, cache):
 
     else:
         return cache
-entity.event(entity='quiz', createfunc=quiz, executefunc=exequiz, desc='Responda certo a pergunta para ganhar coins!', trigger='message')
+entity.event(name='quiz', createfunc=quiz, executefunc=exequiz, desc='Responda certo a pergunta para ganhar coins!', trigger='message')
 
 async def duel(par):
     msg = par[0]
@@ -163,4 +163,4 @@ async def exeduel(param, cache):
         return True
     else:
         return cache
-entity.event(entity='duel', createfunc=duel, executefunc=exeduel, desc='Duele com alguem apostando coins!', trigger='react', command_create=False, loop_event_create=False)
+entity.event(name='duel', createfunc=duel, executefunc=exeduel, desc='Duele com alguem apostando coins!', trigger='react', command_create=False, loop_event_create=False)
