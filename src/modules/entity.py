@@ -11,9 +11,10 @@ class CommandError(Exception):
 
 class command():
     commands = []
-    def __init__(self, name, func, desc='Nothing', cost=0, perm=0):
+    def __init__(self, name, func, category, desc='Este comando faz algo!', cost=0, perm=0):
         self.name = name
         self.func = func
+        self.category = category
         self.desc = desc
         self.cost = cost
         self.perm = perm
@@ -81,12 +82,13 @@ class command():
         if _command == None:
             for cmd in command.commands:
                 if cmd.name == name:
-                    _cmd = ['', cmd.name, '', cmd.desc, cmd.perm, cmd.cost, 1, 0]
-                    leg = ['serverid', 'name', 'message', 'description', 'permission', 'price', 'active', 'overwritten']
+                    _cmd = ['', cmd.name, '', cmd.desc, cmd.perm, cmd.cost, cmd.category, 1, 0]
+                    leg = ['serverid', 'name', 'message', 'description', 'permission', 'price', 'category', 'active', 'overwritten']
                     result = dict(zip(leg, _cmd))
                     return result
         else:
             return _command
+
 
     @classmethod
     def getallcommands(cls, guildid, connection):
@@ -101,8 +103,8 @@ class command():
             if c == 1:
                 continue
 
-            _cmd = ['', cmd.name, '', cmd.desc, cmd.perm, cmd.cost, 1, 0]
-            leg = ['serverid', 'name', 'message', 'description', 'permission', 'price', 'active', 'overwritten']
+            _cmd = ['', cmd.name, '', cmd.desc, cmd.perm, cmd.cost, cmd.category, 1, 0]
+            leg = ['serverid', 'name', 'message', 'description', 'permission', 'price', 'category', 'active', 'overwritten']
             _commands.append(dict(zip(leg, _cmd)))
 
         return _commands

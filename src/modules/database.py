@@ -119,8 +119,10 @@ def getservercommand(guildid, name, connection):
     )
     leg = ['serverid', 'name', 'message', 'description', 'permission', 'price', 'active', 'overwritten']
     r = cursor.fetchone()
+
     try:
         result = dict(zip(leg, r))
+        result['category'] = 'Personalizado'
         return result
     except:    
         return None
@@ -139,8 +141,12 @@ def getallserverscommands(guildid, connection):
     r = cursor.fetchall()
     leg = ['serverid', 'name', 'message', 'description', 'permission', 'price', 'active', 'overwritten']
     
+    result = []
+    for res in r:
+        _res = dict(zip(leg, res))
+        _res['category'] = 'Personalizado'
+        result.append(dict(zip(leg, _res)))
     
-    result = [dict(zip(leg, i)) for i in r]
     return result
 
 
