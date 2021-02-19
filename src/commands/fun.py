@@ -27,7 +27,7 @@ async def spam(message, commandpar, connection, bot):
             raise entity.CommandError('Falta algo nesse comando!')
     else:
         raise entity.CommandError('Quantas vezes? Spam do que?')
-entity.command(name='spam', func=spam , category=category, desc=f'Spam de mensagens.', cost=2500)
+entity.command(name='spam', func=spam , category=category, desc=f'Spam de mensagens.', args=[['quantidade', '*'], ['texto', '*']], cost=2500)
 
 
 async def cmdsay(message, commandpar, connection, bot):
@@ -35,7 +35,7 @@ async def cmdsay(message, commandpar, connection, bot):
         await message.channel.send(commandpar)
     else:
         raise('Falta algo nesse comando')
-entity.command(name='say', func=cmdsay , category=category, desc=f'Fazer o bot dizer algo.', cost=500)
+entity.command(name='say', func=cmdsay , category=category, desc=f'Fazer o bot dizer algo.', args=[['texto', '*']], cost=500)
 
 
 async def mute(message, commandpar, connection, bot):
@@ -50,7 +50,7 @@ async def mute(message, commandpar, connection, bot):
             await message.channel.send(f'{user.name} foi silenciado por {time} segundos! :mute:')
     else:
         raise entity.CommandError('Falta algo nesse comando!')
-entity.command(name='mute', func=mute , category=category, desc=f'Silenciar alguem por alguns segundos.', cost=500)
+entity.command(name='mute', func=mute , category=category, desc=f'Silenciar alguem por alguns segundos.', args=[['pessoa', '*,']], cost=500)
 
 
 async def _duel(message, commandpar, connection, bot):

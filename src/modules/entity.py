@@ -11,11 +11,12 @@ class CommandError(Exception):
 
 class command():
     commands = []
-    def __init__(self, name, func, category, desc='Este comando faz algo!', cost=0, perm=0):
+    def __init__(self, name, func, category, desc='Este comando faz algo!', args=[], cost=0, perm=0):
         self.name = name
         self.func = func
         self.category = category
         self.desc = desc
+        self.args = args
         self.cost = cost
         self.perm = perm
 
@@ -82,8 +83,8 @@ class command():
         if _command == None:
             for cmd in command.commands:
                 if cmd.name == name:
-                    _cmd = ['', cmd.name, '', cmd.desc, cmd.perm, cmd.cost, cmd.category, 1, 0]
-                    leg = ['serverid', 'name', 'message', 'description', 'permission', 'price', 'category', 'active', 'overwritten']
+                    _cmd = ['', cmd.name, '', cmd.desc, cmd.args, cmd.perm, cmd.cost, cmd.category, 1, 0]
+                    leg = ['serverid', 'name', 'message', 'description', 'args', 'permission', 'price', 'category', 'active', 'overwritten']
                     result = dict(zip(leg, _cmd))
                     return result
         else:

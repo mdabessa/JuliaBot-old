@@ -123,6 +123,7 @@ def getservercommand(guildid, name, connection):
     try:
         result = dict(zip(leg, r))
         result['category'] = 'Personalizado'
+        result['args'] = []
         return result
     except:    
         return None
@@ -145,6 +146,7 @@ def getallserverscommands(guildid, connection):
     for res in r:
         _res = dict(zip(leg, res))
         _res['category'] = 'Personalizado'
+        _res['args'] = []
         result.append(dict(zip(leg, _res)))
     
     return result

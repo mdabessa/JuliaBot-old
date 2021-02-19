@@ -16,7 +16,7 @@ async def setprefix(message, commandpar, connection, bot):
 
     else:
         raise entity.CommandError('Falta os parametros do comando!')
-entity.command(name='setprefix', func=setprefix , category=category, desc=f'Mude o prefixo de comandos do bot.', perm=1)
+entity.command(name='setprefix', func=setprefix , category=category, desc=f'Mude o prefixo de comandos do bot.', args=[['prefixo', '*']], perm=1)
 
 
 async def addcmd(message, commandpar, connection, bot):
@@ -36,7 +36,7 @@ async def addcmd(message, commandpar, connection, bot):
 
     db.addcommand(message.guild.id, connection, commandpar[0], commandpar[1], commandpar[2])
     await message.channel.send(f'Comando adicionado com sucesso!\nComando: {commandpar[0]}\nMensagem: {commandpar[1]}\nDescrição: {commandpar[2]}')
-entity.command(name='addcmd', func=addcmd, category=category, desc=f'Adicione um comando personalizado! // [prefixo]addcmd [nome,mensagem,desrição]', perm=1)
+entity.command(name='addcmd', func=addcmd, category=category, desc=f'Adicione um comando personalizado!', args=[['comando', '*'], ['mensagem', '*'], ['descrição', '*']], perm=1)
 
 
 async def delcmd(message, commandpar, connection, bot):
@@ -52,7 +52,7 @@ async def delcmd(message, commandpar, connection, bot):
     else:
         db.delcommand(message.guild.id, connection, commandpar)
         await message.channel.send(f'O comando {commandpar} foi deletado com sucesso!')
-entity.command(name='delcmd', func=delcmd, category=category, desc=f'Delete um comando personalizado!', perm=1)
+entity.command(name='delcmd', func=delcmd, category=category, desc=f'Delete um comando personalizado!', args=[['comando', '*']], perm=1)
 
 
 async def commandchannel(message, commandpar, connection, bot):
@@ -90,4 +90,4 @@ async def commandchannel(message, commandpar, connection, bot):
             
             db.editserver(message.guild.id, connection, 'commandchannel', str(channel.id))
             await message.channel.send(f'O canal de comandos foi definido para <#{channel.id}>')
-entity.command(name='cmdchannel', func=commandchannel, category=category, desc=f'Modifique o canal de comandos!', perm=1)
+entity.command(name='cmdchannel', func=commandchannel, category=category, desc=f'Modifique o canal de comandos!', args=[['canal', '']], perm=1)

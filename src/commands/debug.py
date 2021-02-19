@@ -20,4 +20,4 @@ async def exe(message, commandpar, connection, bot):
 
     else:
         raise entity.CommandError('Falta algo nesse comando!')
-entity.command(name='exec', func=exe , category=category, desc=f'Executar um comando através do bot.', perm=2)
+entity.command(name='exec', func=exe , category=category, desc=f'Executar um comando através do bot.', args=[['comando', '*'], ['parametros do comando', '']], perm=2)

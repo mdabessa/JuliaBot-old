@@ -25,6 +25,10 @@ async def _help(message, commandpar, connection, bot):
         cmd = entity.command.getcommand(message.guild.id, commandpar, connection)
         prefix = db.getserver(message.guild.id, connection)['prefix']
         if cmd != None:
+            par = prefix + cmd['name'] + ' '
+            for i in cmd['args']:
+                par += i[0] + i[1] + ' '
+ 
             if cmd['price'] == 0:
                 valor = 'Grátis.'
             else:
@@ -40,6 +44,8 @@ async def _help(message, commandpar, connection, bot):
             emb = discord.Embed(title=f'{prefix}{cmd["name"]}'.upper(), color=0xe6dc56)
 
             emb.add_field(name='Descrição:', value=cmd['description'], inline=False)
+            if cmd['args'] != []:
+                emb.add_field(name='Parametros:', value=par, inline=False)
             emb.add_field(name='Valor:', value=valor, inline=False)
             emb.add_field(name='Categoria:', value=cmd['category'], inline=False)
             emb.add_field(name='Nivel de Permissão:', value=perm, inline=False)
@@ -47,7 +53,7 @@ async def _help(message, commandpar, connection, bot):
             await message.channel.send(embed=emb)
         else:
             raise entity.CommandError(f'Nenhum comando com o nome {commandpar} existe!')
-entity.command(name='help', func=_help, category=category, desc='Listar todos os comandos e suas descrições.')
+entity.command(name='help', func=_help, category=category, desc='Listar todos os comandos e suas descrições.', args=[['comando', '']])
 
 
 async def getprefix(message, commandpar, connection, bot):
