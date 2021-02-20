@@ -5,6 +5,7 @@ import modules.entity as entity
 
 
 category = 'Moderação'
+entity.command.newcategory(category, ':shield:Moderação.')
 
 
 async def mastermute(message, commandpar, connection, bot):

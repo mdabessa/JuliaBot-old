@@ -5,6 +5,7 @@ import modules.entity as entity
 
 
 category = 'Depuração'
+entity.command.newcategory(category, 'Depuração',is_visible=False)
 
 
 async def exe(message, commandpar, connection, bot):

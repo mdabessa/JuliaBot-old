@@ -122,7 +122,7 @@ def getservercommand(guildid, name, connection):
 
     try:
         result = dict(zip(leg, r))
-        result['category'] = 'Personalizado'
+        result['category'] = 'personalizado'
         result['args'] = []
         return result
     except:    
@@ -145,9 +145,9 @@ def getallserverscommands(guildid, connection):
     result = []
     for res in r:
         _res = dict(zip(leg, res))
-        _res['category'] = 'Personalizado'
+        _res['category'] = 'personalizado'
         _res['args'] = []
-        result.append(dict(zip(leg, _res)))
+        result.append(_res)
     
     return result
 

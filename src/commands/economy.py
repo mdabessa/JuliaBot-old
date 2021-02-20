@@ -5,6 +5,7 @@ import modules.entity as entity
 
 
 category = 'Economia'
+entity.command.newcategory(category, ':coin:Economia.')
 
 
 async def coins(message, commandpar, connection, bot):

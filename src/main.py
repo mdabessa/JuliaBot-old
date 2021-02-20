@@ -19,8 +19,9 @@ class botclient(discord.Client):
             if db.getserver(guild.id, connection) == None:
                 db.addserver(guild.id, connection)
 
-        print(f'{self.user} esta logado em {len(self.guilds)} grupos!')
+        entity.command.newcategory('personalizado', ':paintbrush:Personalizados.')
 
+        print(f'{self.user} esta logado em {len(self.guilds)} grupos!')
         print('Pronto!')
 
 

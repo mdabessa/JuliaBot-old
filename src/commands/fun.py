@@ -4,7 +4,8 @@ import modules.database as db
 import modules.entity as entity
 
 
-category = 'Diverção'
+category = 'Diversão'
+entity.command.newcategory(category, ':game_die:Diversão.')
 
 
 async def spam(message, commandpar, connection, bot):
@@ -84,4 +85,4 @@ async def _duel(message, commandpar, connection, bot):
             
 
             await eve.create([message, points], str(message.guild.id))
-entity.command(name='duel', func=_duel, category=category, desc=f'Duele contra alguem valendo coins!')
+entity.command(name='duel', func=_duel, category=category, desc=f'Duele contra alguem valendo coins!', args=[['coins', '*'], ['pessoa', '*']])

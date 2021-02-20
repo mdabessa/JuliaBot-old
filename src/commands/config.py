@@ -5,6 +5,7 @@ import modules.entity as entity
 
 
 category = 'Configurações'
+entity.command.newcategory(category, ':gear:Configurações.')
 
 
 async def setprefix(message, commandpar, connection, bot):

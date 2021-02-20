@@ -11,6 +11,7 @@ class CommandError(Exception):
 
 class command():
     commands = []
+    categories = []
     def __init__(self, name, func, category, desc='Este comando faz algo!', args=[], cost=0, perm=0):
         self.name = name
         self.func = func
@@ -21,6 +22,7 @@ class command():
         self.perm = perm
 
         command.commands.append(self)
+
 
     async def execute(self, message, param, connection, bot):
         await self.func(message, param, connection, bot)
@@ -37,7 +39,7 @@ class command():
             commandpar = None
 
 
-        cmd = command.getcommand(message.guild.id, contcommand,connection)
+        cmd = cls.getcommand(message.guild.id, contcommand,connection)
         if cmd == None:
             return
 
@@ -65,7 +67,7 @@ class command():
 
         if cmd['overwritten'] == 0:
             try:
-                _cmd = [x for x in command.commands if x.name == cmd['name']][0]
+                _cmd = [x for x in cls.commands if x.name == cmd['name']][0]
                 await _cmd.execute(message, commandpar, connection, bot)
             except CommandError as e:
                 await message.channel.send(e)
@@ -81,7 +83,7 @@ class command():
     def getcommand(cls, guildid, name, connection):
         _command = db.getservercommand(guildid, name, connection)
         if _command == None:
-            for cmd in command.commands:
+            for cmd in cls.commands:
                 if cmd.name == name:
                     _cmd = ['', cmd.name, '', cmd.desc, cmd.args, cmd.perm, cmd.cost, cmd.category, 1, 0]
                     leg = ['serverid', 'name', 'message', 'description', 'args', 'permission', 'price', 'category', 'active', 'overwritten']
@@ -95,7 +97,7 @@ class command():
     def getallcommands(cls, guildid, connection):
         _commands = db.getallserverscommands(guildid, connection)
 
-        for cmd in command.commands:
+        for cmd in cls.commands:
             c = 0
             for i in _commands:
                 if i['name'] == cmd.name:
@@ -104,11 +106,22 @@ class command():
             if c == 1:
                 continue
 
-            _cmd = ['', cmd.name, '', cmd.desc, cmd.perm, cmd.cost, cmd.category, 1, 0]
-            leg = ['serverid', 'name', 'message', 'description', 'permission', 'price', 'category', 'active', 'overwritten']
+            _cmd = ['', cmd.name, '', cmd.desc, cmd.args, cmd.perm, cmd.cost, cmd.category, 1, 0]
+            leg = ['serverid', 'name', 'message', 'description', 'args', 'permission', 'price', 'category', 'active', 'overwritten']
             _commands.append(dict(zip(leg, _cmd)))
 
         return _commands
+
+
+    @classmethod
+    def newcategory(cls, category, visual_name, is_visible=True):
+        cls.categories.append([category, visual_name, is_visible])
+
+
+    @classmethod
+    def getcategories(cls):
+        return cls.categories
+
 
 
 class event():
