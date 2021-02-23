@@ -29,6 +29,8 @@ class botclient(discord.Client):
         if message.author == self.user:
             return
 
+        server = db.getserver(message.guild.id, connection)
+
         #add (pointsqt) points every (pointstime) seconds
         pointstime = 300
         pointsqt = 100
@@ -48,43 +50,57 @@ class botclient(discord.Client):
                 await message.delete()
                 return
         
+        auto_events = server['auto_events']
+        if auto_events:
+            if entity.timer.timer('event_time_'+str(message.guild.id), randint(1000,10000), recreate=1) == True:
+                
+                eventchannel = server['eventchannel']
 
-        if entity.timer.timer('event_time_'+str(message.guild.id), randint(1000,10000), recreate=1) == True:
-            eve = choice([i for i in entity.event.events if i.loop_event_create])
-            eve.clear(str(message.guild.id))
-            await eve.create([message.channel], str(message.guild.id))
-                     
+                try:
+                    eventchannel = self.get_channel(int(eventchannel))
+                    if eventchannel == None:
+                        eventchannel = message.channel
+                except:
+                    db.editserver(message.guild.id, connection, 'eventchannel', None)
+                    eventchannel = message.channel
+                
+                
+                eve = choice([i for i in entity.event.events if i.loop_event_create])
+                eve.clear(str(message.guild.id))
+                
+            
+                await eve.create([eventchannel], str(message.guild.id))
+                        
 
         try:
             print(f'{message.guild} #{message.channel} //{message.author} : {message.content}')
 
-            server = db.getserver(message.guild.id, connection)
             
             prefix = server['prefix']
-            channel = server['commandchannel']
+            cmdchannel = server['commandchannel']
 
 
-            if channel == None:
+            if cmdchannel == None:
                 pass
-            elif self.get_channel(int(channel)) == None:
+            elif self.get_channel(int(cmdchannel)) == None:
                 db.editserver(message.guild.id, connection, 'commandchannel', None)
-                channel = None
+                cmdchannel = None
 
             if message.content == f'<@!{self.user.id}>':
                 helpstr = f'{prefix}help para lista de comandos.'
                 
 
-                if channel != None:
-                    helpstr += f'\nCanal de comandos: <#{channel}>'
+                if cmdchannel != None:
+                    helpstr += f'\nCanal de comandos: <#{cmdchannel}>'
 
                 await message.channel.send(helpstr)
                 return
 
 
             if message.content[0:len(prefix)] == prefix:
-                if channel == None:
+                if cmdchannel == None:
                     pass
-                elif int(channel) != message.channel.id:
+                elif int(cmdchannel) != message.channel.id:
                     return
 
                 content = message.content[len(prefix):]

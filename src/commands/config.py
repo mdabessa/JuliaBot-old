@@ -92,3 +92,64 @@ async def commandchannel(message, commandpar, connection, bot):
             db.editserver(message.guild.id, connection, 'commandchannel', str(channel.id))
             await message.channel.send(f'O canal de comandos foi definido para <#{channel.id}>')
 entity.command(name='cmdchannel', func=commandchannel, category=category, desc=f'Modifique o canal de comandos!', args=[['canal', '']], perm=1)
+
+
+async def eventchannel(message, commandpar, connection, bot):
+    if commandpar == None:
+        server = db.getserver(message.guild.id, connection)
+        channel = server['eventchannel']
+        prefix = server['prefix']
+
+        if channel == None:
+            await message.channel.send(f'O servidor {message.guild} permite que apareca eventos em qualquer canal!\n' +
+            f'Para mudar o canal de eventos, utilize [{prefix}eventchannel #canal] ou [{prefix}eventchannel .] para aparecer eventos em qualquer canail.')
+        else:
+            channel = bot.get_channel(int(channel))
+            await message.channel.send(f'Canal de eventos: <#{channel.id}>\n' +
+            f'Para mudar o canal de eventos, utilize [{prefix}eventchannel #canal] ou [{prefix}eventchannel .] para aparecer eventos em qualquer canail.')
+    else:
+        if commandpar == '.':
+            db.editserver(message.guild.id, connection, 'eventchannel', None)
+            await message.channel.send(f'Eventos agora podem aparecer em qualquer canal.')
+
+        else:
+            channel = commandpar
+            rep = ['<','#','>']
+            for r in rep:
+                channel = channel.replace(r, '')
+
+            try:
+                channel = bot.get_channel(int(channel))
+            except:
+               raise entity.CommandError(f'Nenhum canal com esse nome, marque o canal com # para selecionar o canal desejado.')
+
+            if channel == None:
+                raise entity.CommandError(f'Nenhum canal com esse nome, marque o canal com # para selecionar o canal desejado.')
+            
+            db.editserver(message.guild.id, connection, 'eventchannel', str(channel.id))
+            await message.channel.send(f'O canal de eventos foi definido para <#{channel.id}>')
+entity.command(name='eventchannel', func=eventchannel, category=category, desc=f'Modifique o canal de eventos!', args=[['canal', '']], perm=1)
+
+
+async def auto_event(message, commandpar, connection, bot):
+    if commandpar != None:
+        if commandpar.lower() == 'off':
+            db.editserver(message.guild.id, connection, 'auto_events', False)
+            await message.channel.send('Os eventos automaticosfora desativados.')
+        
+        elif commandpar.lower() == 'on':
+            db.editserver(message.guild.id, connection, 'auto_events', True)
+            await message.channel.send('Os eventos automaticosfora ativados.')
+
+        else:
+            raise entity.CommandError(f'Parametros invalidos!, utilize "on" ou "off".')
+        
+    else:
+        auto_events = db.getserver(message.guild.id, connection)['auto_events']
+        
+        if auto_events:
+            await message.channel.send(f'Os eventos automaticos estão ativos.')
+        else:
+            await message.channel.send(f'Os eventos automaticos estão desativados.')
+
+entity.command(name='event', func=auto_event, category=category, desc=f'Desative ou ative os eventos automaticos.', args=[['booleano', '*']], perm=1)

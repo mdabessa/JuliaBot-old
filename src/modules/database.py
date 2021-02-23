@@ -196,7 +196,7 @@ def getserver(guildid, connection):
     )
     r = cursor.fetchone()
 
-    leg = ['prefix', 'commandchannel']
+    leg = ['prefix', 'commandchannel', 'eventchannel', 'auto_events']
 
     if r != None:
         result = dict(zip(leg, r[1:]))
