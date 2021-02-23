@@ -48,7 +48,7 @@ async def _help(message, commandpar, connection, bot):
         if cmd != None:
             par = prefix + cmd['name'] + ' '
             for i in cmd['args']:
-                par += i[0] + i[1] + ' '
+                par += f'`{i[0]}`{i[1]} '
  
             if cmd['price'] == 0:
                 valor = 'Grátis.'
@@ -79,11 +79,11 @@ entity.command(name='help', func=_help, category=category, desc='Listar todos os
 
 async def getprefix(message, commandpar, connection, bot):
     prefix = db.getserver(message.guild.id, connection)['prefix']
-    await message.channel.send(f'O prefixo do server é: {prefix}')
+    await message.channel.send(f'O prefixo do servidor é: `{prefix}`')
 entity.command(name='prefix', func=getprefix , category=category, desc=f'Retorna o prefixo do bot no servidor.')
 
 
 async def ping(message, commandpar, connection, bot):
     lt = int(round(bot.latency, 3)*1000)
-    await message.channel.send(f'Pong! {lt}')
+    await message.channel.send(f'Pong! `{lt}ms`')
 entity.command(name='ping', func=ping , category=category, desc=f'Pong!')

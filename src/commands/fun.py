@@ -18,7 +18,7 @@ async def spam(message, commandpar, connection, bot):
                 raise entity.CommandError('Quantas vezes?')
             
             if number > 10:
-                raise entity.CommandError('O limite do spam é 10 vezes!')
+                raise entity.CommandError('O limite do spam é `10` vezes!')
 
             msg = str(' '.join(cmdpar[1:]))
             
@@ -48,7 +48,7 @@ async def mute(message, commandpar, connection, bot):
                 return
             entity.timer.timer(str(user.id)+str(message.channel.id),time)
             entity.mutes.append(str(user.id)+str(message.channel.id))
-            await message.channel.send(f'{user.name} foi silenciado por {time} segundos! :mute:')
+            await message.channel.send(f'{user.name} foi silenciado por `{time}` segundos! :mute:')
     else:
         raise entity.CommandError('Falta algo nesse comando!')
 entity.command(name='mute', func=mute , category=category, desc=f'Silenciar alguem por alguns segundos.', args=[['pessoa', '*,']], cost=500)

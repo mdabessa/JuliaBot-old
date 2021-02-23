@@ -21,7 +21,7 @@ async def mastermute(message, commandpar, connection, bot):
                 return
             entity.timer.timer(str(user.id)+str(message.channel.id),time)
             entity.mutes.append(str(user.id)+str(message.channel.id))
-            await message.channel.send(f'{user.name} foi silenciado por {time} segundos :mute: ')
+            await message.channel.send(f'{user.name} foi silenciado por `{time}` segundos :mute: ')
     else:
         raise entity.CommandError('Falta algo!')
 entity.command(name='mastermute', func=mastermute , category=category, desc=f'Silenciar alguem, sem limite de tempo.', args=[['segundos', '*'], ['pessoa', '*,']], perm=1)
@@ -35,7 +35,7 @@ async def c_event(message, commandpar, connection, bot):
                 continue
             if eve.name == commandpar:
                 eve.clear(str(message.guild.id))
-                await message.channel.send(f'{message.author.mention} evento {eve.name} criado com sucesso!')
+                await message.channel.send(f'{message.author.mention} evento `{eve.name}` criado com sucesso!')
                 await eve.create([message.channel], str(message.guild.id))
                 marc = 1
 

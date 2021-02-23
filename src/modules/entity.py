@@ -59,10 +59,10 @@ class command():
         if cmd['price'] > 0:
             points = db.getpoints(message.author.id, message.guild.id, connection)
             if points < cmd['price']:
-                await message.channel.send(f'{message.author.mention}, Voce não possui coins suficiente, custo do comando é de {cmd["price"]}')
+                await message.channel.send(f'{message.author.mention}, Voce não possui coins suficiente, custo do comando é de `{cmd["price"]}c`')
                 return
             else:
-                await message.channel.send(f'{message.author.mention} comprou {cmd["name"]} [-{cmd["price"]}]')
+                await message.channel.send(f'{message.author.mention} comprou {cmd["name"]} por `{cmd["price"]}c`')
                 db.subpoints(message.author.id, message.guild.id, cmd['price'], connection)
 
         if cmd['overwritten'] == 0:

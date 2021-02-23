@@ -9,14 +9,14 @@ entity.command.newcategory(category, ':coin:Economia.')
 
 
 async def coins(message, commandpar, connection, bot):
-    if len(message.mentions) == 1:
+    if len(message.mentions) >= 1 and len(message.mentions) <=3:
         for mentioned in message.mentions:
             points = db.getpoints(mentioned.id, message.guild.id, connection)
-            await message.channel.send(f'{mentioned.name} possui {points}')
+            await message.channel.send(f'{mentioned.name} possui `{points}` coins.')
 
     else:
         points = db.getpoints(message.author.id, message.guild.id, connection)
-        await message.channel.send(f'{message.author.mention}, você possui {points}')
+        await message.channel.send(f'{message.author.mention}, você possui `{points}` coins.')
 entity.command(name='coins', func=coins, category=category, desc='Verificar os pontos.', args=[['pessoa', ',']])
 
 
@@ -59,23 +59,23 @@ async def roulette(message, commandpar, connection, bot):
             try:
                 points = int(commandpar)
             except:
-                raise entity.CommandError('Não posso roletar nada que não seja um numero inteiro :pensive:')
+                raise entity.CommandError('Não posso roletar nada que não seja um `numero inteiro` :pensive:')
 
         if points < p:
             if randint(0,100) < roulettechance:
                 db.addpoints(message.author.id,message.guild.id, points, connection)
-                await message.channel.send(f'{message.author.mention} Ganhou [+{points}] coins! :money_mouth:')
+                await message.channel.send(f'{message.author.mention} Ganhou `{points}` coins! :money_mouth:')
             else:
                 db.subpoints(message.author.id, message.guild.id, points, connection)
-                await message.channel.send(f'{message.author.mention} Perdeu [-{points}] coins! :sob:')
+                await message.channel.send(f'{message.author.mention} Perdeu `{points}` coins! :sob:')
 
         if points == p:
             if randint(0,100) < roulettechance:
                 db.addpoints(message.author.id,message.guild.id, points, connection)
-                await message.channel.send(f'{message.author.mention} roletou tudo e ganhou [+{points}] coins, dobrando sua fortuna! :sunglasses:')
+                await message.channel.send(f'{message.author.mention} roletou tudo e ganhou `{points}` coins, dobrando sua fortuna! :sunglasses:')
             else:
                 db.subpoints(message.author.id, message.guild.id, points, connection)
-                await message.channel.send(f'{message.author.mention} roletou tudo e perdeu [-{points}] zerando seus pontos! :rofl: :rofl: :rofl:')
+                await message.channel.send(f'{message.author.mention} roletou tudo e perdeu `{points}` coins, zerando seus pontos! :rofl: :rofl: :rofl:')
         if points > p:
             raise entity.CommandError('Voce não possui pontos suficiente!')
     else:
@@ -88,7 +88,7 @@ async def setcoins(message, commandpar, connection, bot):
         try:
             pointspar = int(commandpar.split()[0])
         except:
-            raise entity.CommandError('Só numeros inteiros podem ser definidos como coins')
+            raise entity.CommandError('Só `numeros inteiros` podem ser definidos como coins')
 
         try:
             if len(message.mentions) > 0:
@@ -97,15 +97,15 @@ async def setcoins(message, commandpar, connection, bot):
                     names.append(user.name)
                     db.setpoints(user.id,message.guild.id,int(pointspar),connection)
                 
-                await message.channel.send(f'Coins definido como {pointspar} para : {", ".join(names)}')
+                await message.channel.send(f'Coins definido como `{pointspar}` para : {", ".join(names)}')
             else:
                 db.setpoints(message.author.id,message.guild.id,int(pointspar),connection)
-                await message.channel.send(f'{message.author.mention} Seus Coins foram definido para {pointspar}')
+                await message.channel.send(f'{message.author.mention} Seus Coins foram definido para `{pointspar}`')
         except:
             raise entity.CommandError('Não foi possivel realizar esta ação :worried:')
 
     else:
-        raise entity.CommandError('Quantos coins ???')
+        raise entity.CommandError('Quantos coins ?')
 entity.command(name='setcoins', func=setcoins , category=category, desc=f'Definir os seus pontos, ou os dos usuarios marcados.', args=[['coins', '*'], ['pessoa', ',']], perm=1)
 
 
@@ -114,7 +114,7 @@ async def addcoins(message, commandpar, connection, bot):
         try:
             pointspar = int(commandpar.split()[0])
         except:
-            raise entity.CommandError('Pontos tem que ser um numero inteiro!')
+            raise entity.CommandError('Pontos tem que ser um `numero inteiro`!')
 
         try:
             if len(message.mentions) > 0:
@@ -123,10 +123,10 @@ async def addcoins(message, commandpar, connection, bot):
                     names.append(user.name)
                     db.addpoints(user.id,message.guild.id,int(pointspar), connection)
                 
-                await message.channel.send(f'{pointspar} Coins adicionados para : {", ".join(names)}')
+                await message.channel.send(f'`{pointspar}` Coins adicionados para : {", ".join(names)}')
             else:
                 db.addpoints(message.author.id,message.guild.id,int(pointspar),connection)
-                await message.channel.send(f'{message.author.mention} Foram adicionados {pointspar} coins.')
+                await message.channel.send(f'{message.author.mention} Foram adicionados `{pointspar}` coins.')
         except:
             raise entity.CommandError('Não foi possivel realizar esta ação :worried:')
     else:
@@ -139,7 +139,7 @@ async def subcoins(message, commandpar, connection, bot):
         try:
             pointspar = int(commandpar.split()[0])
         except:
-            raise entity.CommandError('Pontos tem que ser um numero inteiro!')
+            raise entity.CommandError('Pontos tem que ser um `numero inteiro`!')
 
         try:
             if len(message.mentions) > 0:
@@ -148,10 +148,10 @@ async def subcoins(message, commandpar, connection, bot):
                     names.append(user.name)
                     db.subpoints(user.id,message.guild.id,int(pointspar), connection)
                 
-                await message.channel.send(f'{pointspar} Coins foram removidos de : {", ".join(names)}')
+                await message.channel.send(f'`{pointspar}` Coins foram removidos de : {", ".join(names)}')
             else:
                 db.subpoints(message.author.id,message.guild.id,int(pointspar), connection)
-                await message.channel.send(f'{message.author.mention} Foram removidos {pointspar} coins.')
+                await message.channel.send(f'{message.author.mention} Foram removidos `{pointspar}` coins.')
         except:
             raise entity.CommandError('Não foi possivel realizar esta ação! :worried:')
     else:
@@ -192,7 +192,7 @@ async def shopadditem(message, commandpar, connection, bot):
     item_name = ' '.join(cmdpar[1:])
 
     db.additem(message.guild.id, item_name, price, connection)
-    await message.channel.send(f'Item: {item_name} foi adicionado a loja por {price} coins!')
+    await message.channel.send(f'Item: `{item_name}` foi adicionado a loja por `{price}` coins!')
 entity.command(name='additem', func=shopadditem, category=category, desc=f'Adicionar um item a loja!',args=[['preço', '*'], ['item', '*']], perm=1)
 
 
@@ -203,7 +203,7 @@ async def buyitem(message, commandpar, connection, bot):
     try:
         item = int(commandpar)
     except:
-        raise entity.CommandError('O item tem que ser referenciado com o um ID.')
+        raise entity.CommandError('O item tem que ser referenciado com o um `ID`.')
 
     items = db.getshop(message.guild.id, connection)
     
@@ -217,10 +217,10 @@ async def buyitem(message, commandpar, connection, bot):
                 raise entity.CommandError('Coins insuficientes!')
 
             db.subpoints(message.author.id, message.guild.id, i[3], connection)
-            await message.channel.send(f'{message.author.mention} comprou [{i[1]} - {i[2]}] por {i[3]}c.')
+            await message.channel.send(f'{message.author.mention} comprou `{i[1]} - {i[2]}` por `{i[3]}c`.')
 
     if marc == 0:
-        raise entity.CommandError(f'{message.author.mention} o item {commandpar} não existe.')
+        raise entity.CommandError(f'{message.author.mention} o item `{commandpar}` não existe.')
 entity.command(name='buy', func=buyitem, category=category, desc=f'Comprar um item.', args=[['id do item', '*']])
 
 
@@ -231,7 +231,7 @@ async def shopdelitem(message, commandpar, connection, bot):
     try:
         item = int(commandpar)
     except:
-        raise entity.CommandError('O item tem que ser referenciado com o um ID.')
+        raise entity.CommandError('O item tem que ser referenciado com o um `ID`.')
 
     items = db.getshop(message.guild.id, connection)
 
@@ -240,8 +240,8 @@ async def shopdelitem(message, commandpar, connection, bot):
         if i[1] == item:
             marc = 1
             db.delitem(message.guild.id, item, connection)
-            await message.channel.send(f'{message.author.mention} removeu o item [{i[1]} - {i[2]}] da loja!')
+            await message.channel.send(f'{message.author.mention} removeu o item `{i[1]} - {i[2]}` da loja!')
 
     if marc == 0:
-        raise entity.CommandError(f'{message.author.mention} o item {commandpar} não existe.')
+        raise entity.CommandError(f'{message.author.mention} o item `{commandpar}` não existe.')
 entity.command(name='delitem', func=shopdelitem, category=category, desc=f'Deletar itens da loja.', args=[['id do item', '*']], perm=1)
