@@ -68,7 +68,7 @@ async def _help(message, commandpar, connection, bot):
             if cmd['args'] != []:
                 emb.add_field(name='Parametros:', value=par, inline=False)
             emb.add_field(name='Valor:', value=valor, inline=False)
-            emb.add_field(name='Categoria:', value=cmd['category'], inline=False)
+            emb.add_field(name='Categoria:', value=cmd['category']+'.', inline=False)
             emb.add_field(name='Nivel de Permissão:', value=perm, inline=False)
 
             await message.channel.send(embed=emb)
