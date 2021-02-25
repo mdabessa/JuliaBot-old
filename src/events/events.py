@@ -1,5 +1,6 @@
 import modules.database as db
 import modules.entity as entity
+import modules.utils as utils
 from random import randint, shuffle, choice
 from math import floor
 
@@ -98,7 +99,7 @@ async def quiz(par):
     if operator == 'Divisão':
         m = await channel.send(f'O quiz chegou!, Qual resultado da divisão entre [{num1}] e [{num2}] ? // ex: 1/16 -> 0.0625 -> 0.062')
         res = num1/num2
-        res = round(res - 0.5/10**3, 3)
+        res = utils.nround(res)
     if operator == 'Subtração':
         m = await channel.send(f'O quiz chegou!, Qual resultado da subtração entre [{num1}] e [{num2}] ? // ex: 2-4 -> -2')
         res = num1-num2
