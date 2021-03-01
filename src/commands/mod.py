@@ -24,7 +24,7 @@ async def mastermute(message, commandpar, connection, bot):
             await message.channel.send(f'{user.name} foi silenciado por `{time}` segundos :mute: ')
     else:
         raise entity.CommandError('Falta algo!')
-entity.command(name='mastermute', func=mastermute , category=category, desc=f'Silenciar alguem, sem limite de tempo.', args=[['segundos', '*'], ['pessoa', '*,']], perm=1)
+entity.command(name='mastermute', func=mastermute , category=category, desc=f'Silenciar alguem, sem limite de tempo.', args=[['segundos', '*'], ['pessoa', '*º']], perm=1)
 
 
 async def c_event(message, commandpar, connection, bot):

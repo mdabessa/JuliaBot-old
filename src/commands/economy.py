@@ -17,7 +17,7 @@ async def coins(message, commandpar, connection, bot):
     else:
         points = db.getpoints(message.author.id, message.guild.id, connection)
         await message.channel.send(f'{message.author.mention}, você possui `{points}` coins.')
-entity.command(name='coins', func=coins, category=category, desc='Verificar os pontos.', args=[['pessoa', ',']])
+entity.command(name='coins', func=coins, category=category, desc='Verificar os pontos.', args=[['pessoa', 'º']])
 
 
 async def coinsrank(message, commandpar, connection, bot):
@@ -106,7 +106,7 @@ async def setcoins(message, commandpar, connection, bot):
 
     else:
         raise entity.CommandError('Quantos coins ?')
-entity.command(name='setcoins', func=setcoins , category=category, desc=f'Definir os seus pontos, ou os dos usuarios marcados.', args=[['coins', '*'], ['pessoa', ',']], perm=1)
+entity.command(name='setcoins', func=setcoins , category=category, desc=f'Definir os seus pontos, ou os dos usuarios marcados.', args=[['coins', '*'], ['pessoa', 'º']], perm=1)
 
 
 async def addcoins(message, commandpar, connection, bot):
@@ -131,7 +131,7 @@ async def addcoins(message, commandpar, connection, bot):
             raise entity.CommandError('Não foi possivel realizar esta ação :worried:')
     else:
         raise entity.CommandError('Quantos pontos?')
-entity.command(name='addcoins', func=addcoins , category=category, desc=f'Adicionar pontos.', args=[['coins', '*'], ['pessoa', ',']], perm=1)
+entity.command(name='addcoins', func=addcoins , category=category, desc=f'Adicionar pontos.', args=[['coins', '*'], ['pessoa', 'º']], perm=1)
 
 
 async def subcoins(message, commandpar, connection, bot):
@@ -156,7 +156,7 @@ async def subcoins(message, commandpar, connection, bot):
             raise entity.CommandError('Não foi possivel realizar esta ação! :worried:')
     else:
         raise entity.CommandError('Quantos pontos?')
-entity.command(name='subcoins', func=subcoins , category=category, desc=f'Remover pontos.', args=[['coins', '*'], ['pessoa', ',']], perm=1)
+entity.command(name='subcoins', func=subcoins , category=category, desc=f'Remover pontos.', args=[['coins', '*'], ['pessoa', 'º']], perm=1)
 
 
 async def shop(message, commandpar, connection, bot):

@@ -51,7 +51,7 @@ async def mute(message, commandpar, connection, bot):
             await message.channel.send(f'{user.name} foi silenciado por `{time}` segundos! :mute:')
     else:
         raise entity.CommandError('Falta algo nesse comando!')
-entity.command(name='mute', func=mute , category=category, desc=f'Silenciar alguem por alguns segundos.', args=[['pessoa', '*,']], cost=500)
+entity.command(name='mute', func=mute , category=category, desc=f'Silenciar alguem por alguns segundos.', args=[['pessoa', '*º']], cost=500)
 
 
 async def _duel(message, commandpar, connection, bot):
