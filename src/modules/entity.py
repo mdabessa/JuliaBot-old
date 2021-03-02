@@ -1,6 +1,8 @@
 import time
 import traceback
+import discord
 import modules.database as db
+from random import randint, choice
 
 mutes = []
 
@@ -123,7 +125,6 @@ class command():
         return cls.categories
 
 
-
 class event():
     events = []
     def __init__(self, name:str, createfunc, executefunc, trigger='react', desc='Nothing', command_create=True, loop_event_create=True):
@@ -212,3 +213,127 @@ class timer():
             if segs > 0:
                 cls.timers.append([ind,timenow,segs])
             return False
+
+
+class Client(discord.Client):
+    def __init__(self, db_connection, master_id, **kwargs):
+        super().__init__(**kwargs)
+        self.db_connection = db_connection
+        self.master_id = master_id
+
+    async def on_ready(self):
+        await self.change_presence(activity=discord.Game(f'{len(self.guilds)} servers!'))
+        
+        for guild in self.guilds:
+            if db.getserver(guild.id, self.db_connection) == None:
+                db.addserver(guild.id, self.db_connection)
+
+        command.newcategory('personalizado', ':paintbrush:Personalizados.')
+
+        print(f'{self.user} esta logado em {len(self.guilds)} grupos!')
+        print('Pronto!')
+
+
+    async def on_message(self, message):
+        if message.author == self.user:
+            return
+
+        server = db.getserver(message.guild.id, self.db_connection)
+
+        #add (pointsqt) points every (pointstime) seconds
+        pointstime = 300
+        pointsqt = 100
+
+        if timer.timer('point_time_'+str(message.guild.id), pointstime, recreate=1):
+            for member in message.guild.members:
+                if member.status == 'offline' or (member.bot == True and member.id != self.user.id):
+                    continue
+                
+                db.addpoints(member.id,message.guild.id,pointsqt, self.db_connection)
+
+
+        if str(message.author.id)+str(message.channel.id) in mutes:
+            if timer.timer(str(message.author.id)+str(message.channel.id),0):
+                mutes.remove(str(message.author.id)+str(message.channel.id))
+            else:
+                await message.delete()
+                return
+        
+        auto_events = server['auto_events']
+        if auto_events:
+            if timer.timer('event_time_'+str(message.guild.id), randint(1000,10000), recreate=1) == True:
+                
+                eventchannel = server['eventchannel']
+
+                try:
+                    eventchannel = self.get_channel(int(eventchannel))
+                    if eventchannel == None:
+                        eventchannel = message.channel
+                except:
+                    db.editserver(message.guild.id, self.db_connection, 'eventchannel', None)
+                    eventchannel = message.channel
+                
+                
+                eve = choice([i for i in event.events if i.loop_event_create])
+                eve.clear(str(message.guild.id))
+                
+            
+                await eve.create([eventchannel], str(message.guild.id))
+                        
+
+        try:
+            print(f'{message.guild} #{message.channel} //{message.author} : {message.content}')
+
+            
+            prefix = server['prefix']
+            cmdchannel = server['commandchannel']
+
+
+            if cmdchannel == None:
+                pass
+            elif self.get_channel(int(cmdchannel)) == None:
+                db.editserver(message.guild.id, self.db_connection, 'commandchannel', None)
+                cmdchannel = None
+
+            if message.content == f'<@!{self.user.id}>':
+                helpstr = f'{prefix}help para lista de comandos.'
+                
+
+                if cmdchannel != None:
+                    helpstr += f'\nCanal de comandos: <#{cmdchannel}>'
+
+                await message.channel.send(helpstr)
+                return
+
+
+            if message.content[0:len(prefix)] == prefix:
+                if cmdchannel == None:
+                    pass
+                elif int(cmdchannel) != message.channel.id:
+                    return
+
+                content = message.content[len(prefix):]
+                await command.trycommand(message, content, self.db_connection, self.master_id, self)
+ 
+
+            for eve in event.events:
+                if eve.trigger == 'message':
+                    await eve.execute([message, self.db_connection], str(message.guild.id))
+
+        except Exception as e:
+            print(e)
+            traceback.print_exc()
+        
+
+    async def on_reaction_add(self, reaction, user):
+        if user == self.user:
+            return
+
+        for eve in event.events:
+            if eve.msgvalidation(reaction.message, str(reaction.message.guild.id)) and eve.trigger == 'react':
+                await eve.execute([user,reaction.emoji, self.db_connection], str(reaction.message.guild.id))
+
+    async def on_guild_join(self, guild):
+        if db.getserver(guild.id, self.db_connection) == None:
+                db.addserver(guild.id, self.db_connection)
+
