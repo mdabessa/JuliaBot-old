@@ -121,6 +121,17 @@ class command():
 
 
     @classmethod
+    def getcommandsbycategory(cls, category, guildid, connection):
+        cmds = []
+        for cmd in cls.getallcommands(guildid, connection):
+            if category == cmd['category']:
+                cmds.append(cmd)
+        
+        return cmds
+            
+
+
+    @classmethod
     def getcategories(cls):
         return cls.categories
 

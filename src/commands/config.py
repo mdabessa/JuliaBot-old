@@ -44,7 +44,7 @@ async def addcmd(message, commandpar, connection, bot):
 
 
     await message.channel.send(embed=emb)
-entity.command(name='addcmd', func=addcmd, category=category, desc=f'Adicione um comando personalizado!', args=[['comando', '*'], ['mensagem', '*'], ['descrição', '*']], perm=1)
+entity.command(name='addcmd', func=addcmd, category=category, desc=f'Adicione um comando personalizado, utilize virgula para separar os parametros. [Ainda em teste!]', args=[['comando', '*'], ['mensagem', '*'], ['descrição', '*']], perm=1)
 
 
 async def delcmd(message, commandpar, connection, bot):

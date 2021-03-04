@@ -18,6 +18,10 @@ async def _help(message, commandpar, connection, bot):
             if c[2] == False:
                 continue
             
+            if len(entity.command.getcommandsbycategory(c[0], message.guild.id, connection)) == 0:
+                continue
+
+
             text = ''
             for cmd in commands:
                 if cmd['category'] == c[0]:
