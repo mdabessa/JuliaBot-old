@@ -11,7 +11,7 @@ class CommandError(Exception):
     pass
 
 
-class command():
+class Command():
     commands = []
     categories = []
     def __init__(self, name, func, category, desc='Este comando faz algo!', args=[], cost=0, perm=0):
@@ -23,7 +23,7 @@ class command():
         self.cost = cost
         self.perm = perm
 
-        command.commands.append(self)
+        Command.commands.append(self)
 
 
     async def execute(self, message, param, connection, bot):
@@ -136,7 +136,7 @@ class command():
         return cls.categories
 
 
-class event():
+class Event():
     events = []
     def __init__(self, name:str, createfunc, executefunc, trigger='react', desc='Nothing', command_create=True, loop_event_create=True):
         self.name = name
@@ -147,7 +147,7 @@ class event():
         self.command_create = command_create
         self.loop_event_create = loop_event_create
         self.cache = dict()
-        event.events.append(self)
+        Event.events.append(self)
 
     async def create(self, par, ind:str):
         cache = self.getcache(ind)
@@ -200,7 +200,7 @@ class event():
             self.cache.pop(ind)
 
 
-class timer():
+class Timer():
     timers = []
 
     @classmethod
@@ -239,7 +239,7 @@ class Client(discord.Client):
             if db.getserver(guild.id, self.db_connection) == None:
                 db.addserver(guild.id, self.db_connection)
 
-        command.newcategory('personalizado', ':paintbrush:Personalizados.')
+        Command.newcategory('personalizado', ':paintbrush:Personalizados.')
 
         print(f'{self.user} esta logado em {len(self.guilds)} grupos!')
         print('Pronto!')
@@ -255,7 +255,7 @@ class Client(discord.Client):
         pointstime = 300
         pointsqt = 100
 
-        if timer.timer('point_time_'+str(message.guild.id), pointstime, recreate=1):
+        if Timer.timer('point_time_'+str(message.guild.id), pointstime, recreate=1):
             for member in message.guild.members:
                 if member.status == 'offline' or (member.bot == True and member.id != self.user.id):
                     continue
@@ -264,7 +264,7 @@ class Client(discord.Client):
 
 
         if str(message.author.id)+str(message.channel.id) in mutes:
-            if timer.timer(str(message.author.id)+str(message.channel.id),0):
+            if Timer.timer(str(message.author.id)+str(message.channel.id),0):
                 mutes.remove(str(message.author.id)+str(message.channel.id))
             else:
                 await message.delete()
@@ -272,7 +272,7 @@ class Client(discord.Client):
         
         auto_events = server['auto_events']
         if auto_events:
-            if timer.timer('event_time_'+str(message.guild.id), randint(1000,10000), recreate=1) == True:
+            if Timer.timer('event_time_'+str(message.guild.id), randint(1000,10000), recreate=1) == True:
                 
                 eventchannel = server['eventchannel']
 
@@ -285,7 +285,7 @@ class Client(discord.Client):
                     eventchannel = message.channel
                 
                 
-                eve = choice([i for i in event.events if i.loop_event_create])
+                eve = choice([i for i in Event.events if i.loop_event_create])
                 eve.clear(str(message.guild.id))
                 
             
@@ -324,10 +324,10 @@ class Client(discord.Client):
                     return
 
                 content = message.content[len(prefix):]
-                await command.trycommand(message, content, self.db_connection, self.master_id, self)
+                await Command.trycommand(message, content, self.db_connection, self.master_id, self)
  
 
-            for eve in event.events:
+            for eve in Event.events:
                 if eve.trigger == 'message':
                     await eve.execute([message, self.db_connection], str(message.guild.id))
 
@@ -340,7 +340,7 @@ class Client(discord.Client):
         if user == self.user:
             return
 
-        for eve in event.events:
+        for eve in Event.events:
             if eve.msgvalidation(reaction.message, str(reaction.message.guild.id)) and eve.trigger == 'react':
                 await eve.execute([user,reaction.emoji, self.db_connection], str(reaction.message.guild.id))
 

@@ -23,7 +23,7 @@ async def exegift(param, cache):
     db.addpoints(user.id, message.guild.id, points, connection)
     await message.channel.send(f'{user.mention} ganhou {points} coins, :partying_face:')
     return True
-entity.event(name='gift', createfunc=gift, executefunc=exegift, desc='Quem pegar o presente primeiro leva os coins!')
+entity.Event(name='gift', createfunc=gift, executefunc=exegift, desc='Quem pegar o presente primeiro leva os coins!')
 
 async def cards(par):
     points = [(randint(1,10)*100), (randint(1,10)*100), (randint(1,5)*(-100))]
@@ -77,7 +77,7 @@ async def execards(param, cache):
         return [message, points, usercache, choicecache]
     else:
         return [message, points, usercache, choicecache]
-entity.event(name='cards', createfunc=cards, executefunc=execards, desc='Escolha cartinhas para ganhar coins (ou perder :D)')
+entity.Event(name='cards', createfunc=cards, executefunc=execards, desc='Escolha cartinhas para ganhar coins (ou perder :D)')
 
 async def quiz(par):
     channel = par[0]
@@ -123,7 +123,7 @@ async def exequiz(param, cache):
 
     else:
         return cache
-entity.event(name='quiz', createfunc=quiz, executefunc=exequiz, desc='Responda certo a pergunta para ganhar coins!', trigger='message')
+entity.Event(name='quiz', createfunc=quiz, executefunc=exequiz, desc='Responda certo a pergunta para ganhar coins!', trigger='message')
 
 async def duel(par):
     msg = par[0]
@@ -164,4 +164,4 @@ async def exeduel(param, cache):
         return True
     else:
         return cache
-entity.event(name='duel', createfunc=duel, executefunc=exeduel, desc='Duele com alguem apostando coins!', trigger='react', command_create=False, loop_event_create=False)
+entity.Event(name='duel', createfunc=duel, executefunc=exeduel, desc='Duele com alguem apostando coins!', trigger='react', command_create=False, loop_event_create=False)

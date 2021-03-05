@@ -5,7 +5,7 @@ import modules.entity as entity
 
 
 category = 'Diversão'
-entity.command.newcategory(category, ':game_die:Diversão.')
+entity.Command.newcategory(category, ':game_die:Diversão.')
 
 
 async def spam(message, commandpar, connection, bot):
@@ -28,7 +28,7 @@ async def spam(message, commandpar, connection, bot):
             raise entity.CommandError('Falta algo nesse comando!')
     else:
         raise entity.CommandError('Quantas vezes? Spam do que?')
-entity.command(name='spam', func=spam , category=category, desc=f'Spam de mensagens.', args=[['quantidade', '*'], ['texto', '*']], cost=2500)
+entity.Command(name='spam', func=spam , category=category, desc=f'Spam de mensagens.', args=[['quantidade', '*'], ['texto', '*']], cost=2500)
 
 
 async def cmdsay(message, commandpar, connection, bot):
@@ -36,7 +36,7 @@ async def cmdsay(message, commandpar, connection, bot):
         await message.channel.send(commandpar)
     else:
         raise('Falta algo nesse comando')
-entity.command(name='say', func=cmdsay , category=category, desc=f'Fazer o bot dizer algo.', args=[['texto', '*']], cost=500)
+entity.Command(name='say', func=cmdsay , category=category, desc=f'Fazer o bot dizer algo.', args=[['texto', '*']], cost=500)
 
 
 async def mute(message, commandpar, connection, bot):
@@ -46,12 +46,12 @@ async def mute(message, commandpar, connection, bot):
             if str(user.id)+str(message.channel.id) in entity.mutes:
                 await message.channel.send(f'{user.name} ja esta silenciado! :zipper_mouth:')
                 return
-            entity.timer.timer(str(user.id)+str(message.channel.id),time)
+            entity.Timer.timer(str(user.id)+str(message.channel.id),time)
             entity.mutes.append(str(user.id)+str(message.channel.id))
             await message.channel.send(f'{user.name} foi silenciado por `{time}` segundos! :mute:')
     else:
         raise entity.CommandError('Falta algo nesse comando!')
-entity.command(name='mute', func=mute , category=category, desc=f'Silenciar alguem por alguns segundos.', args=[['pessoa', '*º']], cost=500)
+entity.Command(name='mute', func=mute , category=category, desc=f'Silenciar alguem por alguns segundos.', args=[['pessoa', '*º']], cost=500)
 
 
 async def _duel(message, commandpar, connection, bot):
@@ -85,4 +85,4 @@ async def _duel(message, commandpar, connection, bot):
             
 
             await eve.create([message, points], str(message.guild.id))
-entity.command(name='duel', func=_duel, category=category, desc=f'Duele contra alguem valendo coins!', args=[['coins', '*'], ['pessoa', '*']])
+entity.Command(name='duel', func=_duel, category=category, desc=f'Duele contra alguem valendo coins!', args=[['coins', '*'], ['pessoa', '*']])

@@ -4,7 +4,7 @@ import modules.database as db
 import modules.entity as entity
 
 category = 'Core'
-entity.command.newcategory(category, ':brain:Core.')
+entity.Command.newcategory(category, ':brain:Core.')
 
 
 async def _help(message, commandpar, connection, bot): 
@@ -12,13 +12,13 @@ async def _help(message, commandpar, connection, bot):
         prefix = db.getserver(message.guild.id, connection)['prefix']
         emb = discord.Embed(title='Lista de Comandos', description=f'{prefix}help [comando]', color=0xe6dc56)
 
-        commands = entity.command.getallcommands(message.guild.id, connection)
-        categories = entity.command.getcategories()
+        commands = entity.Command.getallcommands(message.guild.id, connection)
+        categories = entity.Command.getcategories()
         for c in categories:
             if c[2] == False:
                 continue
             
-            if len(entity.command.getcommandsbycategory(c[0], message.guild.id, connection)) == 0:
+            if len(entity.Command.getcommandsbycategory(c[0], message.guild.id, connection)) == 0:
                 continue
 
 
@@ -33,7 +33,7 @@ async def _help(message, commandpar, connection, bot):
         await message.channel.send(embed=emb)
 
         '''
-        cmds = entity.command.getallcommands(message.guild.id, connection)
+        cmds = entity.Command.getallcommands(message.guild.id, connection)
 
         general_cmds = [cmd for cmd in cmds if cmd['permission'] == 0]
         mod_cmds = [cmd for cmd in cmds if cmd['permission'] == 1] 
@@ -47,7 +47,7 @@ async def _help(message, commandpar, connection, bot):
         await message.channel.send(embed=emb)
         '''
     else:
-        cmd = entity.command.getcommand(message.guild.id, commandpar, connection)
+        cmd = entity.Command.getcommand(message.guild.id, commandpar, connection)
         prefix = db.getserver(message.guild.id, connection)['prefix']
         if cmd != None:
             par = prefix + cmd['name'] + ' '
@@ -78,16 +78,16 @@ async def _help(message, commandpar, connection, bot):
             await message.channel.send(embed=emb)
         else:
             raise entity.CommandError(f'Nenhum comando com o nome {commandpar} existe!')
-entity.command(name='help', func=_help, category=category, desc='Listar todos os comandos e suas descrições.', args=[['comando', '']])
+entity.Command(name='help', func=_help, category=category, desc='Listar todos os comandos e suas descrições.', args=[['comando', '']])
 
 
 async def getprefix(message, commandpar, connection, bot):
     prefix = db.getserver(message.guild.id, connection)['prefix']
     await message.channel.send(f'O prefixo do servidor é: `{prefix}`')
-entity.command(name='prefix', func=getprefix , category=category, desc=f'Retorna o prefixo do bot no servidor.')
+entity.Command(name='prefix', func=getprefix , category=category, desc=f'Retorna o prefixo do bot no servidor.')
 
 
 async def ping(message, commandpar, connection, bot):
     lt = int(round(bot.latency, 3)*1000)
     await message.channel.send(f'Pong! `{lt}ms`')
-entity.command(name='ping', func=ping , category=category, desc=f'Pong!')
+entity.Command(name='ping', func=ping , category=category, desc=f'Pong!')

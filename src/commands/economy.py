@@ -5,7 +5,7 @@ import modules.entity as entity
 
 
 category = 'Economia'
-entity.command.newcategory(category, ':coin:Economia.')
+entity.Command.newcategory(category, ':coin:Economia.')
 
 
 async def coins(message, commandpar, connection, bot):
@@ -17,7 +17,7 @@ async def coins(message, commandpar, connection, bot):
     else:
         points = db.getpoints(message.author.id, message.guild.id, connection)
         await message.channel.send(f'{message.author.mention}, você possui `{points}` coins.')
-entity.command(name='coins', func=coins, category=category, desc='Verificar os pontos.', args=[['pessoa', 'º']])
+entity.Command(name='coins', func=coins, category=category, desc='Verificar os pontos.', args=[['pessoa', 'º']])
 
 
 async def coinsrank(message, commandpar, connection, bot):
@@ -45,7 +45,7 @@ async def coinsrank(message, commandpar, connection, bot):
         emb.add_field(name=f'{medal}{user.name}', value=f':coin:{points}c', inline=False)
     
     await message.channel.send(embed=emb)
-entity.command(name='rank', func=coinsrank, category=category, desc='Top coins do servidor.')
+entity.Command(name='rank', func=coinsrank, category=category, desc='Top coins do servidor.')
 
 
 async def roulette(message, commandpar, connection, bot):
@@ -80,7 +80,7 @@ async def roulette(message, commandpar, connection, bot):
             raise entity.CommandError('Voce não possui pontos suficiente!')
     else:
         raise entity.CommandError('Quantos coins você quer roletar? :thinking:')
-entity.command(name='roulette', func=roulette, category=category, desc=f'Roletar pontos.', args=[['coins', '*']])
+entity.Command(name='roulette', func=roulette, category=category, desc=f'Roletar pontos.', args=[['coins', '*']])
 
 
 async def setcoins(message, commandpar, connection, bot):
@@ -106,7 +106,7 @@ async def setcoins(message, commandpar, connection, bot):
 
     else:
         raise entity.CommandError('Quantos coins ?')
-entity.command(name='setcoins', func=setcoins , category=category, desc=f'Definir os seus pontos, ou os dos usuarios marcados.', args=[['coins', '*'], ['pessoa', 'º']], perm=1)
+entity.Command(name='setcoins', func=setcoins , category=category, desc=f'Definir os seus pontos, ou os dos usuarios marcados.', args=[['coins', '*'], ['pessoa', 'º']], perm=1)
 
 
 async def addcoins(message, commandpar, connection, bot):
@@ -131,7 +131,7 @@ async def addcoins(message, commandpar, connection, bot):
             raise entity.CommandError('Não foi possivel realizar esta ação :worried:')
     else:
         raise entity.CommandError('Quantos pontos?')
-entity.command(name='addcoins', func=addcoins , category=category, desc=f'Adicionar pontos.', args=[['coins', '*'], ['pessoa', 'º']], perm=1)
+entity.Command(name='addcoins', func=addcoins , category=category, desc=f'Adicionar pontos.', args=[['coins', '*'], ['pessoa', 'º']], perm=1)
 
 
 async def subcoins(message, commandpar, connection, bot):
@@ -156,7 +156,7 @@ async def subcoins(message, commandpar, connection, bot):
             raise entity.CommandError('Não foi possivel realizar esta ação! :worried:')
     else:
         raise entity.CommandError('Quantos pontos?')
-entity.command(name='subcoins', func=subcoins , category=category, desc=f'Remover pontos.', args=[['coins', '*'], ['pessoa', 'º']], perm=1)
+entity.Command(name='subcoins', func=subcoins , category=category, desc=f'Remover pontos.', args=[['coins', '*'], ['pessoa', 'º']], perm=1)
 
 
 async def shop(message, commandpar, connection, bot):
@@ -173,7 +173,7 @@ async def shop(message, commandpar, connection, bot):
         
         emb.set_footer(text=f'{db.getserver(message.guild.id, connection)["prefix"]}buy [id]')
         await message.channel.send(embed=emb)
-entity.command(name='shop', func=shop, category=category, desc=f'Loja de itens')
+entity.Command(name='shop', func=shop, category=category, desc=f'Loja de itens')
 
 
 async def shopadditem(message, commandpar, connection, bot):
@@ -193,7 +193,7 @@ async def shopadditem(message, commandpar, connection, bot):
 
     db.additem(message.guild.id, item_name, price, connection)
     await message.channel.send(f'Item: `{item_name}` foi adicionado a loja por `{price}` coins!')
-entity.command(name='additem', func=shopadditem, category=category, desc=f'Adicionar um item a loja!',args=[['preço', '*'], ['item', '*']], perm=1)
+entity.Command(name='additem', func=shopadditem, category=category, desc=f'Adicionar um item a loja!',args=[['preço', '*'], ['item', '*']], perm=1)
 
 
 async def buyitem(message, commandpar, connection, bot):
@@ -221,7 +221,7 @@ async def buyitem(message, commandpar, connection, bot):
 
     if marc == 0:
         raise entity.CommandError(f'{message.author.mention} o item `{commandpar}` não existe.')
-entity.command(name='buy', func=buyitem, category=category, desc=f'Comprar um item.', args=[['id do item', '*']])
+entity.Command(name='buy', func=buyitem, category=category, desc=f'Comprar um item.', args=[['id do item', '*']])
 
 
 async def shopdelitem(message, commandpar, connection, bot):
@@ -244,4 +244,4 @@ async def shopdelitem(message, commandpar, connection, bot):
 
     if marc == 0:
         raise entity.CommandError(f'{message.author.mention} o item `{commandpar}` não existe.')
-entity.command(name='delitem', func=shopdelitem, category=category, desc=f'Deletar itens da loja.', args=[['id do item', '*']], perm=1)
+entity.Command(name='delitem', func=shopdelitem, category=category, desc=f'Deletar itens da loja.', args=[['id do item', '*']], perm=1)

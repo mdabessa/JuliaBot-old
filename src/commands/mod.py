@@ -5,7 +5,7 @@ import modules.entity as entity
 
 
 category = 'Moderação'
-entity.command.newcategory(category, ':shield:Moderação.')
+entity.Command.newcategory(category, ':shield:Moderação.')
 
 
 async def mastermute(message, commandpar, connection, bot):
@@ -19,12 +19,12 @@ async def mastermute(message, commandpar, connection, bot):
             if str(user.id)+str(message.channel.id) in entity.mutes:
                 await message.channel.send(f'{user.name} ja esta silenciado :zipper_mouth:')
                 return
-            entity.timer.timer(str(user.id)+str(message.channel.id),time)
+            entity.Timer.timer(str(user.id)+str(message.channel.id),time)
             entity.mutes.append(str(user.id)+str(message.channel.id))
             await message.channel.send(f'{user.name} foi silenciado por `{time}` segundos :mute: ')
     else:
         raise entity.CommandError('Falta algo!')
-entity.command(name='mastermute', func=mastermute , category=category, desc=f'Silenciar alguem, sem limite de tempo.', args=[['segundos', '*'], ['pessoa', '*º']], perm=1)
+entity.Command(name='mastermute', func=mastermute , category=category, desc=f'Silenciar alguem, sem limite de tempo.', args=[['segundos', '*'], ['pessoa', '*º']], perm=1)
 
 
 async def c_event(message, commandpar, connection, bot):
@@ -43,4 +43,4 @@ async def c_event(message, commandpar, connection, bot):
             raise entity.CommandError('Nenhum evento com esse nome')
     else:
         raise entity.CommandError('Falta algo!')
-entity.command(name='c_event', func=c_event , category=category, desc=f'Criar um evento.', args=[['evento', '*']], perm=1)
+entity.Command(name='c_event', func=c_event , category=category, desc=f'Criar um evento.', args=[['evento', '*']], perm=1)

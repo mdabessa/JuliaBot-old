@@ -5,7 +5,7 @@ import modules.entity as entity
 
 
 category = 'Depuração'
-entity.command.newcategory(category, 'Depuração',is_visible=False)
+entity.Command.newcategory(category, 'Depuração',is_visible=False)
 
 
 async def exe(message, commandpar, connection, bot):
@@ -17,8 +17,8 @@ async def exe(message, commandpar, connection, bot):
             text += ' [' + ' '.join(cont[1:]) + ']'
 
         m = await message.channel.send(text)
-        await entity.command.trycommand(m, commandpar, connection, '', bot)
+        await entity.Command.trycommand(m, commandpar, connection, '', bot)
 
     else:
         raise entity.CommandError('Falta algo nesse comando!')
-entity.command(name='exec', func=exe , category=category, desc=f'Executar um comando através do bot.', args=[['comando', '*'], ['parametros do comando', '']], perm=2)
+entity.Command(name='exec', func=exe , category=category, desc=f'Executar um comando através do bot.', args=[['comando', '*'], ['parametros do comando', '']], perm=2)
