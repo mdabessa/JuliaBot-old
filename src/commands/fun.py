@@ -51,7 +51,7 @@ async def mute(message, commandpar, connection, bot):
             await message.channel.send(f'{user.name} foi silenciado por `{time}` segundos! :mute:')
     else:
         raise entity.CommandError('Falta algo nesse comando!')
-entity.Command(name='mute', func=mute , category=category, desc=f'Silenciar alguem por alguns segundos.', args=[['pessoa', '*º']], cost=500)
+entity.Command(name='fmute', func=mute , category=category, desc=f'Silenciar alguem por alguns segundos.', args=[['pessoa', '*º']], cost=500)
 
 
 async def _duel(message, commandpar, connection, bot):
@@ -74,7 +74,7 @@ async def _duel(message, commandpar, connection, bot):
     if db.getpoints(message.author.id, message.guild.id, connection) < points:
         raise entity.CommandError(f'{message.author.mention} Você não possui pontos suficientes!')
 
-    for eve in entity.event.events:
+    for eve in entity.Event.events:
         if eve.name == 'duel':
             cache = eve.getcache(str(message.guild.id))
             if cache != None:

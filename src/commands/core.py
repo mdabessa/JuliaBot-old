@@ -10,10 +10,12 @@ entity.Command.newcategory(category, ':brain:Core.')
 async def _help(message, commandpar, connection, bot): 
     if commandpar == None:
         prefix = db.getserver(message.guild.id, connection)['prefix']
-        emb = discord.Embed(title='Lista de Comandos', description=f'{prefix}help [comando]', color=0xe6dc56)
+        emb = discord.Embed(title='Lista de Comandos', description=f'{prefix}help `comando`', color=0xe6dc56)
 
         commands = entity.Command.getallcommands(message.guild.id, connection)
         categories = entity.Command.getcategories()
+        
+        count = 0
         for c in categories:
             if c[2] == False:
                 continue
@@ -21,31 +23,20 @@ async def _help(message, commandpar, connection, bot):
             if len(entity.Command.getcommandsbycategory(c[0], message.guild.id, connection)) == 0:
                 continue
 
-
+            
             text = ''
             for cmd in commands:
                 if cmd['category'] == c[0]:
                     text += f'[`{cmd["name"]}`](https://www.google.com "{cmd["description"]}") '
                 
-
+            count =+ 1
             emb.add_field(name=c[1], value=text, inline=True)
 
-        await message.channel.send(embed=emb)
-
-        '''
-        cmds = entity.Command.getallcommands(message.guild.id, connection)
-
-        general_cmds = [cmd for cmd in cmds if cmd['permission'] == 0]
-        mod_cmds = [cmd for cmd in cmds if cmd['permission'] == 1] 
-        
-        prefix = db.getserver(message.guild.id, connection)['prefix']
-        emb = discord.Embed(title='Lista de Comandos', description=f'{prefix}help [comando]', color=0xe6dc56)
-
-        emb.add_field(name=f'Comandos Gerais', value=f'{", ".join([cmd["name"] for cmd in general_cmds])}', inline=False)
-        emb.add_field(name=f'Comandos de Admin', value=f'{", ".join([cmd["name"] for cmd in mod_cmds])}', inline=False)
+        for i in range(0, count%3):
+            emb.add_field(name='** **', value='** **', inline=True)
 
         await message.channel.send(embed=emb)
-        '''
+
     else:
         cmd = entity.Command.getcommand(message.guild.id, commandpar, connection)
         prefix = db.getserver(message.guild.id, connection)['prefix']

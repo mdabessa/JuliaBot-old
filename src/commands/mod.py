@@ -30,7 +30,7 @@ entity.Command(name='mastermute', func=mastermute , category=category, desc=f'Si
 async def c_event(message, commandpar, connection, bot):
     if commandpar != None:
         marc = 0
-        for eve in entity.event.events:
+        for eve in entity.Event.events:
             if eve.command_create == False:
                 continue
             if eve.name == commandpar:
