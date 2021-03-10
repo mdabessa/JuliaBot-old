@@ -1,7 +1,10 @@
 from random import randint
+from time import time
 import discord
 import modules.database as db
 import modules.entity as entity
+import modules.utils as utils
+
 
 category = 'Core'
 entity.Command.newcategory(category, ':brain:Core.')
@@ -79,6 +82,10 @@ entity.Command(name='prefix', func=getprefix , category=category, desc=f'Retorna
 
 
 async def ping(message, commandpar, connection, bot):
-    lt = int(round(bot.latency, 3)*1000)
-    await message.channel.send(f'Pong! `{lt}ms`')
+    t = time()
+    m = await message.channel.send(f'Ping!')
+    t = int((time() - t)*1000)
+
+    await m.edit(content=f'Pong!  `{t}ms`')
+
 entity.Command(name='ping', func=ping , category=category, desc=f'Pong!')
