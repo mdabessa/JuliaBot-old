@@ -1,3 +1,5 @@
+import datetime
+
 def getpoints(userid, guildid, connection):
     cursor = connection.cursor()
     try:
@@ -216,3 +218,42 @@ def editserver(guildid, connection, key, value):
     '''.format(col_name=key), (value,str(guildid))
     )
     connection.commit()
+
+
+def addreminder(serverid, channelid, messageid, userid, date, connection):
+    cursor = connection.cursor()
+    cursor.execute(
+    '''
+    INSERT INTO reminder(serverid, channelid, messageid, userid, creationdate, reminderdate)
+    VALUES(%s, %s, %s, %s, %s, %s)
+    ''',(str(serverid), str(channelid), str(messageid), str(userid), str(datetime.datetime.now()), date)
+    )
+    connection.commit()
+
+
+def delreminder(rid, connection):
+    cursor = connection.cursor()
+    cursor.execute(
+    '''
+    DELETE FROM reminder WHERE id={index}
+    '''.format(index = int(rid))
+    )
+    connection.commit()
+
+
+def getallreminder(connection):
+    cursor = connection.cursor()
+    cursor.execute(
+    '''
+    SELECT * FROM reminder ORDER BY reminderdate LIMIT 5
+    '''    
+    )
+    
+    result = cursor.fetchall()
+
+    leg = ['serverid', 'channelid', 'messageid', 'userid', 'creationdate', 'reminderdate', 'id']
+    resp = []
+    for r in result:
+        resp.append(dict(zip(leg, r)))
+
+    return resp

@@ -1,7 +1,7 @@
 # JuliaBot
 Um bot de discord feito em python utilizando a API [discord.py](https://github.com/Rapptz/discord.py) e totalmente personalizável.
-
 # O que tem no bot?
+
 - Sistema de economia.
 - Rank do servidor baseado em quem possui mais `coins`.
 - Eventos aleatórios para distribuir `coins`.
@@ -18,7 +18,7 @@ Um bot de discord feito em python utilizando a API [discord.py](https://github.c
 | Comando | Descrição | Parâmetros |
 |---------|-----------|------------|
 |j!setprefix|Mude o prefixo de comandos do bot.|`<prefixo>`* |
-|j!addcmd|Adicione um comando personalizado!|`<comando>`* `<mensagem>`* `<descrição>`* |
+|j!addcmd|Adicione um comando personalizado, utilize virgula para separar os parametros. [Ainda em teste!]|`<comando>`* `<mensagem>`* `<descrição>`* |
 |j!delcmd|Delete um comando personalizado!|`<comando>`* |
 |j!cmdchannel|Modifique o canal de comandos!|`<canal>` |
 |j!eventchannel|Modifique o canal de eventos!|`<canal>` |
@@ -29,6 +29,7 @@ Um bot de discord feito em python utilizando a API [discord.py](https://github.c
 |j!help|Listar todos os comandos e suas descrições.|`<comando>` |
 |j!prefix|Retorna o prefixo do bot no servidor.||
 |j!ping|Pong!||
+|j!rememberme|O bot irá te notificar no dia desejado, relembrando sua mensagem!|`<tempo>`* |
 ## Depuração 
 | Comando | Descrição | Parâmetros |
 |---------|-----------|------------|
@@ -51,7 +52,7 @@ Um bot de discord feito em python utilizando a API [discord.py](https://github.c
 |---------|-----------|------------|
 |j!spam|Spam de mensagens.|`<quantidade>`* `<texto>`* |
 |j!say|Fazer o bot dizer algo.|`<texto>`* |
-|j!mute|Silenciar alguem por alguns segundos.|`<pessoa>`*º |
+|j!fmute|Silenciar alguem por alguns segundos.|`<pessoa>`*º |
 |j!duel|Duele contra alguem valendo coins!|`<coins>`* `<pessoa>`* |
 ## Moderação 
 | Comando | Descrição | Parâmetros |

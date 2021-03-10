@@ -1,5 +1,6 @@
 from random import randint
 from time import time
+import datetime
 import discord
 import modules.database as db
 import modules.entity as entity
@@ -87,5 +88,17 @@ async def ping(message, commandpar, connection, bot):
     t = int((time() - t)*1000)
 
     await m.edit(content=f'Pong!  `{t}ms`')
-
 entity.Command(name='ping', func=ping , category=category, desc=f'Pong!')
+
+
+async def rememberme(message, commandpar, connection, bot):
+    if commandpar == None:
+        raise entity.CommandError('Você precisa especificar quando!')
+    
+    future = utils.fdate(commandpar, datetime.datetime.now())
+    if future == None:
+        raise entity.CommandError('Parâmetros inválidos!')
+
+    db.addreminder(message.guild.id, message.channel.id, message.id, message.author.id, future, connection)
+    await message.reply(f'Eu irei te notificar no dia `{future.strftime("%Y-%m-%d %H:%M")}`!')
+entity.Command(name='rememberme', func=rememberme, category=category, desc='O bot irá te notificar no dia desejado, relembrando sua mensagem!', args=[['tempo', '*']])

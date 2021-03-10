@@ -1,8 +1,12 @@
 import time
 import traceback
 import discord
+import datetime
 import modules.database as db
+import modules.utils as utils
 from random import randint, choice
+from discord.ext import tasks
+
 
 mutes = []
 
@@ -232,6 +236,7 @@ class Client(discord.Client):
         self.db_connection = db_connection
         self.master_id = master_id
 
+
     async def on_ready(self):
         await self.change_presence(activity=discord.Game(f'{len(self.guilds)} servers!'))
         
@@ -240,6 +245,7 @@ class Client(discord.Client):
                 db.addserver(guild.id, self.db_connection)
 
         Command.newcategory('personalizado', ':paintbrush:Personalizados.')
+        self.reminder.start()
 
         print(f'{self.user} esta logado em {len(self.guilds)} grupos!')
         print('Pronto!')
@@ -344,7 +350,28 @@ class Client(discord.Client):
             if eve.msgvalidation(reaction.message, str(reaction.message.guild.id)) and eve.trigger == 'react':
                 await eve.execute([user,reaction.emoji, self.db_connection], str(reaction.message.guild.id))
 
+
     async def on_guild_join(self, guild):
         if db.getserver(guild.id, self.db_connection) == None:
                 db.addserver(guild.id, self.db_connection)
 
+
+    @tasks.loop(seconds=60)
+    async def reminder(self):
+        reminders = db.getallreminder(self.db_connection)
+        for r in reminders:
+            if r['reminderdate'] < datetime.datetime.now():
+                try:
+                    channel = self.get_channel(int(r['channelid']))
+                    msg = await channel.fetch_message(int(r['messageid']))
+                    await msg.reply('Aqui esta a mensagem que você me pediu para te lembrar!')
+                    db.delreminder(r['id'], self.db_connection)
+
+                except:
+                    try:
+                        user = await self.fetch_user(int(r['userid']))
+                        await user.send('Você criou um lembrete para hoje, mas não consegui recuperar a mensagem do lembrete para te marcar. :worried:')
+                        db.delreminder(r['id'], self.db_connection)
+                    except:
+                        print('Não foi possivel recuperar a mensagem e nem o autor do lembrete!')
+                        db.delreminder(r['id'], self.db_connection)
