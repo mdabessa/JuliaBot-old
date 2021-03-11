@@ -102,3 +102,10 @@ async def rememberme(message, commandpar, connection, bot):
     db.addreminder(message.guild.id, message.channel.id, message.id, message.author.id, future, connection)
     await message.reply(f'Eu irei te notificar no dia `{future.strftime("%Y-%m-%d %H:%M")}`!')
 entity.Command(name='rememberme', func=rememberme, category=category, desc='O bot irá te notificar no dia desejado, relembrando sua mensagem!', args=[['tempo', '*']])
+
+
+async def chatclear(message, commandpar, connection, bot):
+    text = ''.join(['** **\n' for x in range(0, 30)])
+    await message.channel.send(text)
+
+entity.Command(name='upchat', func=chatclear, category=category, desc='"Limpe" o chat do discord!', cost=250)
