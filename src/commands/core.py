@@ -94,8 +94,10 @@ entity.Command(name='ping', func=ping , category=category, desc=f'Pong!')
 async def rememberme(message, commandpar, connection, bot):
     if commandpar == None:
         raise entity.CommandError('Você precisa especificar quando!')
+
+    partime = commandpar.split()[0]
     
-    future = utils.fdate(commandpar, datetime.datetime.now())
+    future = utils.fdate(partime, datetime.datetime.now())
     if future == None:
         raise entity.CommandError('Parâmetros inválidos!')
 

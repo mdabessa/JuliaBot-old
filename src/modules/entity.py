@@ -364,7 +364,12 @@ class Client(discord.Client):
                 try:
                     channel = self.get_channel(int(r['channelid']))
                     msg = await channel.fetch_message(int(r['messageid']))
-                    await msg.reply('Aqui esta a mensagem que você me pediu para te lembrar!')
+                    
+                    text = ''
+                    for user in msg.mentions:
+                        text += ' ' + user.mention
+
+                    await msg.reply('Aqui esta a mensagem que você me pediu para te lembrar!'+text)
                     db.delreminder(r['id'], self.db_connection)
 
                 except:

@@ -30,6 +30,7 @@ Um bot de discord feito em python utilizando a API [discord.py](https://github.c
 |j!prefix|Retorna o prefixo do bot no servidor.||
 |j!ping|Pong!||
 |j!rememberme|O bot irá te notificar no dia desejado, relembrando sua mensagem!|`<tempo>`* |
+|j!upchat|"Limpe" o chat do discord!||
 ## Depuração 
 | Comando | Descrição | Parâmetros |
 |---------|-----------|------------|
