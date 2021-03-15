@@ -30,7 +30,7 @@ Clique [aqui](https://discord.com/oauth2/authorize?client_id=483054181176049685&
 |---------|-----------|------------|
 |j!help|Listar todos os comandos e suas descrições.|`<comando>` |
 |j!prefix|Retorna o prefixo do bot no servidor.||
-|j!ping|Pong!||
+|j!ping|Retorna a latência do bot.||
 |j!rememberme|O bot irá te notificar no dia desejado, relembrando sua mensagem!|`<tempo>`* |
 |j!upchat|"Limpe" o chat do discord!||
 ## Depuração 
@@ -53,12 +53,9 @@ Clique [aqui](https://discord.com/oauth2/authorize?client_id=483054181176049685&
 ## Diversão 
 | Comando | Descrição | Parâmetros |
 |---------|-----------|------------|
-|j!spam|Spam de mensagens.|`<quantidade>`* `<texto>`* |
 |j!say|Fazer o bot dizer algo.|`<texto>`* |
-|j!fmute|Silenciar alguem por alguns segundos.|`<pessoa>`*º |
 |j!duel|Duele contra alguem valendo coins!|`<coins>`* `<pessoa>`* |
 ## Moderação 
 | Comando | Descrição | Parâmetros |
 |---------|-----------|------------|
-|j!mastermute|Silenciar alguem, sem limite de tempo.|`<segundos>`* `<pessoa>`*º |
 |j!c_event|Criar um evento.|`<evento>`* |
