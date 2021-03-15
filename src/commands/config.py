@@ -158,5 +158,4 @@ async def auto_event(message, commandpar, connection, bot):
             await message.channel.send(f'Os eventos automaticos estão `ativos`.')
         else:
             await message.channel.send(f'Os eventos automaticos estão `desativos`.')
-
 entity.Command(name='event', func=auto_event, category=category, desc=f'Desative ou ative os eventos automaticos.', args=[['booleano', '*']], perm=1)

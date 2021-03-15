@@ -1,5 +1,7 @@
 # JuliaBot
 Um bot de discord feito em python utilizando a API [discord.py](https://github.com/Rapptz/discord.py) e totalmente personalizável.
+
+Clique [aqui](https://discord.com/oauth2/authorize?client_id=483054181176049685&scope=bot) para adicionar a `JuliaBot` ao seu servidor.
 # O que tem no bot?
 
 - Sistema de economia.

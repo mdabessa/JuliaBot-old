@@ -8,50 +8,12 @@ category = 'Diversão'
 entity.Command.newcategory(category, ':game_die:Diversão.')
 
 
-async def spam(message, commandpar, connection, bot):
-    if commandpar !=None:
-        cmdpar = commandpar.split()
-        if len(cmdpar) >= 2:
-            try:
-                number = int(cmdpar[0])
-            except:
-                raise entity.CommandError('Quantas vezes?')
-            
-            if number > 10:
-                raise entity.CommandError('O limite do spam é `10` vezes!')
-
-            msg = str(' '.join(cmdpar[1:]))
-            
-            for i in range(0,number):
-                await message.channel.send(f'{msg}')
-        else:
-            raise entity.CommandError('Falta algo nesse comando!')
-    else:
-        raise entity.CommandError('Quantas vezes? Spam do que?')
-entity.Command(name='spam', func=spam , category=category, desc=f'Spam de mensagens.', args=[['quantidade', '*'], ['texto', '*']], cost=2500)
-
-
 async def cmdsay(message, commandpar, connection, bot):
     if commandpar != None:
         await message.channel.send(commandpar)
     else:
         raise('Falta algo nesse comando')
 entity.Command(name='say', func=cmdsay , category=category, desc=f'Fazer o bot dizer algo.', args=[['texto', '*']], cost=500)
-
-
-async def mute(message, commandpar, connection, bot):
-    if commandpar !=None:
-        time = 15
-        for user in message.mentions:
-            if str(user.id)+str(message.channel.id) in entity.mutes:
-                await message.channel.send(f'{user.name} ja esta silenciado! :zipper_mouth:')
-                return
-            entity.Timer.timer(str(user.id)+str(message.channel.id),time)
-            entity.mutes.append(str(user.id)+str(message.channel.id))
-            await message.channel.send(f'{user.name} foi silenciado por `{time}` segundos! :mute:')
-    else:
-        raise entity.CommandError('Falta algo nesse comando!')
-entity.Command(name='fmute', func=mute , category=category, desc=f'Silenciar alguem por alguns segundos.', args=[['pessoa', '*º']], cost=500)
 
 
 async def _duel(message, commandpar, connection, bot):

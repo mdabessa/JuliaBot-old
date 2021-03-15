@@ -8,25 +8,6 @@ category = 'Moderação'
 entity.Command.newcategory(category, ':shield:Moderação.')
 
 
-async def mastermute(message, commandpar, connection, bot):
-    if commandpar !=None:
-        try:
-            time = int(commandpar.split()[0])
-        except:
-            raise entity.CommandError('Quanto tempo?')
-
-        for user in message.mentions:
-            if str(user.id)+str(message.channel.id) in entity.mutes:
-                await message.channel.send(f'{user.name} ja esta silenciado :zipper_mouth:')
-                return
-            entity.Timer.timer(str(user.id)+str(message.channel.id),time)
-            entity.mutes.append(str(user.id)+str(message.channel.id))
-            await message.channel.send(f'{user.name} foi silenciado por `{time}` segundos :mute: ')
-    else:
-        raise entity.CommandError('Falta algo!')
-entity.Command(name='mastermute', func=mastermute , category=category, desc=f'Silenciar alguem, sem limite de tempo.', args=[['segundos', '*'], ['pessoa', '*º']], perm=1)
-
-
 async def c_event(message, commandpar, connection, bot):
     if commandpar != None:
         marc = 0

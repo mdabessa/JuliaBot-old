@@ -88,7 +88,7 @@ async def ping(message, commandpar, connection, bot):
     t = int((time() - t)*1000)
 
     await m.edit(content=f'Pong!  `{t}ms`')
-entity.Command(name='ping', func=ping , category=category, desc=f'Pong!')
+entity.Command(name='ping', func=ping , category=category, desc=f'Retorna a latência do bot.')
 
 
 async def rememberme(message, commandpar, connection, bot):
