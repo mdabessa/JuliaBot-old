@@ -18,11 +18,12 @@ class CommandError(Exception):
 class Command():
     commands = []
     categories = []
-    def __init__(self, name, func, category, desc='Este comando faz algo!', args=[], cost=0, perm=0):
+    def __init__(self, name, func, category, desc='Este comando faz algo!', aliases=[], args=[], cost=0, perm=0):
         self.name = name
         self.func = func
         self.category = category
         self.desc = desc
+        self.aliases = aliases
         self.args = args
         self.cost = cost
         self.perm = perm
@@ -88,13 +89,16 @@ class Command():
     @classmethod
     def getcommand(cls, guildid, name, connection):
         _command = db.getservercommand(guildid, name, connection)
+
         if _command == None:
             for cmd in cls.commands:
-                if cmd.name == name:
-                    _cmd = ['', cmd.name, '', cmd.desc, cmd.args, cmd.perm, cmd.cost, cmd.category, 1, 0]
-                    leg = ['serverid', 'name', 'message', 'description', 'args', 'permission', 'price', 'category', 'active', 'overwritten']
+                if (cmd.name == name) or (name in cmd.aliases):
+                    _cmd = ['', cmd.name, '', cmd.desc, cmd.aliases, cmd.args, cmd.perm, cmd.cost, cmd.category, 1, 0]
+                    leg = ['serverid', 'name', 'message', 'description', 'aliases', 'args', 'permission', 'price', 'category', 'active', 'overwritten']
                     result = dict(zip(leg, _cmd))
                     return result
+                
+
         else:
             return _command
 
@@ -112,8 +116,8 @@ class Command():
             if c == 1:
                 continue
 
-            _cmd = ['', cmd.name, '', cmd.desc, cmd.args, cmd.perm, cmd.cost, cmd.category, 1, 0]
-            leg = ['serverid', 'name', 'message', 'description', 'args', 'permission', 'price', 'category', 'active', 'overwritten']
+            _cmd = ['', cmd.name, '', cmd.desc, cmd.aliases, cmd.args, cmd.perm, cmd.cost, cmd.category, 1, 0]
+            leg = ['serverid', 'name', 'message', 'description', 'aliases', 'args', 'permission', 'price', 'category', 'active', 'overwritten']
             _commands.append(dict(zip(leg, _cmd)))
 
         return _commands

@@ -13,7 +13,7 @@ async def cmdsay(message, commandpar, connection, bot):
         await message.channel.send(commandpar)
     else:
         raise('Falta algo nesse comando')
-entity.Command(name='say', func=cmdsay , category=category, desc=f'Fazer o bot dizer algo.', args=[['texto', '*']], cost=500)
+entity.Command(name='say', func=cmdsay , category=category, desc=f'Fazer o bot dizer algo.', aliases=['dizer', 'falar'], args=[['texto', '*']], cost=500)
 
 
 async def _duel(message, commandpar, connection, bot):
@@ -47,4 +47,4 @@ async def _duel(message, commandpar, connection, bot):
             
 
             await eve.create([message, points], str(message.guild.id))
-entity.Command(name='duel', func=_duel, category=category, desc=f'Duele contra alguem valendo coins!', args=[['coins', '*'], ['pessoa', '*']])
+entity.Command(name='duel', func=_duel, category=category, desc=f'Duele contra alguem valendo coins!', aliases=['duelo', 'x1'], args=[['coins', '*'], ['pessoa', '*']])

@@ -17,7 +17,7 @@ async def setprefix(message, commandpar, connection, bot):
 
     else:
         raise entity.CommandError('Falta os parametros do comando!')
-entity.Command(name='setprefix', func=setprefix , category=category, desc=f'Mude o prefixo de comandos do bot.', args=[['prefixo', '*']], perm=1)
+entity.Command(name='setprefix', func=setprefix , category=category, desc=f'Mude o prefixo de comandos do bot.', aliases=['definirprefixo', 'defprefixo'], args=[['prefixo', '*']], perm=1)
 
 
 async def addcmd(message, commandpar, connection, bot):
@@ -44,7 +44,7 @@ async def addcmd(message, commandpar, connection, bot):
 
 
     await message.channel.send(embed=emb)
-entity.Command(name='addcmd', func=addcmd, category=category, desc=f'Adicione um comando personalizado, utilize virgula para separar os parametros. [Ainda em teste!]', args=[['comando', '*'], ['mensagem', '*'], ['descrição', '*']], perm=1)
+entity.Command(name='addcommand', func=addcmd, category=category, desc=f'Adicione um comando personalizado, utilize virgula para separar os parametros. [Ainda em teste!]', aliases=['addcmd', 'addcomando', 'adicionarcomando'], args=[['comando', '*'], ['mensagem', '*'], ['descrição', '*']], perm=1)
 
 
 async def delcmd(message, commandpar, connection, bot):
@@ -60,7 +60,7 @@ async def delcmd(message, commandpar, connection, bot):
     else:
         db.delcommand(message.guild.id, connection, commandpar)
         await message.channel.send(f'O comando `{commandpar}` foi deletado com sucesso!')
-entity.Command(name='delcmd', func=delcmd, category=category, desc=f'Delete um comando personalizado!', args=[['comando', '*']], perm=1)
+entity.Command(name='delcommand', func=delcmd, category=category, desc=f'Delete um comando personalizado!', aliases=['delcmd', 'deletecommand', 'deletarcomando', 'delcomando'], args=[['comando', '*']], perm=1)
 
 
 async def commandchannel(message, commandpar, connection, bot):
@@ -98,7 +98,7 @@ async def commandchannel(message, commandpar, connection, bot):
             
             db.editserver(message.guild.id, connection, 'commandchannel', str(channel.id))
             await message.channel.send(f'O canal de comandos foi definido para `<#{channel.id}>`')
-entity.Command(name='cmdchannel', func=commandchannel, category=category, desc=f'Modifique o canal de comandos!', args=[['canal', '']], perm=1)
+entity.Command(name='cmdchannel', func=commandchannel, category=category, desc=f'Modifique o canal de comandos!', aliases=['commandchannel', 'cmdcanal', 'canaldecomandos'], args=[['canal', '']], perm=1)
 
 
 async def eventchannel(message, commandpar, connection, bot):
@@ -135,16 +135,19 @@ async def eventchannel(message, commandpar, connection, bot):
             
             db.editserver(message.guild.id, connection, 'eventchannel', str(channel.id))
             await message.channel.send(f'O canal de eventos foi definido para `<#{channel.id}>`')
-entity.Command(name='eventchannel', func=eventchannel, category=category, desc=f'Modifique o canal de eventos!', args=[['canal', '']], perm=1)
+entity.Command(name='eventchannel', func=eventchannel, category=category, desc=f'Modifique o canal de eventos!', aliases=['canaldeevento', 'eventocanal'], args=[['canal', '']], perm=1)
 
 
 async def auto_event(message, commandpar, connection, bot):
     if commandpar != None:
-        if commandpar.lower() == 'off':
+        on = ['on', '1', 'true', 'yes', 'sim']
+        off = ['off', '0', 'false', 'no', 'nao', 'não']
+
+        if commandpar.lower() in off:
             db.editserver(message.guild.id, connection, 'auto_events', False)
             await message.channel.send('Os eventos automaticosforam `desativados`.')
         
-        elif commandpar.lower() == 'on':
+        elif commandpar.lower() in on:
             db.editserver(message.guild.id, connection, 'auto_events', True)
             await message.channel.send('Os eventos automaticosforam `ativados`.')
 
@@ -158,4 +161,4 @@ async def auto_event(message, commandpar, connection, bot):
             await message.channel.send(f'Os eventos automaticos estão `ativos`.')
         else:
             await message.channel.send(f'Os eventos automaticos estão `desativos`.')
-entity.Command(name='event', func=auto_event, category=category, desc=f'Desative ou ative os eventos automaticos.', args=[['booleano', '*']], perm=1)
+entity.Command(name='event', func=auto_event, category=category, desc=f'Desative ou ative os eventos automaticos.', aliases=['evento', 'events', 'eventos'], args=[['booleano', '*']], perm=1)

@@ -48,7 +48,11 @@ async def _help(message, commandpar, connection, bot):
             par = prefix + cmd['name'] + ' '
             for i in cmd['args']:
                 par += f'`{i[0]}`{i[1]} '
- 
+            
+            aliases = ''
+            for i in cmd['aliases']:
+                aliases += f'`{i}` '
+
             if cmd['price'] == 0:
                 valor = 'Grátis.'
             else:
@@ -68,18 +72,20 @@ async def _help(message, commandpar, connection, bot):
                 emb.add_field(name='Parametros:', value=par, inline=False)
             emb.add_field(name='Valor:', value=valor, inline=False)
             emb.add_field(name='Categoria:', value=cmd['category']+'.', inline=False)
+            if cmd['aliases'] != []:
+                emb.add_field(name='Aliases:', value=aliases, inline=False)
             emb.add_field(name='Nivel de Permissão:', value=perm, inline=False)
 
             await message.channel.send(embed=emb)
         else:
             raise entity.CommandError(f'Nenhum comando com o nome {commandpar} existe!')
-entity.Command(name='help', func=_help, category=category, desc='Listar todos os comandos e suas descrições.', args=[['comando', '']])
+entity.Command(name='help', func=_help, category=category, desc='Listar todos os comandos e suas descrições.', aliases=['ajuda', 'h'], args=[['comando', '']])
 
 
 async def getprefix(message, commandpar, connection, bot):
     prefix = db.getserver(message.guild.id, connection)['prefix']
     await message.channel.send(f'O prefixo do servidor é: `{prefix}`')
-entity.Command(name='prefix', func=getprefix , category=category, desc=f'Retorna o prefixo do bot no servidor.')
+entity.Command(name='prefix', func=getprefix , category=category, desc=f'Retorna o prefixo do bot no servidor.', aliases=['prefixo'])
 
 
 async def ping(message, commandpar, connection, bot):
@@ -88,10 +94,10 @@ async def ping(message, commandpar, connection, bot):
     t = int((time() - t)*1000)
 
     await m.edit(content=f'Pong!  `{t}ms`')
-entity.Command(name='ping', func=ping , category=category, desc=f'Retorna a latência do bot.')
+entity.Command(name='ping', func=ping , category=category, desc=f'Retorna a latência do bot.', aliases=['latency', 'latencia'])
 
 
-async def rememberme(message, commandpar, connection, bot):
+async def remindme(message, commandpar, connection, bot):
     if commandpar == None:
         raise entity.CommandError('Você precisa especificar quando!')
 
@@ -103,11 +109,10 @@ async def rememberme(message, commandpar, connection, bot):
 
     db.addreminder(message.guild.id, message.channel.id, message.id, message.author.id, future, connection)
     await message.reply(f'Eu irei te notificar no dia `{future.strftime("%Y-%m-%d %H:%M")}`!')
-entity.Command(name='rememberme', func=rememberme, category=category, desc='O bot irá te notificar no dia desejado, relembrando sua mensagem!', args=[['tempo', '*']])
+entity.Command(name='remindme', func=remindme, category=category, desc='O bot irá te notificar no dia desejado, relembrando sua mensagem!', aliases=['rm', 'relembreme', 'lembrete', 'remind', 'clock'], args=[['tempo', '*']])
 
 
 async def chatclear(message, commandpar, connection, bot):
     text = ''.join(['** **\n' for x in range(0, 30)])
     await message.channel.send(text)
-
-entity.Command(name='upchat', func=chatclear, category=category, desc='"Limpe" o chat do discord!', cost=250)
+entity.Command(name='upchat', func=chatclear, category=category, desc='"Limpe" o chat do discord!', aliases=['subirchat'], perm=1)
