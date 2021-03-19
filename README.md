@@ -45,6 +45,7 @@ Clique [aqui](https://discord.com/oauth2/authorize?client_id=483054181176049685&
 |j!roulette|Roletar pontos.|`<coins>`* |Livre.|
 |j!shop|Loja de itens.||Livre.|
 |j!buy|Comprar um item.|`<id_do_item>`* |Livre.|
+|j!distance|Calcula a diferença de coins entre você e outra pessoa.|`<pessoa>`* |Livre.|
 ## Diversão 
 | Comando | Descrição | Parâmetros | Permissão |
 |---------|-----------|------------|-----------|

@@ -126,3 +126,23 @@ async def buyitem(message, commandpar, connection, bot):
     if marc == 0:
         raise entity.CommandError(f'{message.author.mention} o item `{commandpar}` não existe.')
 entity.Command(name='buy', func=buyitem, category=category, desc=f'Comprar um item.', aliases=['comprar'], args=[['id do item', '*']])
+
+
+async def distance(message, commandpar, connection, bot):
+    if len(message.mentions) < 1:
+        raise entity.CommandError('Você precisa/deve mensionar apenas `1 pessoa`!')
+
+    p1 = db.getpoints(message.author.id, message.guild.id, connection)
+    p2 = db.getpoints(message.mentions[0].id, message.guild.id, connection)
+
+    dif = p1 - p2
+
+    if dif < 0:
+        await message.channel.send(f'{message.author.mention}, {message.mentions[0].mention} possui `{abs(dif)}` coins a `mais` que você!')
+
+    elif dif == 0:
+        await message.channel.send(f'{message.author.mention}, {message.mentions[0].mention} possui a `mesma` quantidade de coins que você!')
+
+    elif dif > 0:
+        await message.channel.send(f'{message.author.mention}, {message.mentions[0].mention} possui `{dif}` coins a `menos` que você!')
+entity.Command(name='distance', func=distance, category=category, desc=f'Calcula a diferença de coins entre você e outra pessoa.', aliases=['distancia', 'dist', 'distcoins', 'dc'], args=[['pessoa', '*']])
