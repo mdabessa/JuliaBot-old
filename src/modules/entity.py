@@ -249,7 +249,9 @@ class Client(discord.Client):
                 db.addserver(guild.id, self.db_connection)
 
         Command.newcategory('personalizado', ':paintbrush:Personalizados.')
+        
         self.reminder.start()
+        self.anime_notifier.start()
 
         print(f'{self.user} esta logado em {len(self.guilds)} grupos!')
         print('Pronto!')
@@ -384,3 +386,35 @@ class Client(discord.Client):
                     except:
                         print('Não foi possivel recuperar a mensagem e nem o autor do lembrete!')
                         db.delreminder(r['id'], self.db_connection)
+    
+
+    @tasks.loop(seconds=30)
+    async def anime_notifier(self):
+        print('Verificando novos animes...')
+        animes = db.get_all_animes(self.db_connection, processed=False)
+
+        if len(animes) == 0:
+            return
+
+        animes.reverse()
+        for guild in self.guilds:
+            server = db.getserver(guild.id, self.db_connection)
+            channel = server['anime_channel']
+            try:
+                channel = self.get_channel(int(channel))
+            except:
+                channel = None
+
+            if channel != None:
+                for ani in animes:
+                    try: 
+                        embed = discord.Embed(title=ani['anime'], url=ani['link'], description=f'Episódio {ani["episode"]}', color=0xe6dc56)
+                        embed.set_image(url=ani['imagelink'])
+                        embed.set_footer(text=ani['site'])
+
+                        await channel.send(embed=embed)
+                    except Exception as e:
+                        print(e)
+    
+        for ani in animes:
+            db.update_anime(ani['id'], self.db_connection)

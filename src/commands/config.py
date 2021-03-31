@@ -162,3 +162,42 @@ async def auto_event(message, commandpar, connection, bot):
         else:
             await message.channel.send(f'Os eventos automaticos estão `desativos`.')
 entity.Command(name='event', func=auto_event, category=category, desc=f'Desative ou ative os eventos automaticos.', aliases=['evento', 'events', 'eventos'], args=[['booleano', '*']], perm=1)
+
+
+async def anime_channel(message, commandpar, connection, bot):
+    if commandpar == None:
+        server = db.getserver(message.guild.id, connection)
+        channel = server['anime_channel']    
+        if channel != None:
+            channel = bot.get_channel(int(channel))
+
+        prefix = server['prefix']
+
+        if channel == None:
+            await message.channel.send(f'O servidor `{message.guild}` não possui um canal para as notifições de animes.')
+        else:
+            await message.channel.send(f'Canal de notificações de animes: <#{channel.id}>\n' +
+            f'Para mudar o canal de animes, utilize `{prefix}animechannel #canal` ou `{prefix}anime_channel .` para desabilitar as notificações de animes em todos os canais.'
+            )
+    else:
+        if commandpar == '.':
+            db.editserver(message.guild.id, connection, 'anime_channel', None)
+            await message.channel.send(f'As notificações de animes foram desabilitadas.')
+
+        else:
+            channel = commandpar
+            rep = ['<','#','>']
+            for r in rep:
+                channel = channel.replace(r, '')
+
+            try:
+                channel = bot.get_channel(int(channel))
+            except:
+               raise entity.CommandError(f'Nenhum canal com esse nome, marque o canal com `#` para selecionar o canal desejado.')
+
+            if channel == None:
+                raise entity.CommandError(f'Nenhum canal com esse nome, marque o canal com `#` para selecionar o canal desejado.')
+            
+            db.editserver(message.guild.id, connection, 'anime_channel', str(channel.id))
+            await message.channel.send(f'O canal de notificações de animes foi definido para `<#{channel.id}>`')
+entity.Command(name='animechannel', func=anime_channel, category=category, desc=f'Define o canal de notificações de novos episódios de animes.', aliases=['animecanal', 'ac', 'canalanime'], args=[['canal', '*']], perm=1)

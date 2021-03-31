@@ -200,7 +200,7 @@ def getserver(guildid, connection):
     )
     r = cursor.fetchone()
 
-    leg = ['prefix', 'commandchannel', 'eventchannel', 'auto_events']
+    leg = ['prefix', 'commandchannel', 'eventchannel', 'auto_events', 'anime_channel']
 
     if r != None:
         result = dict(zip(leg, r[1:]))
@@ -259,3 +259,42 @@ def getallreminder(connection):
         resp.append(dict(zip(leg, r)))
 
     return resp
+
+
+def get_all_animes(connection, limit=None, processed=None):
+    cursor = connection.cursor()
+    query = 'SELECT * FROM animes '
+    
+    if processed != None:
+        processed = bool(processed)
+        query += 'WHERE processed = {p} '.format(p=processed)
+
+    query += 'ORDER BY id ASC '
+
+    if limit != None:
+        limit = int(limit)
+        query += 'LIMIT lim '.format(lim=limit)
+
+
+    cursor.execute(query)
+    r = cursor.fetchall()
+    cursor.close()
+
+    legend = ['id', 'alid', 'episode','anime', 'imagelink', 'link', 'site', 'processed']
+    result = []
+    for i in r:
+        result.append(dict(zip(legend, i)))
+
+    return result
+
+
+def update_anime(anime_id, connection):
+    cursor = connection.cursor()
+    cursor.execute('''
+        UPDATE animes
+        SET processed = TRUE
+        WHERE id={i}
+    '''.format(i=anime_id))
+
+    cursor.close()
+    connection.commit()
