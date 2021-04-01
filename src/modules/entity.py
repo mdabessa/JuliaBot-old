@@ -8,9 +8,6 @@ from random import randint, choice
 from discord.ext import tasks
 
 
-mutes = []
-
-
 class CommandError(Exception):
     pass
 
@@ -275,13 +272,6 @@ class Client(discord.Client):
                 db.addpoints(member.id,message.guild.id,pointsqt, self.db_connection)
 
 
-        if str(message.author.id)+str(message.channel.id) in mutes:
-            if Timer.timer(str(message.author.id)+str(message.channel.id),0):
-                mutes.remove(str(message.author.id)+str(message.channel.id))
-            else:
-                await message.delete()
-                return
-        
         auto_events = server['auto_events']
         if auto_events:
             if Timer.timer('event_time_'+str(message.guild.id), randint(1000,10000), recreate=1) == True:
@@ -388,7 +378,7 @@ class Client(discord.Client):
                         db.delreminder(r['id'], self.db_connection)
     
 
-    @tasks.loop(seconds=30)
+    @tasks.loop(seconds=600)
     async def anime_notifier(self):
         print('Verificando novos animes...')
         animes = db.get_all_animes(self.db_connection, processed=False)

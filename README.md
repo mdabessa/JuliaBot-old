@@ -25,6 +25,7 @@ Clique [aqui](https://discord.com/oauth2/authorize?client_id=483054181176049685&
 |j!cmdchannel|Modifique o canal de comandos!|`<canal>` |Admin.|
 |j!eventchannel|Modifique o canal de eventos!|`<canal>` |Admin.|
 |j!event|Desative ou ative os eventos automaticos.|`<booleano>`* |Admin.|
+|j!animechannel|Define o canal de notificações de novos episódios de animes.|`<canal>`* |Admin.|
 ## Core 
 | Comando | Descrição | Parâmetros | Permissão |
 |---------|-----------|------------|-----------|
