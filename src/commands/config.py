@@ -37,7 +37,7 @@ async def addcmd(message, commandpar, connection, bot):
 
     db.addcommand(message.guild.id, connection, commandpar[0], commandpar[1], commandpar[2])
 
-    emb = discord.Embed(title='Novo Comando:', description=commandpar[0], color=0xe6dc56)
+    emb = discord.Embed(title='Novo Comando:', description=commandpar[0], color=bot.color)
 
     emb.add_field(name='Mensagem:', value=commandpar[1], inline=False)
     emb.add_field(name='Descrição:', value=commandpar[2], inline=False)

@@ -236,7 +236,7 @@ class Client(discord.Client):
         super().__init__(**kwargs)
         self.db_connection = db_connection
         self.master_id = master_id
-
+        self.color = 0xe6dc56
 
     async def on_ready(self):
         await self.change_presence(activity=discord.Game(f'{len(self.guilds)} servers!'))
@@ -398,7 +398,7 @@ class Client(discord.Client):
             if channel != None:
                 for ani in animes:
                     try: 
-                        embed = discord.Embed(title=ani['anime'], url=ani['link'], description=f'Episódio {ani["episode"]}', color=0xe6dc56)
+                        embed = discord.Embed(title=ani['anime'], url=ani['link'], description=f'Episódio {ani["episode"]}', color=self.color)
                         embed.set_image(url=ani['imagelink'])
                         embed.set_footer(text=ani['site'])
 

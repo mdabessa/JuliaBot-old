@@ -8,6 +8,7 @@ Clique [aqui](https://discord.com/oauth2/authorize?client_id=483054181176049685&
 - Rank do servidor baseado em quem possui mais `coins`.
 - Eventos aleatórios para distribuir `coins`.
 - Possibilidade de criar comandos personalizádos para o servidor.
+- Notificar episódios novos de animes.
 - Bot totalmente personalizável.
 
 # Comandos 

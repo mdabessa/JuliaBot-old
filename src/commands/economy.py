@@ -25,7 +25,7 @@ async def coinsrank(message, commandpar, connection, bot):
     if rank == None:   
         raise entity.CommandError('Não foi possivel execultar esta ação!')
 
-    emb = discord.Embed(title='Rank', color=0xe6dc56)
+    emb = discord.Embed(title='Rank', color=bot.color)
     for num, i in enumerate(rank):
         user = bot.get_user(int(i[1]))
         points = i[2]
@@ -90,7 +90,7 @@ async def shop(message, commandpar, connection, bot):
         await message.channel.send('Esse servidor não possui itens a venda!')
 
     else:
-        emb = discord.Embed(title='Loja', color=0xe6dc56)
+        emb = discord.Embed(title='Loja', color=bot.color)
 
         for i in items:
             emb.add_field(name=f'{i[1]} - {i[2]}', value=f':coin:{i[3]}c', inline=True)

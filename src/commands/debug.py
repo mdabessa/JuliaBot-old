@@ -1,5 +1,3 @@
-from random import randint
-import discord
 import modules.database as db
 import modules.entity as entity
 

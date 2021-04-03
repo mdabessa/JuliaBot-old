@@ -14,7 +14,7 @@ entity.Command.newcategory(category, ':brain:Core.')
 async def _help(message, commandpar, connection, bot): 
     if commandpar == None:
         prefix = db.getserver(message.guild.id, connection)['prefix']
-        emb = discord.Embed(title='Lista de Comandos', description=f'{prefix}help `comando`', color=0xe6dc56)
+        emb = discord.Embed(title='Lista de Comandos', description=f'{prefix}help `comando`', color=bot.color)
 
         commands = entity.Command.getallcommands(message.guild.id, connection)
         categories = entity.Command.getcategories()
@@ -65,7 +65,7 @@ async def _help(message, commandpar, connection, bot):
             else:
                 perm = 'DEBUG.'
 
-            emb = discord.Embed(title=f'{prefix}{cmd["name"]}'.upper(), color=0xe6dc56)
+            emb = discord.Embed(title=f'{prefix}{cmd["name"]}'.upper(), color=bot.color)
 
             emb.add_field(name='Descrição:', value=cmd['description'], inline=False)
             if cmd['args'] != []:
