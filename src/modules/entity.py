@@ -241,6 +241,8 @@ class Client(discord.Client):
     async def on_ready(self):
         await self.change_presence(activity=discord.Game(f'{len(self.guilds)} servers!'))
         
+        db.initdb(self.db_connection)
+
         for guild in self.guilds:
             if db.getserver(guild.id, self.db_connection) == None:
                 db.addserver(guild.id, self.db_connection)

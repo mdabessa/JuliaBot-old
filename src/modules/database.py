@@ -1,5 +1,95 @@
 import datetime
 
+
+def initdb(connection):
+    cursor = connection.cursor()
+    query = []
+
+    # animes table
+    query.append('''
+        CREATE TABLE IF NOT EXISTS animes(
+            id SERIAL,
+            alid INT,
+            episode INT,
+            anime VARCHAR(255),
+            imagelink VARCHAR(255),
+            link VARCHAR(255),
+            site VARCHAR(255),
+            processed BOOLEAN DEFAULT FALSE,
+            PRIMARY KEY (alid, episode)
+        )
+    ''')
+    
+    # commands table
+    query.append('''
+        CREATE TABLE IF NOT EXISTS commands(
+            serverid VARCHAR(255),
+            name VARCHAR(255),
+            message VARCHAR(255),
+            description VARCHAR(255),
+            permission int,
+            price int,
+            active int DEFAULT 1,
+            overwritten int DEFAULT 1,
+            PRIMARY KEY (serverid, name)
+        )
+    ''')
+
+    # reminder table
+    query.append('''
+        CREATE TABLE IF NOT EXISTS reminder(
+            serverid VARCHAR(255)
+            channelid VARCHAR(255) 
+            messageid VARCHAR(255) 
+            userid VARCHAR(255) 
+            creationdate timestamp without time zone,
+            reminderdate timestamp without time zone,
+            id SERIAL,
+            PRIMARY KEY (id)
+        )
+    ''')
+
+    # servers table
+    query.append('''
+        CREATE TABLE IF NOT EXISTS servers(
+            serverid VARCHAR(255),
+            prefix VARCHAR(10)  DEFAULT 'j!',
+            commandchannel VARCHAR(255),
+            eventchannel VARCHAR(255),
+            auto_events boolean DEFAULT true,
+            anime_channel VARCHAR(255) DEFAULT NULL,
+            PRIMARY KEY (serverid)
+        )
+    ''')
+
+    # shop table
+    query.append('''
+        CREATE TABLE IF NOT EXISTS shop(
+            itemid SERIAL,
+            serverid VARCHAR(255),
+            userid VARCHAR(255),
+            name VARCHAR(255),
+            price integer,
+            PRIMARY KEY ( itemid)
+        )
+    ''')
+
+    # users table
+    query.append('''
+        CREATE TABLE IF NOT EXISTS users(
+            serverid character varying(255) COLLATE pg_catalog."default" NOT NULL,
+            userid character varying(255) COLLATE pg_catalog."default" NOT NULL,
+            points integer NOT NULL,
+            CONSTRAINT users_pkey PRIMARY KEY (serverid, userid)
+        )
+    ''')
+
+    for q in query:
+        cursor.execute(q)
+
+    connection.commit()
+
+
 def getpoints(userid, guildid, connection):
     cursor = connection.cursor()
     try:
