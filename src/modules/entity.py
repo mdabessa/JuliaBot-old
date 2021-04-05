@@ -237,6 +237,8 @@ class Client(discord.Client):
         self.db_connection = db_connection
         self.master_id = master_id
         self.color = 0xe6dc56
+        self.allowed_bots = [483054181176049685, 817024987629223948]
+
 
     async def on_ready(self):
         await self.change_presence(activity=discord.Game(f'{len(self.guilds)} servers!'))
@@ -260,6 +262,9 @@ class Client(discord.Client):
         if message.author == self.user:
             return
 
+        if message.author.bot == True and message.author.id not in self.allowed_bots:
+            return
+
         server = db.getserver(message.guild.id, self.db_connection)
 
         #add (pointsqt) points every (pointstime) seconds
@@ -268,7 +273,7 @@ class Client(discord.Client):
 
         if Timer.timer('point_time_'+str(message.guild.id), pointstime, recreate=1):
             for member in message.guild.members:
-                if member.status == 'offline' or (member.bot == True and member.id != self.user.id):
+                if member.status == 'offline' or (member.bot == True and member.id not in self.allowed_bots):
                     continue
                 
                 db.addpoints(member.id,message.guild.id,pointsqt, self.db_connection)
