@@ -90,14 +90,42 @@ async def shop(message, commandpar, connection, bot):
         await message.channel.send('Esse servidor não possui itens a venda!')
 
     else:
-        emb = discord.Embed(title='Loja', color=bot.color)
+        img = discord.File('src/images/coin.png')
+        emb = discord.Embed(title='Loja de itens', color=bot.color)
+        emb.set_thumbnail(url='attachment://coin.png')
 
         for i in items:
-            emb.add_field(name=f'{i[1]} - {i[2]}', value=f':coin:{i[3]}c', inline=True)
+            emb.add_field(name=i['name'], value=f'id: {i["itemid"]}', inline=True)
         
-        emb.set_footer(text=f'{db.getserver(message.guild.id, connection)["prefix"]}buy [id]')
-        await message.channel.send(embed=emb)
+        prefix = db.getserver(message.guild.id, connection)["prefix"]
+        emb.set_footer(text=f'{prefix}buy [id] // {prefix}iteminfo [id]')
+        await message.channel.send(file=img, embed=emb)
 entity.Command(name='shop', func=shop, category=category, desc=f'Loja de itens.', aliases=['loja'])
+
+
+async def iteminfo(message, commandpar, connection, bot):
+    if commandpar == None:
+        raise entity.CommandError('Qual item você quer ver os detalhes ?')
+    try:
+        item_id = int(commandpar)
+    except:
+        raise entity.CommandError('O item tem que ser referenciado com o um `ID`.')
+    
+    item = db.getitem(message.guild.id, item_id, connection)
+
+    if item != None:
+        user = bot.get_user(int(item['userid']))
+        
+        emb = discord.Embed(title=item['name'], color=bot.color)
+        emb.add_field(name='Valor:', value=f'{item["price"]}:coin:')
+        if user != None:
+            emb.set_author(name=user.name, icon_url=user.avatar_url)
+
+        emb.set_footer(text=f'{db.getserver(message.guild.id, connection)["prefix"]}buy {item["itemid"]}')
+        await message.channel.send(embed=emb)
+    else:
+        raise entity.CommandError(f'{message.author.mention} o item `{commandpar}` não existe.')
+entity.Command(name='iteminfo', func=iteminfo, category=category, desc='Veja as informações de um item da loja.', aliases=['ii'], args=[['id do item', '*']])
 
 
 async def buyitem(message, commandpar, connection, bot):
@@ -109,21 +137,18 @@ async def buyitem(message, commandpar, connection, bot):
     except:
         raise entity.CommandError('O item tem que ser referenciado com o um `ID`.')
 
-    items = db.getshop(message.guild.id, connection)
+    i = db.getitem(message.guild.id, item, connection)
     
-    marc = 0
-    for i in items:
-        if i[1] == item:
-            marc = 1
-            points = db.getpoints(message.author.id, message.guild.id, connection)
+    if i != None:
+        points = db.getpoints(message.author.id, message.guild.id, connection)
 
-            if i[3] > points:
-                raise entity.CommandError('Coins insuficientes!')
+        if i['price'] > points:
+            raise entity.CommandError('Coins insuficientes!')
 
-            db.subpoints(message.author.id, message.guild.id, i[3], connection)
-            await message.channel.send(f'{message.author.mention} comprou `{i[1]} - {i[2]}` por `{i[3]}c`.')
+        db.subpoints(message.author.id, message.guild.id, i['price'], connection)
+        await message.channel.send(f'{message.author.mention} comprou `{i["itemid"]} - {i["name"]}` por `{i["price"]}c`.')
 
-    if marc == 0:
+    else:
         raise entity.CommandError(f'{message.author.mention} o item `{commandpar}` não existe.')
 entity.Command(name='buy', func=buyitem, category=category, desc=f'Comprar um item.', aliases=['comprar'], args=[['id do item', '*']])
 

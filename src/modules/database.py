@@ -169,21 +169,35 @@ def getshop(guildid, connection):
         ORDER BY Price Desc
         """.format(gid=str(guildid))
         )
+        leg = ['itemid', 'serverid', 'userid', 'name', 'price']
         result = cursor.fetchall()
 
-        return result
+        return [dict(zip(leg, r)) for r in result]
     except:
         return []
 
 
-def additem(guildid, item_name, price, connection):
+def getitem(guildid, itemid, connection):
+    cursor = connection.cursor()
+    cursor.execute('''
+    SELECT * FROM shop
+    WHERE serverid = %s and itemid = %s
+    ''', (str(guildid), itemid))
+
+    result = cursor.fetchone()
+
+    leg = ['itemid', 'serverid', 'userid', 'name', 'price']
+    return dict(zip(leg, result)) if result != None else None
+
+
+def additem(guildid, userid, item_name, price, connection):
     cursor = connection.cursor()
     cursor.execute(
     '''
-        INSERT INTO Shop(ServerId, name, price)
-        VALUES('{gid}', '{n}', '{p}')
+        INSERT INTO Shop(ServerId, userid, name, price)
+        VALUES('{gid}', '{uid}', '{n}', '{p}')
                 
-    '''.format(gid=str(guildid), n=item_name, p=price)
+    '''.format(gid=str(guildid), uid=userid, n=item_name, p=price)
     )
     connection.commit()
 

@@ -117,7 +117,7 @@ async def shopadditem(message, commandpar, connection, bot):
     
     item_name = ' '.join(cmdpar[1:])
 
-    db.additem(message.guild.id, item_name, price, connection)
+    db.additem(message.guild.id, message.author.id, item_name, price, connection)
     await message.channel.send(f'Item: `{item_name}` foi adicionado a loja por `{price}` coins!')
 entity.Command(name='additem', func=shopadditem, category=category, desc=f'Adicionar um item a loja.', aliases=['adicionaritem'], args=[['preço', '*'], ['item', '*']], perm=1)
 
@@ -131,15 +131,13 @@ async def shopdelitem(message, commandpar, connection, bot):
     except:
         raise entity.CommandError('O item tem que ser referenciado com o um `ID`.')
 
-    items = db.getshop(message.guild.id, connection)
+    i = db.getitem(message.guild.id, item, connection)
 
-    marc = 0
-    for i in items:
-        if i[1] == item:
-            marc = 1
-            db.delitem(message.guild.id, item, connection)
-            await message.channel.send(f'{message.author.mention} removeu o item `{i[1]} - {i[2]}` da loja!')
 
-    if marc == 0:
+    if i != None:
+        db.delitem(message.guild.id, item, connection)
+        await message.channel.send(f'{message.author.mention} removeu o item `{i["itemid"]} - {i["name"]}` da loja!')
+
+    else:
         raise entity.CommandError(f'{message.author.mention} o item `{commandpar}` não existe.')
 entity.Command(name='delitem', func=shopdelitem, category=category, desc=f'Deletar itens da loja.', aliases=['deleteitem', 'deletaritem', 'removeritem', 'removeitem'], args=[['id do item', '*']], perm=1)
