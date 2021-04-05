@@ -38,10 +38,10 @@ def initdb(connection):
     # reminder table
     query.append('''
         CREATE TABLE IF NOT EXISTS reminder(
-            serverid VARCHAR(255)
-            channelid VARCHAR(255) 
-            messageid VARCHAR(255) 
-            userid VARCHAR(255) 
+            serverid VARCHAR(255),
+            channelid VARCHAR(255),
+            messageid VARCHAR(255), 
+            userid VARCHAR(255),
             creationdate timestamp without time zone,
             reminderdate timestamp without time zone,
             id SERIAL,
