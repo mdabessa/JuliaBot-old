@@ -7,7 +7,7 @@ from os import environ
 from environs import Env
 import modules.entity as entity
 from commands import *
-from events import *
+from scripts import *
 
 
 env = Env()

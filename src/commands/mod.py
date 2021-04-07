@@ -8,22 +8,34 @@ entity.Command.newcategory(category, ':shield:Moderação.')
 
 async def c_event(message, commandpar, connection, bot):
     if commandpar != None:
-        marc = 0
-        for eve in entity.Event.events:
-            if eve.command_create == False:
-                continue
-            if eve.name == commandpar:
-                eve.clear(str(message.guild.id))
-                await message.channel.send(f'{message.author.mention} evento `{eve.name}` criado com sucesso!')
-                await eve.create([message.channel], str(message.guild.id))
-                marc = 1
+        eve = entity.Script.fetch_function(commandpar)
+        if len(eve) == 0:
+            raise entity.CommandError('Nenhum evento com esse nome!')
+        
+        eve = eve[0]
+        try:
+            scr = entity.Script(f'created_{commandpar}_{message.guild.id}', eve['name'], time_out=30)
+            await message.channel.send(f'{message.author.mention} evento `{eve["name"]}` criado com sucesso!')
+        except entity.Script.ScriptIndiceLimit:
+            prefix = db.getserver(message.guild.id, bot.db_connection)['prefix']
+            raise entity.CommandError(f'{message.author.mention}, Número `máximo` de eventos simultâneos atingido!, finalize os eventos que ja estão ocorrendo ou'+
+                f'utilize o comando `{prefix}clean_events`, para deletar todos os eventos que estão ocorrendo no momento.')
+        except Exception as e:
+            print(e)
 
-        if marc == 0:
-            raise entity.CommandError('Nenhum evento com esse nome')
+        await scr.execute([message.channel], bot)
     else:
-        raise entity.CommandError('Falta algo!')
+        raise entity.CommandError('Você precisa declarar qual evento você quer criar!')
 entity.Command(name='c_event', func=c_event , category=category, desc=f'Criar um evento.', aliases=['c_evento', 'createevent', 'criarevento'], args=[['evento', '*']], perm=1)
 
+
+async def clean_events(message, commandpar, connection, bot):
+    scripts = entity.Script.get_scripts()
+    for i in range(len(scripts)):
+        scripts[0].kill()
+
+    await message.add_reaction('✅')
+entity.Command(name='clean_events', func=clean_events, category=category, desc='Limpar todos os eventos.', aliases=['limpar_eventos', 'le'], perm=1)
 
 
 async def setcoins(message, commandpar, connection, bot):

@@ -12,7 +12,7 @@ class CommandError(Exception):
     pass
 
 
-class Command():
+class Command:
     commands = []
     categories = []
     def __init__(self, name, func, category, desc='Este comando faz algo!', aliases=[], args=[], cost=0, perm=0):
@@ -141,71 +141,132 @@ class Command():
         return cls.categories
 
 
-class Event():
-    events = []
-    def __init__(self, name:str, createfunc, executefunc, trigger='react', desc='Nothing', command_create=True, loop_event_create=True):
-        self.name = name
-        self.createfunc = createfunc
-        self.exec = executefunc
-        self.desc = desc
-        self.trigger = trigger
-        self.command_create = command_create
-        self.loop_event_create = loop_event_create
-        self.cache = dict()
-        Event.events.append(self)
+class Script:
+    scripts = []
+    functions = []
+    index = 0
 
-    async def create(self, par, ind:str):
-        cache = self.getcache(ind)
-
-        if cache == None:
-            cache = await self.createfunc(par)
-            self.cache[ind] = cache
+    class FuncError(Exception):
+        pass
+    
+    
+    class ScriptIndiceLimit(Exception):
+        pass
 
 
-    async def execute(self, par, ind:str):
-        cache = self.getcache(ind)
+    def __init__(self, name, func_name, time_out=0):
+        func = Script.fetch_function(func_name)[0]
+        if len(func) == 0:
+            raise Script.FuncError(f'Nenhuma função registrada com o nome "{func_name}".')
 
-        if cache == None:
-            return
         
-        if cache == True:
-            self.clear(ind)
-            return
-
-        cache = await self.exec(par, cache)
-        self.cache[ind] = cache
-
-
-    def msgvalidation(self, msg, ind:str):
-        cache = self.getcache(ind)
-        if cache == None:
-            return False
+        script = Script.fetch_script(name, by='refname')
+        if len(script) >= func['limit_by_name']:
+            raise Script.ScriptIndiceLimit(f'Scripts com o nome "{name}", não podem ser mais criados.')
+    
         
-        if cache == True:
-            return False
+        self.name = name+'_ind'+str(Script.index)
+        self.refname = name
+        self.func = func
+        self.created_time = datetime.datetime.now()
+        self.last_execute = None
+        self.time_out = time_out
+        self.cache = {
+            'status': 'created'
+        }
 
-        if cache[0] == msg:
-            return True
-        else:
-            return False
+        Script.scripts.append(self)
+        Script.index += 1
 
 
-    def getcache(self, ind):
-        ind = str(ind)
+    async def execute(self, args, bot):
         try:
-            cache = self.cache[ind]
-        except:
-            cache = None
+            await self.func['function'](self.cache, args, bot)
+            self.last_execute = datetime.datetime.now()
+            if self.cache['status'] == 0:
+                Script.scripts.remove(self)
+            
 
-        return cache
-
-
-    def clear(self, ind:str):
-        if self.getcache(ind) != None:
-            self.cache.pop(ind)
+        except Exception as e:
+            print(e)
 
 
-class Timer():
+    def kill(self):
+        Script.scripts.remove(self)
+
+
+    @staticmethod
+    def new_function(function, name=None, tag='default', triggers=['reaction'], limit_by_name=1):
+        func = dict()
+        func['function'] = function
+        func['tag'] = tag
+        func['triggers'] = triggers
+        func['limit_by_name'] = limit_by_name
+
+        if name == None:
+            func['name'] = function.__name__
+        else:
+            func['name'] = name
+
+        Script.functions.append(func)
+
+
+    @staticmethod
+    def get_functions():
+        return Script.functions
+
+    @staticmethod
+    def fetch_function(query, by='name'):
+        funcs = []
+        for func in Script.get_functions():
+            try:
+                if func[by] == query:
+                    funcs.append(func)
+            except:
+                continue
+                
+        
+        return funcs
+
+    @staticmethod
+    def get_scripts():
+        return Script.scripts
+    
+    @staticmethod
+    def fetch_script(query, by='name', _in='script'):
+        scrs = []
+        if _in=='cache':
+            for s in Script.get_scripts():
+                try:
+                    if s.cache[by] == query:
+                        scrs.append(s)
+                except:
+                    continue
+        elif _in=='script':
+            for s in Script.get_scripts():
+                try:
+                    attr = getattr(s, by)
+                    if attr == query:
+                        scrs.append(s)
+                    elif (query in attr) and (isinstance(attr, list)):
+                        scrs.append(s)
+                except:
+                    continue
+        
+        elif _in=='function':
+            for s in Script.get_scripts():
+                try:
+                    func = s.func
+                    if func[by] == query:
+                        scrs.append(s)
+                    elif (query in func[by]) and (isinstance(func[by], list)):
+                        scrs.append(s)
+                except:
+                    continue
+        return scrs
+    
+
+class Timer:
     timers = []
 
     @classmethod
@@ -293,13 +354,11 @@ class Client(discord.Client):
                     db.editserver(message.guild.id, self.db_connection, 'eventchannel', None)
                     eventchannel = message.channel
                 
-                
-                eve = choice([i for i in Event.events if i.loop_event_create])
-                eve.clear(str(message.guild.id))
-                
+                # Create scripts/events only for functions that has the tag 'event'
+                eve = choice([i for i in Script.fetch_function('event', by='tag')])
+                scr = Script(f'{eve["name"]}_{message.guild.id}', eve['name'], time_out=600)
+                await scr.execute([eventchannel], self)
             
-                await eve.create([eventchannel], str(message.guild.id))
-                        
 
         try:
             print(f'{message.guild} #{message.channel} //{message.author} : {message.content}')
@@ -336,9 +395,8 @@ class Client(discord.Client):
                 await Command.trycommand(message, content, self.db_connection, self.master_id, self)
  
 
-            for eve in Event.events:
-                if eve.trigger == 'message':
-                    await eve.execute([message, self.db_connection], str(message.guild.id))
+            for eve in Script.fetch_script('message', by='triggers', _in='function'):
+                await eve.execute([message], self)
 
         except Exception as e:
             print(e)
@@ -349,9 +407,12 @@ class Client(discord.Client):
         if user == self.user:
             return
 
-        for eve in Event.events:
-            if eve.msgvalidation(reaction.message, str(reaction.message.guild.id)) and eve.trigger == 'react':
-                await eve.execute([user,reaction.emoji, self.db_connection], str(reaction.message.guild.id))
+        scr = Script.fetch_script(reaction.message, by='message', _in='cache')
+
+        if len(scr) > 0:
+            scr = scr[0]
+            await scr.execute([user, reaction.emoji], self)
+
 
 
     async def on_guild_join(self, guild):

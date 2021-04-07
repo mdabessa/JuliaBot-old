@@ -39,6 +39,7 @@ Clique [aqui](https://discord.com/oauth2/authorize?client_id=483054181176049685&
 | Comando | Descrição | Parâmetros | Permissão |
 |---------|-----------|------------|-----------|
 |j!exec|Executar um comando através do bot.|`<comando>`* `<parametros_do_comando>` |Depuração.|
+|j!get_all_scripts|Listar todos os scripts rodando.||Depuração.|
 ## Economia 
 | Comando | Descrição | Parâmetros | Permissão |
 |---------|-----------|------------|-----------|
@@ -46,6 +47,7 @@ Clique [aqui](https://discord.com/oauth2/authorize?client_id=483054181176049685&
 |j!rank|Top coins do servidor.||Livre.|
 |j!roulette|Roletar pontos.|`<coins>`* |Livre.|
 |j!shop|Loja de itens.||Livre.|
+|j!iteminfo|Veja as informações de um item da loja.|`<id_do_item>`* |Livre.|
 |j!buy|Comprar um item.|`<id_do_item>`* |Livre.|
 |j!distance|Calcula a diferença de coins entre você e outra pessoa.|`<pessoa>`* |Livre.|
 ## Diversão 
@@ -57,6 +59,7 @@ Clique [aqui](https://discord.com/oauth2/authorize?client_id=483054181176049685&
 | Comando | Descrição | Parâmetros | Permissão |
 |---------|-----------|------------|-----------|
 |j!c_event|Criar um evento.|`<evento>`* |Admin.|
+|j!clean_events|Limpar todos os eventos.||Admin.|
 |j!setcoins|Definir os seus pontos, ou os dos usuarios marcados.|`<coins>`* `<pessoa>`º |Admin.|
 |j!addcoins|Adicionar pontos.|`<coins>`* `<pessoa>`º |Admin.|
 |j!subcoins|Remover pontos.|`<coins>`* `<pessoa>`º |Admin.|

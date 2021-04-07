@@ -35,15 +35,11 @@ async def _duel(message, commandpar, connection, bot):
     if db.getpoints(message.author.id, message.guild.id, connection) < points:
         raise entity.CommandError(f'{message.author.mention} Você não possui pontos suficientes!')
 
-    for eve in entity.Event.events:
-        if eve.name == 'duel':
-            cache = eve.getcache(str(message.guild.id))
-            if cache != None:
-                if cache == True:
-                    eve.clear(str(message.guild.id))
-                else:
-                    raise entity.CommandError('Ja existe um duelo em andamento!')
-            
 
-            await eve.create([message, points], str(message.guild.id))
+    try:
+        scr = entity.Script(f'duel_{message.guild.id}', 'duel', time_out=60)        
+        await scr.execute([message, points], bot)
+    
+    except entity.Script.ScriptIndiceLimit:
+        raise entity.CommandError('Ja existe um duelo em andamento!')
 entity.Command(name='duel', func=_duel, category=category, desc=f'Duele contra alguem valendo coins!', aliases=['duelo', 'x1'], args=[['coins', '*'], ['pessoa', '*']])
