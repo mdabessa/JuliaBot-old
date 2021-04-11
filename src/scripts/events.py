@@ -47,11 +47,9 @@ async def cards(cache, par, bot):
         user = par[0]
         emoji = par[1]
 
-        print('to aki dentro', user, emoji)
         userind = str(user.id) + str(message.guild.id)
         
         if userind in cache['users']:
-            print('RETORNANDO LOL')
             return
         
         choice = 0
@@ -64,12 +62,11 @@ async def cards(cache, par, bot):
         if emoji == '💷':
             choice = 3
 
-        print(choice)
+
         if choice != 0 and (choice not in cache['choices']):
             cache['users'].append(userind)
             cache['choices'].append(choice)
             pts = points[choice-1]
-            print(pts)
             if pts > 0:
                 await message.channel.send(f'{user.mention} pegou uma das cartas `boas` e ganhou `{pts}` coins! :moneybag:')
                 db.addpoints(user.id, message.guild.id, pts, bot.db_connection)

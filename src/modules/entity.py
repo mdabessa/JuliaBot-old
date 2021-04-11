@@ -154,7 +154,7 @@ class Script:
         pass
 
 
-    def __init__(self, name, func_name, time_out=0):
+    def __init__(self, name, func_name, *, time_out=60, refresh=False):
         func = Script.fetch_function(func_name)[0]
         if len(func) == 0:
             raise Script.FuncError(f'Nenhuma função registrada com o nome "{func_name}".')
@@ -168,8 +168,8 @@ class Script:
         self.name = name+'_ind'+str(Script.index)
         self.refname = name
         self.func = func
-        self.created_time = datetime.datetime.now()
-        self.last_execute = None
+        self.refresh = refresh
+        self.last_execute = datetime.datetime.now()
         self.time_out = time_out
         self.cache = {
             'status': 'created'
@@ -182,16 +182,17 @@ class Script:
     async def execute(self, args, bot):
         try:
             await self.func['function'](self.cache, args, bot)
-            self.last_execute = datetime.datetime.now()
+            if self.refresh:
+                self.last_execute = datetime.datetime.now()
             if self.cache['status'] == 0:
-                Script.scripts.remove(self)
+                self.close()
             
 
         except Exception as e:
             print(e)
 
 
-    def kill(self):
+    def close(self):
         Script.scripts.remove(self)
 
 
@@ -314,6 +315,7 @@ class Client(discord.Client):
         
         self.reminder.start()
         self.anime_notifier.start()
+        self.scripts_time_out.start()
 
         print(f'{self.user} esta logado em {len(self.guilds)} grupos!')
         print('Pronto!')
@@ -356,7 +358,7 @@ class Client(discord.Client):
                 
                 # Create scripts/events only for functions that has the tag 'event'
                 eve = choice([i for i in Script.fetch_function('event', by='tag')])
-                scr = Script(f'{eve["name"]}_{message.guild.id}', eve['name'], time_out=600)
+                scr = Script(f'{eve["name"]}_{message.guild.id}', eve['name'], time_out=30)
                 await scr.execute([eventchannel], self)
             
 
@@ -476,3 +478,12 @@ class Client(discord.Client):
     
         for ani in animes:
             db.update_anime(ani['id'], self.db_connection)
+
+
+    @tasks.loop(seconds=10)
+    async def scripts_time_out(self):
+        now = datetime.datetime.now()
+        for script in Script.get_scripts():
+            diff = now - script.last_execute
+            if diff.total_seconds() >= script.time_out:
+                script.close()

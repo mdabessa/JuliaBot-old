@@ -32,7 +32,7 @@ entity.Command(name='c_event', func=c_event , category=category, desc=f'Criar um
 async def clean_events(message, commandpar, connection, bot):
     scripts = entity.Script.get_scripts()
     for i in range(len(scripts)):
-        scripts[0].kill()
+        scripts[0].close()
 
     await message.add_reaction('✅')
 entity.Command(name='clean_events', func=clean_events, category=category, desc='Limpar todos os eventos.', aliases=['limpar_eventos', 'le'], perm=1)
