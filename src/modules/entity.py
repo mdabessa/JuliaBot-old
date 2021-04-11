@@ -358,7 +358,7 @@ class Client(discord.Client):
                 
                 # Create scripts/events only for functions that has the tag 'event'
                 eve = choice([i for i in Script.fetch_function('event', by='tag')])
-                scr = Script(f'{eve["name"]}_{message.guild.id}', eve['name'], time_out=30)
+                scr = Script(f'{eve["name"]}_{message.guild.id}', eve['name'], time_out=600)
                 await scr.execute([eventchannel], self)
             
 
@@ -480,7 +480,7 @@ class Client(discord.Client):
             db.update_anime(ani['id'], self.db_connection)
 
 
-    @tasks.loop(seconds=10)
+    @tasks.loop(seconds=30)
     async def scripts_time_out(self):
         now = datetime.datetime.now()
         for script in Script.get_scripts():
