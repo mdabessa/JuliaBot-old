@@ -155,10 +155,10 @@ class Script:
 
 
     def __init__(self, name, func_name, *, time_out=60, refresh=False):
-        func = Script.fetch_function(func_name)[0]
+        func = Script.fetch_function(func_name)
         if len(func) == 0:
             raise Script.FuncError(f'Nenhuma função registrada com o nome "{func_name}".')
-
+        func = func[0]
         
         script = Script.fetch_script(name, by='refname')
         if len(script) >= func['limit_by_name']:

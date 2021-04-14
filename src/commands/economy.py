@@ -50,7 +50,7 @@ entity.Command(name='rank', func=coinsrank, category=category, desc='Top coins d
 
 async def roulette(message, commandpar, connection, bot):
     if commandpar != None:
-        roulettechance = 33 #x/100
+        chance = 33 #x/100
         p = db.getpoints(message.author.id, message.guild.id, connection)
 
         if commandpar == 'all':
@@ -61,23 +61,9 @@ async def roulette(message, commandpar, connection, bot):
             except:
                 raise entity.CommandError('Não posso roletar nada que não seja um `numero inteiro` :pensive:')
 
-        if points < p:
-            if randint(0,100) < roulettechance:
-                db.addpoints(message.author.id,message.guild.id, points, connection)
-                await message.channel.send(f'{message.author.mention} Ganhou `{points}` coins! :money_mouth:')
-            else:
-                db.subpoints(message.author.id, message.guild.id, points, connection)
-                await message.channel.send(f'{message.author.mention} Perdeu `{points}` coins! :sob:')
+        scr = entity.Script(f'roulette_{message.guild.id}', '_roulette', time_out=30)
+        await scr.execute([message.channel, message.author, points, chance], bot)
 
-        if points == p:
-            if randint(0,100) < roulettechance:
-                db.addpoints(message.author.id,message.guild.id, points, connection)
-                await message.channel.send(f'{message.author.mention} roletou tudo e ganhou `{points}` coins, dobrando sua fortuna! :sunglasses:')
-            else:
-                db.subpoints(message.author.id, message.guild.id, points, connection)
-                await message.channel.send(f'{message.author.mention} roletou tudo e perdeu `{points}` coins, zerando seus pontos! :rofl: :rofl: :rofl:')
-        if points > p:
-            raise entity.CommandError('Voce não possui pontos suficiente!')
     else:
         raise entity.CommandError('Quantos coins você quer roletar? :thinking:')
 entity.Command(name='roulette', func=roulette, category=category, desc=f'Roletar pontos.', aliases=['roletar'], args=[['coins', '*']])
