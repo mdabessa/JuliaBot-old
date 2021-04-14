@@ -14,7 +14,7 @@ async def c_event(message, commandpar, connection, bot):
         
         eve = eve[0]
         try:
-            scr = entity.Script(f'created_{commandpar}_{message.guild.id}', eve['name'], time_out=30)
+            scr = entity.Script(f'created_{commandpar}_{message.guild.id}', eve['name'], message.guild_id, time_out=30)
             await message.channel.send(f'{message.author.mention} evento `{eve["name"]}` criado com sucesso!')
         except entity.Script.ScriptIndiceLimit:
             prefix = db.getserver(message.guild.id, bot.db_connection)['prefix']
@@ -30,7 +30,7 @@ entity.Command(name='c_event', func=c_event , category=category, desc=f'Criar um
 
 
 async def clean_events(message, commandpar, connection, bot):
-    scripts = entity.Script.get_scripts()
+    scripts = entity.Script.fetch_script(message.id, by='guild_id')
     for i in range(len(scripts)):
         scripts[0].close()
 

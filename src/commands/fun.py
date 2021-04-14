@@ -37,7 +37,7 @@ async def _duel(message, commandpar, connection, bot):
 
 
     try:
-        scr = entity.Script(f'duel_{message.guild.id}', 'duel', time_out=60)        
+        scr = entity.Script(f'duel_{message.guild.id}', 'duel', message.guild_id, time_out=60)        
         await scr.execute([message, points], bot)
     
     except entity.Script.ScriptIndiceLimit:

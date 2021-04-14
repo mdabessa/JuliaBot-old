@@ -154,7 +154,7 @@ class Script:
         pass
 
 
-    def __init__(self, name, func_name, *, time_out=60, refresh=False):
+    def __init__(self, name, func_name, guild_id, *, time_out=60, refresh=False):
         func = Script.fetch_function(func_name)
         if len(func) == 0:
             raise Script.FuncError(f'Nenhuma função registrada com o nome "{func_name}".')
@@ -167,6 +167,7 @@ class Script:
         
         self.name = name+'_ind'+str(Script.index)
         self.refname = name
+        self.guild_id = guild_id
         self.func = func
         self.refresh = refresh
         self.last_execute = datetime.datetime.now()
@@ -358,7 +359,7 @@ class Client(discord.Client):
                 
                 # Create scripts/events only for functions that has the tag 'event'
                 eve = choice([i for i in Script.fetch_function('event', by='tag')])
-                scr = Script(f'{eve["name"]}_{message.guild.id}', eve['name'], time_out=600)
+                scr = Script(f'{eve["name"]}_{message.guild.id}', eve['name'], message.guild_id, time_out=600)
                 await scr.execute([eventchannel], self)
             
 
