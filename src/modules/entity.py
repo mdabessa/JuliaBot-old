@@ -359,7 +359,7 @@ class Client(discord.Client):
                 
                 # Create scripts/events only for functions that has the tag 'event'
                 eve = choice([i for i in Script.fetch_function('event', by='tag')])
-                scr = Script(f'{eve["name"]}_{message.guild.id}', eve['name'], message.guild_id, time_out=600)
+                scr = Script(f'{eve["name"]}_{message.guild.id}', eve['name'], message.guild.id, time_out=600)
                 await scr.execute([eventchannel], self)
             
 
