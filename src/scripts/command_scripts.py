@@ -1,6 +1,7 @@
 import modules.database as db
 import modules.entity as entity
 import modules.utils as utils
+from discord import Embed
 from random import randint, shuffle, choice
 
 
@@ -47,7 +48,7 @@ async def duel(cache, par, bot):
 entity.Script.new_function(duel, tag='command', limit_by_name=1)
 
 
-async def _roulette(cache, par, bot):
+async def roulette(cache, par, bot):
     if cache['status'] == 'created':
         channel = par[0]
         author = par[1]
@@ -98,4 +99,100 @@ async def _roulette(cache, par, bot):
         elif emoji == '👎' and author == react:
             await message.channel.send(f'{react.mention} cancelou a roleta! :no_entry_sign:')
             cache['status'] = 0
-entity.Script.new_function(_roulette, tag='command', limit_by_name=4)
+entity.Script.new_function(roulette, tag='command', limit_by_name=4)
+
+
+async def add_anime_confirm(cache, par, bot):
+    if cache['status'] == 'created':
+        channel = par[0]
+        anime = par[2]
+
+        desc = f'Nome: {anime["title"]}\n' + \
+            f'Episódios: {anime["episodes"]}\n' + \
+            f'Tipo: {anime["type"]}\n' + \
+            f'Lançando?: {"Sim" if anime["airing"] else "Não"}\n' + \
+            f'Link: [MyAnimeList]({anime["url"]})'
+            
+
+        emb = Embed(title='Confirmar anime para adicionar:', description=desc, color=bot.color)
+        emb.set_thumbnail(url=anime['image_url'])
+
+        m = await channel.send(embed=emb)
+        await m.add_reaction('👍')
+        await m.add_reaction('👎')
+
+        cache['message'] = m
+        cache['author'] = par[1]
+        cache['anime'] = anime
+        cache['status'] = 'started'
+    else:
+        react = par[0]
+        emoji = par[1]
+        message = cache['message']
+        author = cache['author']
+        anime = cache['anime']
+
+        if emoji == '👍' and author == react:
+            if db.verify_anime_notifier(author.id, anime['mal_id'], bot.db_connection) == None:
+                db.add_anime(author.id, anime['mal_id'], bot.db_connection)
+            else:
+                await message.channel.send('Esse anime ja esta na sua lista de notificações.')
+                await message.add_reaction('❌')
+                cache['status'] = 0
+                return
+
+            await message.add_reaction('✅')
+            cache['status'] = 0
+        
+        elif emoji == '👎' and author == react:
+            await message.add_reaction('❌')
+            cache['status'] = 0
+entity.Script.new_function(add_anime_confirm, tag='command', limit_by_name=2)
+
+
+async def del_anime_confirm(cache, par, bot):
+    if cache['status'] == 'created':
+        channel = par[0]
+        anime = par[2]
+
+        desc = f'Nome: {anime["title"]}\n' + \
+            f'Episódios: {anime["episodes"]}\n' + \
+            f'Tipo: {anime["type"]}\n' + \
+            f'Lançando?: {"Sim" if anime["airing"] else "Não"}\n' + \
+            f'Link: [MyAnimeList]({anime["url"]})'
+            
+
+        emb = Embed(title='Confirmar anime para remover:', description=desc, color=bot.color)
+        emb.set_thumbnail(url=anime['image_url'])
+
+        m = await channel.send(embed=emb)
+        await m.add_reaction('👍')
+        await m.add_reaction('👎')
+
+        cache['message'] = m
+        cache['author'] = par[1]
+        cache['anime'] = anime
+        cache['status'] = 'started'
+    else:
+        react = par[0]
+        emoji = par[1]
+        message = cache['message']
+        author = cache['author']
+        anime = cache['anime']
+
+        if emoji == '👍' and author == react:
+            if db.verify_anime_notifier(author.id, anime['mal_id'], bot.db_connection) != None:
+                db.del_anime(author.id, anime['mal_id'], bot.db_connection)
+            else:
+                await message.channel.send('Esse anime não esta na sua lista de notificações.')
+                await message.add_reaction('❌')
+                cache['status'] = 0
+                return
+
+            await message.add_reaction('✅')
+            cache['status'] = 0
+        
+        elif emoji == '👎' and author == react:
+            await message.add_reaction('❌')
+            cache['status'] = 0
+entity.Script.new_function(del_anime_confirm, tag='command', limit_by_name=2)

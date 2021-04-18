@@ -476,7 +476,23 @@ class Client(discord.Client):
                         await channel.send(embed=embed)
                     except Exception as e:
                         print(e)
-    
+
+
+        for ani in animes:
+            embed = discord.Embed(title=ani['anime'], url=ani['link'], description=f'Episódio {ani["episode"]}', color=self.color)
+            embed.set_image(url=ani['imagelink'])
+            embed.set_footer(text=ani['site'])
+
+            users = db.get_anime_notifier(ani['alid'], self.db_connection)
+
+            for user in users:
+                try:
+                    _user = await self.fetch_user(int(user['userid']))
+                    await _user.send(embed=embed)
+                except:
+                    pass
+
+
         for ani in animes:
             db.update_anime(ani['id'], self.db_connection)
 

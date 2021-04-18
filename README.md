@@ -17,6 +17,12 @@ Clique [aqui](https://discord.com/oauth2/authorize?client_id=483054181176049685&
 |---------|-----------|---------|-----------------|
 | * | Parâmetro obrigatório. | `<preço>`* | j!roulette 50 |
 | º | Possivel mais de um. | `<pessoa>`º | j!mute @pessoa1 @pessoa2 @pessoa3 |
+## Animes 
+| Comando | Descrição | Parâmetros | Permissão |
+|---------|-----------|------------|-----------|
+|j!animechannel|Define o canal de notificações de novos episódios de animes.|`<canal>`* |Admin.|
+|j!add_anime|Marque um anime para você ser notificado quando lancar episódio novo.|`<anime>`* |Livre.|
+|j!del_anime|Remova um anime da sua lista de notificações.|`<anime>`* |Livre.|
 ## Configurações 
 | Comando | Descrição | Parâmetros | Permissão |
 |---------|-----------|------------|-----------|
@@ -26,7 +32,6 @@ Clique [aqui](https://discord.com/oauth2/authorize?client_id=483054181176049685&
 |j!cmdchannel|Modifique o canal de comandos!|`<canal>` |Admin.|
 |j!eventchannel|Modifique o canal de eventos!|`<canal>` |Admin.|
 |j!event|Desative ou ative os eventos automaticos.|`<booleano>`* |Admin.|
-|j!animechannel|Define o canal de notificações de novos episódios de animes.|`<canal>`* |Admin.|
 ## Core 
 | Comando | Descrição | Parâmetros | Permissão |
 |---------|-----------|------------|-----------|

@@ -83,6 +83,15 @@ def initdb(connection):
             CONSTRAINT users_pkey PRIMARY KEY (serverid, userid)
         )
     ''')
+    
+    # anime notifier table
+    query.append('''
+        CREATE TABLE IF NOT EXISTS anime_notifier(
+            userid character varying(255) NOT NULL,
+            alid integer NOT NULL,
+            PRIMARY KEY (userid, alid)
+        )
+    ''')
 
     for q in query:
         cursor.execute(q)
@@ -400,5 +409,52 @@ def update_anime(anime_id, connection):
         WHERE id={i}
     '''.format(i=anime_id))
 
+    cursor.close()
+    connection.commit()
+
+
+def get_anime_notifier(query, connection, column='alid'):
+    cursor = connection.cursor()
+    cursor.execute('''
+    SELECT * FROM anime_notifier
+    WHERE {col} = {q}
+    '''.format(col=column, q=query))
+    result = cursor.fetchall()
+    cursor.close()
+
+    leg = ['userid', 'alid']
+
+    return [dict(zip(leg, r)) for r in result]
+
+
+def verify_anime_notifier(user_id, anime_id, connection):
+    cursor = connection.cursor()
+    cursor.execute('''
+    SELECT * FROM anime_notifier
+    WHERE userid = %s AND alid = %s
+    ''', (str(user_id), anime_id))
+
+    result = cursor.fetchone()
+    cursor.close()
+
+    leg = ['userid', 'alid']
+    return None if result == None else dict(zip(leg, result))
+
+
+def add_anime(user_id, anime_id, connection):
+    cursor = connection.cursor()
+    cursor.execute('''
+        INSERT INTO anime_notifier(userid, alid)
+        VALUES(%s, %s)
+    ''',(user_id, anime_id))
+    cursor.close()
+    connection.commit()
+
+
+def del_anime(user_id, anime_id, connection):
+    cursor = connection.cursor()
+    cursor.execute('''
+        DELETE FROM anime_notifier WHERE userid=%s AND alid=%s
+    ''',(str(user_id), anime_id))
     cursor.close()
     connection.commit()
