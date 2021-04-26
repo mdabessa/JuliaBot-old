@@ -108,7 +108,7 @@ async def remindme(message, commandpar, connection, bot):
         raise entity.CommandError('Parâmetros inválidos!')
 
     db.addreminder(message.guild.id, message.channel.id, message.id, message.author.id, future, connection)
-    await message.reply(f'Eu irei te notificar no dia `{future.strftime("%Y-%m-%d %H:%M")}`!')
+    await message.reply(f'Eu irei te notificar no dia `{future.strftime("%d/%m/%Y %H:%M")}`!')
 entity.Command(name='remindme', func=remindme, category=category, desc='O bot irá te notificar no dia desejado, relembrando sua mensagem!', aliases=['rm', 'relembreme', 'lembrete', 'remind', 'clock'], args=[['tempo', '*']])
 
 
