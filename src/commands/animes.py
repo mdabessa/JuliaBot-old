@@ -99,4 +99,50 @@ async def anime_info(message, commandpar, connection, bot):
     else: 
         raise entity.CommandError('Falta parametros nesse comando!')
 entity.Command(name='anime_info', func=anime_info, category=category, desc=f'Informações sobre um anime.', aliases=['anime', 'ai', 'a'], args=[['anime', '*']])
+
+
+async def character(message, commandpar, connection, bot):
+    if commandpar!=None:
+        jikan = jk.Jikan()
+        try:
+            char = jikan.search('character', commandpar)['results'][0]
+            emb = Embed(title=char['name'], description=' ,'.join(f'`{x}`' for x in char['alternative_names']), color=bot.color)
+            emb.set_image(url=char['image_url'])
+
+            _animes = ''
+            animes = ''
+            for ani in char['anime']: 
+                _animes += f'[{ani["name"]}]({ani["url"]}), '
+                if len(_animes) > 500:
+                    break
+                else:
+                    animes = _animes
+
+            if len(animes) > 0:
+                animes = animes[:-2]
+
+
+            _mangas = ''
+            mangas = ''
+            for manga in char['manga']:
+                _mangas += f'[{manga["name"]}]({manga["url"]}), '
+                if len(_mangas) > 500:
+                    break
+                else:
+                    mangas = _mangas
     
+            if len(mangas) > 0:
+                mangas = mangas[:-2]
+
+            emb.add_field(name='Animes:', value=animes, inline=False)
+            emb.add_field(name='Mangas:', value=mangas, inline=False)
+
+            await message.channel.send(embed=emb)
+        
+        except Exception as e:
+            print(e)
+            raise entity.CommandError('Não consegui achar nenhum personagem com esse nome.')
+        
+    else: 
+        raise entity.CommandError('Falta parametros nesse comando!')
+entity.Command(name='character', func=character, category=category, desc=f'Informações sobre um personagem.', aliases=['char', 'personagem'], args=[['char', '*']])

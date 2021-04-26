@@ -24,6 +24,7 @@ Clique [aqui](https://discord.com/oauth2/authorize?client_id=483054181176049685&
 |j!add_anime|Marque um anime para você ser notificado quando lancar episódio novo.|`<anime>`* |Livre.|
 |j!del_anime|Remova um anime da sua lista de notificações.|`<anime>`* |Livre.|
 |j!anime_info|Informações sobre um anime.|`<anime>`* |Livre.|
+|j!character|Informações sobre um personagem.|`<char>`* |Livre.|
 ## Configurações 
 | Comando | Descrição | Parâmetros | Permissão |
 |---------|-----------|------------|-----------|
