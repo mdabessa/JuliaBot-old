@@ -1,4 +1,4 @@
-import discord
+from discord import Embed
 import jikanpy as jk
 import modules.database as db
 import modules.entity as entity
@@ -75,3 +75,28 @@ async def del_anime(message, commandpar, connection, bot):
     else:
         raise entity.CommandError('Falta os parametros do comando!')
 entity.Command(name='del_anime', func=del_anime, category=category, desc=f'Remova um anime da sua lista de notificações.', aliases=['da'], args=[['anime', '*']])
+
+
+async def anime_info(message, commandpar, connection, bot):
+    if commandpar!=None:
+        jikan = jk.Jikan()
+        try:
+            anime = jikan.search('anime', commandpar)['results'][0]
+        except:
+            raise entity.CommandError('Não consegui achar nenhum anime com esse nome.')
+        
+
+        emb = Embed(title=anime['title'], description=anime['synopsis'], color=bot.color)
+        emb.set_thumbnail(url=anime['image_url']) 
+
+        emb.add_field(name='Episódios:', value=anime['episodes'], inline=False)
+        emb.add_field(name='Score (MyAnimeList):', value=anime['score'], inline=False)
+        emb.add_field(name='Tipo:', value=anime['type'], inline=False)
+        emb.add_field(name='Lançando:', value='Sim' if anime['airing'] else 'Não', inline=False)
+        emb.add_field(name='Link:', value=f'[MyAnimeList]({anime["url"]})', inline=False)
+
+        await message.channel.send(embed=emb)
+    else: 
+        raise entity.CommandError('Falta parametros nesse comando!')
+entity.Command(name='anime_info', func=anime_info, category=category, desc=f'Informações sobre um anime.', aliases=['anime', 'ai', 'a'], args=[['anime', '*']])
+    
