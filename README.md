@@ -47,6 +47,9 @@ Clique [aqui](https://discord.com/oauth2/authorize?client_id=483054181176049685&
 |---------|-----------|------------|-----------|
 |j!exec|Executar um comando através do bot.|`<comando>`* `<parametros_do_comando>` |Depuração.|
 |j!get_all_scripts|Listar todos os scripts rodando.||Depuração.|
+|j!get_allowed_bots|Listar todos os bots permitidos.||Depuração.|
+|j!add_allowed_bot|Permitir com que um bot especifico seja respondido.|`<bot_id>`* |Depuração.|
+|j!del_allowed_bot|Remover um bot especifico da lista de bots permitidos.|`<bot_id>`* |Depuração.|
 ## Economia 
 | Comando | Descrição | Parâmetros | Permissão |
 |---------|-----------|------------|-----------|
