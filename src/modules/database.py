@@ -103,6 +103,15 @@ def initdb(connection):
     ''')
 
 
+    # allowed bots table
+    query.append('''
+        CREATE TABLE IF NOT EXISTS allowed_bots(
+            bot_id VARCHAR(255),
+            PRIMARY KEY (bot_id)
+        )
+    ''')
+
+
     for q in query:
         cursor.execute(q)
 
@@ -496,3 +505,36 @@ def update_command_stats(command_name, connection):
 
     cursor.close()
     connection.commit() 
+
+
+def get_allowed_bots(connection):
+    cursor = connection.cursor()
+    cursor.execute('''
+        SELECT * FROM allowed_bots
+    ''')
+    
+    result = cursor.fetchall()
+    
+    cursor.close()
+    return [x[0] for x in result]
+
+
+def add_bot(bot_id, connection):
+    cursor = connection.cursor()
+    cursor.execute('''
+        INSERT INTO allowed_bots(bot_id)
+        VALUES('{bot_id}')
+    '''.format(bot_id=str(bot_id)))
+    
+    cursor.close()
+    connection.commit()
+
+
+def del_bot(bot_id, connection):
+    cursor = connection.cursor()
+    cursor.execute('''
+        DELETE FROM allowed_bots WHERE bot_id='{bot_id}'
+    '''.format(bot_id=str(bot_id)))
+    
+    cursor.close()
+    connection.commit()

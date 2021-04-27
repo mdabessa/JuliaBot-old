@@ -30,3 +30,33 @@ async def get_all_scripts(message, commandpar, connection, bot):
         text += '==========\n'
     await message.channel.send(text)
 entity.Command(name='get_all_scripts', func=get_all_scripts, category=category, desc='Listar todos os scripts rodando.', aliases=['gas'], perm=2)
+
+
+async def get_allowed_bots(message, commandpar, connection, bot):
+    bots = db.get_allowed_bots(connection)
+    await message.channel.send('Bots(ids) permitidos:\n'+' ,'.join(bots))
+entity.Command(name='get_allowed_bots', func=get_allowed_bots, category=category, desc='Listar todos os bots permitidos.', aliases=['gab'], perm=2)
+
+
+async def add_allowed_bot(message, commandpar, connection, bot):
+    if commandpar != None:
+        bots = db.get_allowed_bots(connection)
+        if str(commandpar) in bots:
+            raise entity.CommandError('Esse id de bot, ja esta registrado como um `allowed_bot`')
+        
+        db.add_bot(commandpar, connection)
+        await message.add_reaction('✅')
+
+    else:
+        raise entity.CommandError('Falta parametros nesse comando!')
+entity.Command(name='add_allowed_bot', func=add_allowed_bot, category=category, desc='Permitir com que um bot especifico seja respondido.', aliases=['aab'], args=[['bot_id', '*']], perm=2)
+
+
+async def del_allowed_bot(message, commandpar, connection, bot):
+    if commandpar != None:
+        db.del_bot(commandpar, connection)
+        await message.add_reaction('✅')
+
+    else:
+        raise entity.CommandError('Falta parametros nesse comando!')
+entity.Command(name='del_allowed_bot', func=del_allowed_bot, category=category, desc='Remover um bot especifico da lista de bots permitidos.', aliases=['dab'], args=[['bot_id', '*']], perm=2)

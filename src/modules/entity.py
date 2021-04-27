@@ -302,7 +302,6 @@ class Client(discord.Client):
         self.db_connection = db_connection
         self.master_id = master_id
         self.color = 0xe6dc56
-        self.allowed_bots = [483054181176049685, 817024987629223948]
 
 
     async def on_ready(self):
@@ -325,11 +324,10 @@ class Client(discord.Client):
 
 
     async def on_message(self, message):
-        if message.author == self.user:
-            return
-
-        if message.author.bot == True and message.author.id not in self.allowed_bots:
-            return
+        if message.author.bot == True:
+            if str(message.author.id) not in db.get_allowed_bots(self.db_connection):
+                return
+        
 
         server = db.getserver(message.guild.id, self.db_connection)
 
