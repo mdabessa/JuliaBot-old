@@ -93,6 +93,16 @@ def initdb(connection):
         )
     ''')
 
+    # stats table
+    query.append('''
+        CREATE TABLE IF NOT EXISTS stats(
+            command VARCHAR(255),
+            execution_count INT DEFAULT 1,
+            PRIMARY KEY (command)
+        )
+    ''')
+
+
     for q in query:
         cursor.execute(q)
 
@@ -458,3 +468,31 @@ def del_anime(user_id, anime_id, connection):
     ''',(str(user_id), anime_id))
     cursor.close()
     connection.commit()
+
+
+def update_command_stats(command_name, connection):
+    cursor = connection.cursor()
+    cursor.execute(
+    """
+    SELECT execution_count FROM stats WHERE command = '{command_name}'
+
+    """.format(command_name=str(command_name))
+    )
+    result = cursor.fetchone()
+    
+    if result == None:
+        cursor.execute('''
+            INSERT INTO stats(command)
+            VALUES('{command_name}')
+        '''.format(command_name=command_name))
+
+    else:
+        cursor.execute(
+        '''
+            Update stats 
+            SET execution_count = %s
+            WHERE command = %s
+        ''', (result[0]+1, command_name))
+
+    cursor.close()
+    connection.commit() 

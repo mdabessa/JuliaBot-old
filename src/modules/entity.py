@@ -73,6 +73,7 @@ class Command:
             try:
                 _cmd = [x for x in cls.commands if x.name == cmd['name']][0]
                 await _cmd.execute(message, commandpar, connection, bot)
+                db.update_command_stats(_cmd.name, connection)
             except CommandError as e:
                 await message.channel.send(e)
                 if cmd['price'] > 0:
@@ -81,6 +82,7 @@ class Command:
                 traceback.print_exc()
         else:
             await message.channel.send(cmd['message'])
+            db.update_command_stats('custom_commands', connection)
 
 
     @classmethod
