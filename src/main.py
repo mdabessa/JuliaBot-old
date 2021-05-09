@@ -13,11 +13,11 @@ from scripts import *
 env = Env()
 env.read_env()
 
-db_URI = environ['DATABASE_URI']
+db_URL = environ['DATABASE_URL']
 token = environ['DiscordToken']
 master_id = int(environ['master_id'])
 
-connection = psycopg2.connect(db_URI, sslmode='allow')
+connection = psycopg2.connect(db_URL, sslmode='allow')
 
 intents = Intents.all()
 bot = entity.Client(db_connection=connection, master_id=master_id, intents=intents)
