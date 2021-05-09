@@ -120,6 +120,8 @@ async def character(message, commandpar, connection, bot):
 
             if len(animes) > 0:
                 animes = animes[:-2]
+                emb.add_field(name='Animes:', value=animes, inline=False)
+
 
 
             _mangas = ''
@@ -133,9 +135,8 @@ async def character(message, commandpar, connection, bot):
     
             if len(mangas) > 0:
                 mangas = mangas[:-2]
+                emb.add_field(name='Mangas:', value=mangas, inline=False)
 
-            emb.add_field(name='Animes:', value=animes, inline=False)
-            emb.add_field(name='Mangas:', value=mangas, inline=False)
 
             await message.channel.send(embed=emb)
         
