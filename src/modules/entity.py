@@ -306,10 +306,10 @@ class Client(discord.Client):
 
 
     async def on_ready(self):
-        await self.change_presence(activity=discord.Game(f'{len(self.guilds)} servers!'))
-        
-        db.initdb(self.db_connection)
+        await self.change_presence(activity=discord.Game(f'Iniciando...'))
+        print('Iniciando..,')
 
+        db.initdb(self.db_connection)
         for guild in self.guilds:
             if db.getserver(guild.id, self.db_connection) == None:
                 db.addserver(guild.id, self.db_connection)
@@ -320,6 +320,7 @@ class Client(discord.Client):
         self.anime_notifier.start()
         self.scripts_time_out.start()
 
+        await self.change_presence(activity=discord.Game(f'{len(self.guilds)} Servidores!'))
         print(f'{self.user} esta logado em {len(self.guilds)} grupos!')
         print('Pronto!')
 
