@@ -297,11 +297,12 @@ class Timer:
 
 
 class Client(discord.Client):
-    def __init__(self, db_connection, master_id, **kwargs):
+    def __init__(self, db_connection, master_id, print_chat=False, **kwargs):
         super().__init__(**kwargs)
         self.db_connection = db_connection
         self.master_id = master_id
         self.color = 0xe6dc56
+        self.print_chat = print_chat
 
 
     async def on_ready(self):
@@ -364,7 +365,8 @@ class Client(discord.Client):
             
 
         try:
-            print(f'{message.guild} #{message.channel} //{message.author} : {message.content}')
+            if self.print_chat:
+                print(f'{message.guild} #{message.channel} //{message.author} : {message.content}')
 
             
             prefix = server['prefix']
@@ -402,6 +404,7 @@ class Client(discord.Client):
                 await eve.execute([message], self)
 
         except Exception as e:
+            print('Um erro ocorreu:')
             print(e)
             traceback.print_exc()
         
@@ -415,7 +418,6 @@ class Client(discord.Client):
         if len(scr) > 0:
             scr = scr[0]
             await scr.execute([user, reaction.emoji], self)
-
 
 
     async def on_guild_join(self, guild):
