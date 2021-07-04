@@ -117,5 +117,5 @@ async def quiz(cache, par, bot):
         if str(msg.content) == r and msg.channel.id == m.channel.id:
             await m.channel.send(f'{msg.author.mention} acertou e ganhou `{p}` coins!')
             db.addpoints(msg.author.id, msg.guild.id, p, bot.db_connection)
-            cache['status'] == 0
+            cache['status'] = 0
 entity.Script.new_function(quiz, tag='event', limit_by_name=2, triggers=['message'])
