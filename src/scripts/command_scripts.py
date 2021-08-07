@@ -196,3 +196,65 @@ async def del_anime_confirm(cache, par, bot):
             await message.add_reaction('❌')
             cache['status'] = 0
 entity.Script.new_function(del_anime_confirm, tag='command', limit_by_name=2)
+
+
+async def list_animes(cache, par, bot):
+    if cache['status'] == 'created':
+        channel = par[0]
+        animes = par[2]
+
+        anime = animes[0]
+        
+        desc = f'Nome: {anime["title"]}\n' + \
+            f'Episódios: {anime["episodes"]}\n' + \
+            f'Tipo: {anime["type"]}\n' + \
+            f'Lançando?: {"Sim" if anime["airing"] else "Não"}\n' + \
+            f'Link: [MyAnimeList]({anime["url"]})'
+            
+                    
+
+        emb = Embed(title='Anime:', description=desc, color=bot.color)
+        emb.set_thumbnail(url=anime['image_url'])
+
+        m = await channel.send(embed=emb)
+        await m.add_reaction('⬅️')
+        await m.add_reaction('➡️')
+
+        cache['message'] = m
+        cache['animes'] = animes
+        cache['index'] = 0
+        cache['author'] = par[1]
+        cache['status'] = 'started'
+    else:
+        m = cache['message']
+        animes = cache['animes']
+        index = cache['index']
+
+        emoji = par[1]
+
+        if emoji == '➡️':
+            index += 1
+            if index >= len(animes):
+                index = 0
+
+        if emoji == '⬅️':
+            index -= 1
+            if index < 0:
+                index = len(animes)-1
+
+        anime = animes[index]
+
+        desc = f'Nome: {anime["title"]}\n' + \
+            f'Episódios: {anime["episodes"]}\n' + \
+            f'Tipo: {anime["type"]}\n' + \
+            f'Lançando?: {"Sim" if anime["airing"] else "Não"}\n' + \
+            f'Link: [MyAnimeList]({anime["url"]})'
+
+
+        emb = Embed(title='Anime:', description=desc, color=bot.color)
+        emb.set_thumbnail(url=anime['image_url'])
+        
+        await m.edit(embed=emb)
+        
+        cache['index'] = index
+entity.Script.new_function(list_animes, tag='command', limit_by_name=2)

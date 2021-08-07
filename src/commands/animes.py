@@ -147,3 +147,21 @@ async def character(message, commandpar, connection, bot):
     else: 
         raise entity.CommandError('Falta parametros nesse comando!')
 entity.Command(name='character', func=character, category=category, desc=f'Informações sobre um personagem.', aliases=['char', 'personagem'], args=[['char', '*']])
+
+
+async def anime_list(message, commandpar, connection, bot):
+    if commandpar == None:
+        animes = db.get_anime_notifier(str(message.author.id), connection, column='userid')
+
+        if len(animes) <= 0:
+            raise entity.CommandError('Sua lista esta vazia!')
+
+        jikan = jk.Jikan()
+        _animes = []
+        for anime in animes:
+            _anime = jikan.anime(anime['alid'])
+            _animes.append(_anime)
+
+        scr = entity.Script(f'list_animes_{message.guild.id}', 'list_animes', message.guild.id, time_out=30)
+        await scr.execute([message.channel, message.author, _animes], bot)
+entity.Command(name='a_list', func=anime_list, category=category, desc=f'Liste todos os animes da sua lista.', aliases=['al'])

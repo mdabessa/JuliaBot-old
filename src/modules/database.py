@@ -434,10 +434,18 @@ def update_anime(anime_id, connection):
 
 def get_anime_notifier(query, connection, column='alid'):
     cursor = connection.cursor()
-    cursor.execute('''
-    SELECT * FROM anime_notifier
-    WHERE {col} = {q}
-    '''.format(col=column, q=query))
+
+    if isinstance(query, str):
+        cursor.execute('''
+        SELECT * FROM anime_notifier
+        WHERE {col} = '{q}'
+        '''.format(col=column, q=query))
+    else:
+        cursor.execute('''
+        SELECT * FROM anime_notifier
+        WHERE {col} = {q}
+        '''.format(col=column, q=query))
+
     result = cursor.fetchall()
     cursor.close()
 

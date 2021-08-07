@@ -307,7 +307,7 @@ class Client(discord.Client):
 
     async def on_ready(self):
         await self.change_presence(activity=discord.Game(f'Iniciando...'))
-        print('Iniciando..,')
+        print('Iniciando...')
 
         db.initdb(self.db_connection)
         for guild in self.guilds:
