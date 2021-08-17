@@ -2,6 +2,7 @@ from discord import Embed
 import jikanpy as jk
 import modules.database as db
 import modules.entity as entity
+from time import sleep
 
 
 category = 'Animes'
@@ -156,12 +157,17 @@ async def anime_list(message, commandpar, connection, bot):
         if len(animes) <= 0:
             raise entity.CommandError('Sua lista esta vazia!')
 
+        q = len(animes)
+        m = await message.channel.send(f'Você possui `{q}` animes em sua lista, aguarde `{q*4} segundos` enquanto a sua lista esta sendo processada.')
+        
         jikan = jk.Jikan()
         _animes = []
         for anime in animes:
             _anime = jikan.anime(anime['alid'])
             _animes.append(_anime)
+            sleep(4)
 
+        await m.delete()
         scr = entity.Script(f'list_animes_{message.guild.id}', 'list_animes', message.guild.id, time_out=30)
         await scr.execute([message.channel, message.author, _animes], bot)
 entity.Command(name='a_list', func=anime_list, category=category, desc=f'Liste todos os animes da sua lista.', aliases=['al'])

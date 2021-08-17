@@ -215,6 +215,7 @@ async def list_animes(cache, par, bot):
 
         emb = Embed(title='Anime:', description=desc, color=bot.color)
         emb.set_thumbnail(url=anime['image_url'])
+        emb.set_footer(text=f'1/{len(animes)} animes.')
 
         m = await channel.send(embed=emb)
         await m.add_reaction('⬅️')
@@ -253,7 +254,8 @@ async def list_animes(cache, par, bot):
 
         emb = Embed(title='Anime:', description=desc, color=bot.color)
         emb.set_thumbnail(url=anime['image_url'])
-        
+        emb.set_footer(text=f'{index+1}/{len(animes)} animes.')
+
         await m.edit(embed=emb)
         
         cache['index'] = index
