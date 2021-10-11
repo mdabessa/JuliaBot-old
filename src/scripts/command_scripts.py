@@ -3,6 +3,8 @@ import modules.entity as entity
 import modules.utils as utils
 from discord import Embed
 from random import randint, shuffle, choice
+import jikanpy as jk
+from time import sleep
 
 
 async def duel(cache, par, bot):
@@ -201,36 +203,88 @@ entity.Script.new_function(del_anime_confirm, tag='command', limit_by_name=2)
 async def list_animes(cache, par, bot):
     if cache['status'] == 'created':
         channel = par[0]
-        animes = par[2]
+        _animes = par[2]
+        animes = []
+        m = await channel.send('Buscando animes...')
 
-        anime = animes[0]
-        
-        desc = f'Nome: {anime["title"]}\n' + \
-            f'Episódios: {anime["episodes"]}\n' + \
-            f'Tipo: {anime["type"]}\n' + \
-            f'Lançando?: {"Sim" if anime["airing"] else "Não"}\n' + \
-            f'Link: [MyAnimeList]({anime["url"]})'
-            
-                    
-
-        emb = Embed(title='Anime:', description=desc, color=bot.color)
-        emb.set_thumbnail(url=anime['image_url'])
-        emb.set_footer(text=f'1/{len(animes)} animes.')
-
-        m = await channel.send(embed=emb)
+        cache['author'] = par[1]
+        cache['index'] = 0
+        cache['status'] = 'searching'
+        cache['animes'] = animes
+        cache['message'] = m
+                
         await m.add_reaction('⬅️')
         await m.add_reaction('➡️')
+        await m.add_reaction('❌')
 
-        cache['message'] = m
-        cache['animes'] = animes
-        cache['index'] = 0
-        cache['author'] = par[1]
+        jikan = jk.Jikan()
+        for i, _anime in enumerate(_animes):
+            anime = jikan.anime(_anime['alid'])
+            animes.append(anime)
+            
+            if len(animes) > 0:
+                index = cache['index']
+                anime = animes[index]
+                desc = f'Nome: {anime["title"]}\n' + \
+                    f'Episódios: {anime["episodes"]}\n' + \
+                    f'Tipo: {anime["type"]}\n' + \
+                    f'Lançando?: {"Sim" if anime["airing"] else "Não"}\n' + \
+                    f'Link: [MyAnimeList]({anime["url"]})'
+
+                emb = Embed(title='Anime:', description=desc, color=bot.color)
+                emb.set_thumbnail(url=anime['image_url'])
+
+                if i != len(_animes)-1:
+                    emb.set_footer(text=f'{index+1}/{len(animes)} animes  -  Pesquisando: {len(animes)}/{len(_animes)} animes.')
+                    sleep(4)
+                else:
+                    emb.set_footer(text=f'{index+1}/{len(animes)} animes.')
+                
+                await m.edit(embed=emb)
+            else:
+                await m.edit(embed=None, content='Sua lista esta vazia!')
+
         cache['status'] = 'started'
-    else:
+
+    elif cache['status'] == 'searching':
+        emoji = par[1]
+        index = cache['index']
+        animes = cache['animes']
+        author = cache['author']
+        m = cache['message']
+
+        emoji_author = par[0]
+        
+        if emoji == '➡️':
+            index += 1
+            if index >= len(animes):
+                index = 0
+
+        if emoji == '⬅️':
+            index -= 1
+            if index < 0:
+                index = len(animes)-1
+        
+        if emoji == '❌' and author == emoji_author:
+            if index < len(animes):
+                anime = animes[index]
+                db.del_anime(author.id, anime['mal_id'], bot.db_connection)
+                animes.remove(anime)
+        
+                if index >= len(animes):
+                    index = len(animes) - 1
+
+                await m.channel.send(f'`{anime["title"]}` removido da sua lista com sucesso!')
+        
+        cache['index'] = index
+
+    elif cache['status'] == 'started':
         m = cache['message']
         animes = cache['animes']
         index = cache['index']
+        author = cache['author']
 
+        emoji_author = par[0]
         emoji = par[1]
 
         if emoji == '➡️':
@@ -243,20 +297,32 @@ async def list_animes(cache, par, bot):
             if index < 0:
                 index = len(animes)-1
 
-        anime = animes[index]
-
-        desc = f'Nome: {anime["title"]}\n' + \
-            f'Episódios: {anime["episodes"]}\n' + \
-            f'Tipo: {anime["type"]}\n' + \
-            f'Lançando?: {"Sim" if anime["airing"] else "Não"}\n' + \
-            f'Link: [MyAnimeList]({anime["url"]})'
-
-
-        emb = Embed(title='Anime:', description=desc, color=bot.color)
-        emb.set_thumbnail(url=anime['image_url'])
-        emb.set_footer(text=f'{index+1}/{len(animes)} animes.')
-
-        await m.edit(embed=emb)
+        if emoji == '❌' and author == emoji_author:
+            if index < len(animes):
+                anime = animes[index]
+                db.del_anime(author.id, anime['mal_id'], bot.db_connection)
+                animes.remove(anime)
         
+                if index >= len(animes):
+                    index = len(animes) -1
+
+                await m.channel.send(f'`{anime["title"]}` removido da sua lista com sucesso!')
+                        
         cache['index'] = index
+        
+        if len(animes) > 0:
+            anime = animes[index]
+            desc = f'Nome: {anime["title"]}\n' + \
+                f'Episódios: {anime["episodes"]}\n' + \
+                f'Tipo: {anime["type"]}\n' + \
+                f'Lançando: {"Sim" if anime["airing"] else "Não"}\n' + \
+                f'Link: [MyAnimeList]({anime["url"]})'
+
+            emb = Embed(title='Anime:', description=desc, color=bot.color)
+            emb.set_thumbnail(url=anime['image_url'])
+            emb.set_footer(text=f'{index+1}/{len(animes)} animes.')
+
+            await m.edit(embed=emb)
+        else:
+            await m.edit(embed=None, content='Sua lista esta vazia!')
 entity.Script.new_function(list_animes, tag='command', limit_by_name=2)
