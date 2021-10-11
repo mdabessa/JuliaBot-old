@@ -25,7 +25,7 @@ Clique [aqui](https://discord.com/oauth2/authorize?client_id=483054181176049685&
 |j!del_anime|Remova um anime da sua lista de notificações.|`<anime>`* |Livre.|
 |j!anime_info|Informações sobre um anime.|`<anime>`* |Livre.|
 |j!character|Informações sobre um personagem.|`<char>`* |Livre.|
-|j!a_list|Liste todos os animes da sua lista.||Livre.|
+|j!anime_list|Liste todos os animes da sua lista.||Livre.|
 ## Configurações 
 | Comando | Descrição | Parâmetros | Permissão |
 |---------|-----------|------------|-----------|
