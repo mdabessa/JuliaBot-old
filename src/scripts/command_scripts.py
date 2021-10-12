@@ -240,7 +240,7 @@ async def list_animes(cache, par, bot):
                 else:
                     emb.set_footer(text=f'{index+1}/{len(animes)} animes.')
                 
-                await m.edit(embed=emb)
+                await m.edit(embed=emb, content='')
             else:
                 await m.edit(embed=None, content='Sua lista esta vazia!')
 
@@ -322,7 +322,7 @@ async def list_animes(cache, par, bot):
             emb.set_thumbnail(url=anime['image_url'])
             emb.set_footer(text=f'{index+1}/{len(animes)} animes.')
 
-            await m.edit(embed=emb)
+            await m.edit(embed=emb, content='')
         else:
             await m.edit(embed=None, content='Sua lista esta vazia!')
 entity.Script.new_function(list_animes, tag='command', limit_by_name=2)
