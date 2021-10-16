@@ -158,4 +158,18 @@ async def anime_list(message, commandpar, connection, bot):
 
         scr = entity.Script(f'list_animes_{message.guild.id}', 'list_animes', message.guild.id, time_out=120)
         await scr.execute([message.channel, message.author, animes], bot)
-entity.Command(name='anime_list', func=anime_list, category=category, desc=f'Liste todos os animes da sua lista.', aliases=['al'])
+    else:
+        if len(message.mentions) != 0:
+            user = message.mentions[0]
+            animes = db.get_anime_notifier(str(user.id), connection, column='userid')
+
+            if len(animes) <= 0:
+                raise entity.CommandError(f'A lista do(a) `{user.name}` esta vazia!')
+
+            scr = entity.Script(f'list_animes_{message.guild.id}', 'list_animes', message.guild.id, time_out=120)
+            await scr.execute([message.channel, user, animes], bot)
+
+
+        else:
+            raise entity.CommandError('Você precisa mencionar alguem para ver a lista dessa pessoa, ou usar o comando sem nenhum parametro para ver sua propria lista!')
+entity.Command(name='anime_list', func=anime_list, category=category, desc=f'Liste todos os animes da sua lista, ou da pessoa mensionada.', aliases=['al'])
