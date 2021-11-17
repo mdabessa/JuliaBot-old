@@ -1,0 +1,123 @@
+{
+    "commands": [
+        {
+            "command": "help",
+            "args": [],
+            "delay": 3
+        },
+        {
+            "command": "help",
+            "args": ["help"],
+            "delay": 3
+        },
+        {
+            "command": "animechannel",
+            "delay": 2
+        },
+        {
+            "command": "add_anime",
+            "args": ["naruto"],
+            "delay": 5
+        },
+        {
+            "command": "del_anime",
+            "args": ["naruto"],
+            "delay": 5
+        },
+        {
+            "command": "anime_info",
+            "args": ["naruto"],
+            "delay": 5
+        },
+        {
+            "command": "character",
+            "args": ["naruto"],
+            "delay": 5
+        },
+        {
+            "command": "anime_list",
+            "delay": 5
+        },
+        {
+            "command": "setprefix",
+            "args": ["J!"],
+            "delay": 2
+        },
+        {
+            "command": "cmdchannel",
+            "delay": 2
+        },
+        {
+            "command": "eventchannel",
+            "delay": 2
+        },
+        {
+            "command": "event",
+            "delay": 2
+        },
+        {
+            "command": "c_event",
+            "args": ["gift"],
+            "delay": 4
+        },
+        {
+            "command": "clean_events",
+            "delay": 2
+        },
+        {
+            "command": "setcoins",
+            "args": ["1000000"],
+            "delay": 2
+        },
+        {
+            "command": "addcoins",
+            "args": ["1000"],
+            "delay": 2
+        },
+        {
+            "command": "subcoins",
+            "args": ["1000"],
+            "delay": 2
+        },
+        {
+            "command": "say",
+            "args": ["Test!"],
+            "delay": 3
+        },
+        {
+            "command": "coins",
+            "delay": 2
+        },
+        {
+            "command": "rank",
+            "delay": 2
+        },
+        {
+            "command": "roulette",
+            "args": ["all"],
+            "delay": 2
+        },
+        {
+            "command": "shop",
+            "delay": 3
+        },
+        {
+            "command": "prefix",
+            "delay": 2
+        },
+        {
+            "command": "ping",
+            "delay": 2
+        },
+        {
+            "command": "remindme",
+            "args": ["1min"],
+            "delay": 2
+        },
+        {
+            "command": "upchat",
+            "delay": 2
+        }
+    ]
+
+}

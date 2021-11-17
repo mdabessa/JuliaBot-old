@@ -61,7 +61,7 @@ async def roulette(message, commandpar, connection, bot):
             except:
                 raise entity.CommandError('Não posso roletar nada que não seja um `numero inteiro` :pensive:')
 
-        scr = entity.Script(f'roulette_{message.guild.id}', '_roulette', message.guild.id, time_out=30)
+        scr = entity.Script(f'roulette_{message.guild.id}', 'roulette', message.guild.id, time_out=30)
         await scr.execute([message.channel, message.author, points, chance], bot)
 
     else:
