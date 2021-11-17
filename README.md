@@ -16,7 +16,7 @@ Clique [aqui](https://discord.com/oauth2/authorize?client_id=483054181176049685&
 | Simbolo | Descrição | Exemplo na tabela | Exemplo no comando |
 |---------|-----------|---------|-----------------|
 | * | Parâmetro obrigatório. | `<preço>`* | j!roulette 50 |
-| º | Possivel mais de um. | `<pessoa>`º | j!mute @pessoa1 @pessoa2 @pessoa3 |
+| º | Possivel mais de um. | `<pessoa>`º | j!coins @pessoa1 @pessoa2 @pessoa3 |
 ## Animes 
 | Comando | Descrição | Parâmetros | Permissão |
 |---------|-----------|------------|-----------|
