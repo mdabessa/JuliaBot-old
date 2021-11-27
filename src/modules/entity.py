@@ -28,12 +28,12 @@ class Command:
         Command.commands.append(self)
 
 
-    async def execute(self, message, param, connection, bot):
-        await self.func(message, param, connection, bot)
+    async def execute(self, message, param, bot):
+        await self.func(message, param, bot)
 
 
     @classmethod
-    async def trycommand(cls, message, content, connection, masterid, bot):
+    async def trycommand(cls, message, content, bot):
         contlist = content.split()
         contcommand = str(contlist[0]).lower()
 
@@ -43,7 +43,7 @@ class Command:
             commandpar = None
 
 
-        cmd = cls.getcommand(message.guild.id, contcommand,connection)
+        cmd = cls.getcommand(message.guild.id, contcommand, bot.db_connection)
         if cmd == None:
             return
 
@@ -51,7 +51,7 @@ class Command:
             return
 
         if cmd['permission'] == 2:
-            if message.author.id != masterid:
+            if message.author.id != bot.master_id:
                 await message.channel.send('Voce não possui permissão para isto! :sob:')
                 return
 
@@ -61,28 +61,28 @@ class Command:
                 return
 
         if cmd['price'] > 0:
-            points = db.getpoints(message.author.id, message.guild.id, connection)
+            points = db.getpoints(message.author.id, message.guild.id, bot.db_connection)
             if points < cmd['price']:
                 await message.channel.send(f'{message.author.mention}, Voce não possui coins suficiente, custo do comando é de `{cmd["price"]}c`')
                 return
             else:
                 await message.channel.send(f'{message.author.mention} comprou {cmd["name"]} por `{cmd["price"]}c`')
-                db.subpoints(message.author.id, message.guild.id, cmd['price'], connection)
+                db.subpoints(message.author.id, message.guild.id, cmd['price'], bot.db_connection)
 
         if cmd['overwritten'] == 0:
             try:
                 _cmd = [x for x in cls.commands if x.name == cmd['name']][0]
-                await _cmd.execute(message, commandpar, connection, bot)
-                db.update_command_stats(_cmd.name, connection)
+                await _cmd.execute(message, commandpar, bot)
+                db.update_command_stats(_cmd.name, bot.db_connection)
             except CommandError as e:
                 await message.channel.send(e)
                 if cmd['price'] > 0:
-                    db.addpoints(message.author.id, message.guild.id, cmd['price'], connection)
+                    db.addpoints(message.author.id, message.guild.id, cmd['price'], bot.db_connection)
             except Exception:
                 traceback.print_exc()
         else:
             await message.channel.send(cmd['message'])
-            db.update_command_stats('custom_commands', connection)
+            db.update_command_stats('custom_commands', bot.db_connection)
 
 
     @classmethod
@@ -398,7 +398,7 @@ class Client(discord.Client):
                     return
 
                 content = message.content[len(prefix):]
-                await Command.trycommand(message, content, self.db_connection, self.master_id, self)
+                await Command.trycommand(message, content, self)
  
 
             for eve in Script.fetch_script('message', by='triggers', _in='function'):

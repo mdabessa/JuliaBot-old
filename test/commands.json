@@ -40,7 +40,7 @@
         },
         {
             "command": "setprefix",
-            "args": ["J!"],
+            "args": ["j!"],
             "delay": 2
         },
         {

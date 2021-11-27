@@ -11,12 +11,12 @@ category = 'Core'
 entity.Command.newcategory(category, ':brain:Core.')
 
 
-async def _help(message, commandpar, connection, bot): 
+async def _help(message, commandpar, bot): 
     if commandpar == None:
-        prefix = db.getserver(message.guild.id, connection)['prefix']
+        prefix = db.getserver(message.guild.id, bot.db_connection)['prefix']
         emb = discord.Embed(title='Lista de Comandos', description=f'{prefix}help `comando`', color=bot.color)
 
-        commands = entity.Command.getallcommands(message.guild.id, connection)
+        commands = entity.Command.getallcommands(message.guild.id, bot.db_connection)
         categories = entity.Command.getcategories()
         
         count = 0
@@ -24,7 +24,7 @@ async def _help(message, commandpar, connection, bot):
             if c[2] == False:
                 continue
             
-            if len(entity.Command.getcommandsbycategory(c[0], message.guild.id, connection)) == 0:
+            if len(entity.Command.getcommandsbycategory(c[0], message.guild.id, bot.db_connection)) == 0:
                 continue
 
             
@@ -42,8 +42,8 @@ async def _help(message, commandpar, connection, bot):
         await message.channel.send(embed=emb)
 
     else:
-        cmd = entity.Command.getcommand(message.guild.id, commandpar, connection)
-        prefix = db.getserver(message.guild.id, connection)['prefix']
+        cmd = entity.Command.getcommand(message.guild.id, commandpar, bot.db_connection)
+        prefix = db.getserver(message.guild.id, bot.db_connection)['prefix']
         if cmd != None:
             par = prefix + cmd['name'] + ' '
             for i in cmd['args']:
@@ -82,13 +82,13 @@ async def _help(message, commandpar, connection, bot):
 entity.Command(name='help', func=_help, category=category, desc='Listar todos os comandos e suas descrições.', aliases=['ajuda', 'h'], args=[['comando', '']])
 
 
-async def getprefix(message, commandpar, connection, bot):
-    prefix = db.getserver(message.guild.id, connection)['prefix']
+async def getprefix(message, commandpar, bot):
+    prefix = db.getserver(message.guild.id, bot.db_connection)['prefix']
     await message.channel.send(f'O prefixo do servidor é: `{prefix}`')
 entity.Command(name='prefix', func=getprefix , category=category, desc=f'Retorna o prefixo do bot no servidor.', aliases=['prefixo'])
 
 
-async def ping(message, commandpar, connection, bot):
+async def ping(message, commandpar, bot):
     t = time()
     m = await message.channel.send(f'Ping!')
     t = int((time() - t)*1000)
@@ -97,7 +97,7 @@ async def ping(message, commandpar, connection, bot):
 entity.Command(name='ping', func=ping , category=category, desc=f'Retorna a latência do bot.', aliases=['latency', 'latencia'])
 
 
-async def remindme(message, commandpar, connection, bot):
+async def remindme(message, commandpar, bot):
     if commandpar == None:
         raise entity.CommandError('Você precisa especificar quando!')
 
@@ -107,12 +107,12 @@ async def remindme(message, commandpar, connection, bot):
     if future == None:
         raise entity.CommandError('Parâmetros inválidos!')
 
-    db.addreminder(message.guild.id, message.channel.id, message.id, message.author.id, future, connection)
+    db.addreminder(message.guild.id, message.channel.id, message.id, message.author.id, future, bot.db_connection)
     await message.reply(f'Eu irei te notificar no dia `{future.strftime("%d/%m/%Y %H:%M")}`!')
 entity.Command(name='remindme', func=remindme, category=category, desc='O bot irá te notificar no dia desejado, relembrando sua mensagem!', aliases=['rm', 'relembreme', 'lembrete', 'remind', 'clock'], args=[['tempo', '*']])
 
 
-async def chatclear(message, commandpar, connection, bot):
+async def chatclear(message, commandpar, bot):
     text = ''.join(['** **\n' for x in range(0, 30)])
     await message.channel.send(text)
 entity.Command(name='upchat', func=chatclear, category=category, desc='"Limpe" o chat do discord!', aliases=['subirchat'], perm=1)

@@ -6,7 +6,7 @@ category = 'Depuração'
 entity.Command.newcategory(category, 'Depuração',is_visible=False)
 
 
-async def exe(message, commandpar, connection, bot):
+async def exe(message, commandpar, bot):
     if commandpar != None:
         cont = commandpar.split()
         text = f'Executando: {cont[0]}'
@@ -15,14 +15,14 @@ async def exe(message, commandpar, connection, bot):
             text += ' [' + ' '.join(cont[1:]) + ']'
 
         m = await message.channel.send(text)
-        await entity.Command.trycommand(m, commandpar, connection, '', bot)
+        await entity.Command.trycommand(m, commandpar, bot)
 
     else:
         raise entity.CommandError('Falta algo nesse comando!')
 entity.Command(name='exec', func=exe , category=category, desc=f'Executar um comando através do bot.', args=[['comando', '*'], ['parametros do comando', '']], perm=2)
 
 
-async def get_all_scripts(message, commandpar, connection, bot):
+async def get_all_scripts(message, commandpar, bot):
     scripts = entity.Script.get_scripts()
     text = 'Scripts infos:\n'
     for script in scripts:
@@ -32,19 +32,19 @@ async def get_all_scripts(message, commandpar, connection, bot):
 entity.Command(name='get_all_scripts', func=get_all_scripts, category=category, desc='Listar todos os scripts rodando.', aliases=['gas'], perm=2)
 
 
-async def get_allowed_bots(message, commandpar, connection, bot):
-    bots = db.get_allowed_bots(connection)
+async def get_allowed_bots(message, commandpar, bot):
+    bots = db.get_allowed_bots(bot.db_connection)
     await message.channel.send('Bots(ids) permitidos:\n'+' ,'.join(bots))
 entity.Command(name='get_allowed_bots', func=get_allowed_bots, category=category, desc='Listar todos os bots permitidos.', aliases=['gab'], perm=2)
 
 
-async def add_allowed_bot(message, commandpar, connection, bot):
+async def add_allowed_bot(message, commandpar, bot):
     if commandpar != None:
-        bots = db.get_allowed_bots(connection)
+        bots = db.get_allowed_bots(bot.db_connection)
         if str(commandpar) in bots:
             raise entity.CommandError('Esse id de bot, ja esta registrado como um `allowed_bot`')
         
-        db.add_bot(commandpar, connection)
+        db.add_bot(commandpar, bot.db_connection)
         await message.add_reaction('✅')
 
     else:
@@ -52,9 +52,9 @@ async def add_allowed_bot(message, commandpar, connection, bot):
 entity.Command(name='add_allowed_bot', func=add_allowed_bot, category=category, desc='Permitir com que um bot especifico seja respondido.', aliases=['aab'], args=[['bot_id', '*']], perm=2)
 
 
-async def del_allowed_bot(message, commandpar, connection, bot):
+async def del_allowed_bot(message, commandpar, bot):
     if commandpar != None:
-        db.del_bot(commandpar, connection)
+        db.del_bot(commandpar, bot.db_connection)
         await message.add_reaction('✅')
 
     else:

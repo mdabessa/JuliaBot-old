@@ -6,7 +6,7 @@ category = 'Moderação'
 entity.Command.newcategory(category, ':shield:Moderação.')
 
 
-async def c_event(message, commandpar, connection, bot):
+async def c_event(message, commandpar, bot):
     if commandpar != None:
         eve = entity.Script.fetch_function(commandpar)
         if len(eve) == 0:
@@ -29,7 +29,7 @@ async def c_event(message, commandpar, connection, bot):
 entity.Command(name='c_event', func=c_event , category=category, desc=f'Criar um evento.', aliases=['c_evento', 'createevent', 'criarevento'], args=[['evento', '*']], perm=1)
 
 
-async def clean_events(message, commandpar, connection, bot):
+async def clean_events(message, commandpar, bot):
     scripts = entity.Script.fetch_script(message.id, by='guild_id')
     for i in range(len(scripts)):
         scripts[0].close()
@@ -38,7 +38,7 @@ async def clean_events(message, commandpar, connection, bot):
 entity.Command(name='clean_events', func=clean_events, category=category, desc='Limpar todos os eventos.', aliases=['limpar_eventos', 'le'], perm=1)
 
 
-async def setcoins(message, commandpar, connection, bot):
+async def setcoins(message, commandpar, bot):
     if commandpar != None:
         try:
             pointspar = int(commandpar.split()[0])
@@ -50,11 +50,11 @@ async def setcoins(message, commandpar, connection, bot):
                 names = []
                 for user in message.mentions:
                     names.append(user.name)
-                    db.setpoints(user.id,message.guild.id,int(pointspar),connection)
+                    db.setpoints(user.id, message.guild.id, int(pointspar), bot.db_connection)
                 
                 await message.channel.send(f'Coins definido como `{pointspar}` para : {", ".join(names)}')
             else:
-                db.setpoints(message.author.id,message.guild.id,int(pointspar),connection)
+                db.setpoints(message.author.id, message.guild.id, int(pointspar), bot.db_connection)
                 await message.channel.send(f'{message.author.mention} Seus Coins foram definido para `{pointspar}`')
         except:
             raise entity.CommandError('Não foi possivel realizar esta ação :worried:')
@@ -64,7 +64,7 @@ async def setcoins(message, commandpar, connection, bot):
 entity.Command(name='setcoins', func=setcoins , category=category, desc=f'Definir os seus pontos, ou os dos usuarios marcados.', aliases=['definircoins', 'defcoins'], args=[['coins', '*'], ['pessoa', 'º']], perm=1)
 
 
-async def addcoins(message, commandpar, connection, bot):
+async def addcoins(message, commandpar, bot):
     if commandpar != None:
         try:
             pointspar = int(commandpar.split()[0])
@@ -76,11 +76,11 @@ async def addcoins(message, commandpar, connection, bot):
                 names = []
                 for user in message.mentions:
                     names.append(user.name)
-                    db.addpoints(user.id,message.guild.id,int(pointspar), connection)
+                    db.addpoints(user.id,message.guild.id,int(pointspar), bot.db_connection)
                 
                 await message.channel.send(f'`{pointspar}` Coins adicionados para : {", ".join(names)}')
             else:
-                db.addpoints(message.author.id,message.guild.id,int(pointspar),connection)
+                db.addpoints(message.author.id,message.guild.id,int(pointspar), bot.db_connection)
                 await message.channel.send(f'{message.author.mention} Foram adicionados `{pointspar}` coins.')
         except:
             raise entity.CommandError('Não foi possivel realizar esta ação :worried:')
@@ -89,7 +89,7 @@ async def addcoins(message, commandpar, connection, bot):
 entity.Command(name='addcoins', func=addcoins , category=category, desc=f'Adicionar pontos.', aliases=['adicionarcoins'], args=[['coins', '*'], ['pessoa', 'º']], perm=1)
 
 
-async def subcoins(message, commandpar, connection, bot):
+async def subcoins(message, commandpar, bot):
     if commandpar != None:
         try:
             pointspar = int(commandpar.split()[0])
@@ -101,11 +101,11 @@ async def subcoins(message, commandpar, connection, bot):
                 names = []
                 for user in message.mentions:
                     names.append(user.name)
-                    db.subpoints(user.id,message.guild.id,int(pointspar), connection)
+                    db.subpoints(user.id,message.guild.id,int(pointspar), bot.db_connection)
                 
                 await message.channel.send(f'`{pointspar}` Coins foram removidos de : {", ".join(names)}')
             else:
-                db.subpoints(message.author.id,message.guild.id,int(pointspar), connection)
+                db.subpoints(message.author.id,message.guild.id,int(pointspar), bot.db_connection)
                 await message.channel.send(f'{message.author.mention} Foram removidos `{pointspar}` coins.')
         except:
             raise entity.CommandError('Não foi possivel realizar esta ação! :worried:')
@@ -114,7 +114,7 @@ async def subcoins(message, commandpar, connection, bot):
 entity.Command(name='subcoins', func=subcoins , category=category, desc=f'Remover pontos.', aliases=['removercoins', 'removecoins'], args=[['coins', '*'], ['pessoa', 'º']], perm=1)
 
 
-async def shopadditem(message, commandpar, connection, bot):
+async def shopadditem(message, commandpar, bot):
     if commandpar == None:
         raise entity.CommandError('Falta parametros!')
 
@@ -129,12 +129,12 @@ async def shopadditem(message, commandpar, connection, bot):
     
     item_name = ' '.join(cmdpar[1:])
 
-    db.additem(message.guild.id, message.author.id, item_name, price, connection)
+    db.additem(message.guild.id, message.author.id, item_name, price, bot.db_connection)
     await message.channel.send(f'Item: `{item_name}` foi adicionado a loja por `{price}` coins!')
 entity.Command(name='additem', func=shopadditem, category=category, desc=f'Adicionar um item a loja.', aliases=['adicionaritem'], args=[['preço', '*'], ['item', '*']], perm=1)
 
 
-async def shopdelitem(message, commandpar, connection, bot):
+async def shopdelitem(message, commandpar, bot):
     if commandpar == None:
         raise entity.CommandError('Qual item irá deletar?')
 
@@ -143,11 +143,11 @@ async def shopdelitem(message, commandpar, connection, bot):
     except:
         raise entity.CommandError('O item tem que ser referenciado com o um `ID`.')
 
-    i = db.getitem(message.guild.id, item, connection)
+    i = db.getitem(message.guild.id, item, bot.db_connection)
 
 
     if i != None:
-        db.delitem(message.guild.id, item, connection)
+        db.delitem(message.guild.id, item, bot.db_connection)
         await message.channel.send(f'{message.author.mention} removeu o item `{i["itemid"]} - {i["name"]}` da loja!')
 
     else:

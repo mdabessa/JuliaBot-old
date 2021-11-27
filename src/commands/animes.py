@@ -8,9 +8,9 @@ category = 'Animes'
 entity.Command.newcategory(category, ':japanese_goblin:Animes.')
 
 
-async def anime_channel(message, commandpar, connection, bot):
+async def anime_channel(message, commandpar, bot):
     if commandpar == None:
-        server = db.getserver(message.guild.id, connection)
+        server = db.getserver(message.guild.id, bot.db_connection)
         channel = server['anime_channel']    
         if channel != None:
             channel = bot.get_channel(int(channel))
@@ -25,7 +25,7 @@ async def anime_channel(message, commandpar, connection, bot):
             )
     else:
         if commandpar == '.':
-            db.editserver(message.guild.id, connection, 'anime_channel', None)
+            db.editserver(message.guild.id, bot.db_connection, 'anime_channel', None)
             await message.channel.send(f'As notificações de animes foram desabilitadas.')
 
         else:
@@ -42,12 +42,12 @@ async def anime_channel(message, commandpar, connection, bot):
             if channel == None:
                 raise entity.CommandError(f'Nenhum canal com esse nome, marque o canal com `#` para selecionar o canal desejado.')
             
-            db.editserver(message.guild.id, connection, 'anime_channel', str(channel.id))
+            db.editserver(message.guild.id, bot.db_connection, 'anime_channel', str(channel.id))
             await message.channel.send(f'O canal de notificações de animes foi definido para `<#{channel.id}>`')
 entity.Command(name='animechannel', func=anime_channel, category=category, desc=f'Define o canal de notificações de novos episódios de animes.', aliases=['animecanal', 'ac', 'canalanime'], args=[['canal', '*']], perm=1)
 
 
-async def add_anime(message, commandpar, connection, bot):
+async def add_anime(message, commandpar, bot):
     if commandpar!=None:
         jikan = jk.Jikan()
         try:
@@ -62,7 +62,7 @@ async def add_anime(message, commandpar, connection, bot):
 entity.Command(name='add_anime', func=add_anime, category=category, desc=f'Marque um anime para você ser notificado quando lancar episódio novo.', aliases=['aa'], args=[['anime', '*']])
 
 
-async def del_anime(message, commandpar, connection, bot):
+async def del_anime(message, commandpar, bot):
     if commandpar!=None:
         jikan = jk.Jikan()
         try:
@@ -77,7 +77,7 @@ async def del_anime(message, commandpar, connection, bot):
 entity.Command(name='del_anime', func=del_anime, category=category, desc=f'Remova um anime da sua lista de notificações.', aliases=['da'], args=[['anime', '*']])
 
 
-async def anime_info(message, commandpar, connection, bot):
+async def anime_info(message, commandpar, bot):
     if commandpar!=None:
         jikan = jk.Jikan()
         try:
@@ -101,7 +101,7 @@ async def anime_info(message, commandpar, connection, bot):
 entity.Command(name='anime_info', func=anime_info, category=category, desc=f'Informações sobre um anime.', aliases=['anime', 'ai', 'a'], args=[['anime', '*']])
 
 
-async def character(message, commandpar, connection, bot):
+async def character(message, commandpar, bot):
     if commandpar!=None:
         jikan = jk.Jikan()
         try:
@@ -149,9 +149,9 @@ async def character(message, commandpar, connection, bot):
 entity.Command(name='character', func=character, category=category, desc=f'Informações sobre um personagem.', aliases=['char', 'personagem'], args=[['char', '*']])
 
 
-async def anime_list(message, commandpar, connection, bot):
+async def anime_list(message, commandpar, bot):
     if commandpar == None:
-        animes = db.get_anime_notifier(str(message.author.id), connection, column='userid')
+        animes = db.get_anime_notifier(str(message.author.id), bot.db_connection, column='userid')
 
         if len(animes) <= 0:
             raise entity.CommandError('Sua lista esta vazia!')
@@ -161,7 +161,7 @@ async def anime_list(message, commandpar, connection, bot):
     else:
         if len(message.mentions) != 0:
             user = message.mentions[0]
-            animes = db.get_anime_notifier(str(user.id), connection, column='userid')
+            animes = db.get_anime_notifier(str(user.id), bot.db_connection, column='userid')
 
             if len(animes) <= 0:
                 raise entity.CommandError(f'A lista do(a) `{user.name}` esta vazia!')

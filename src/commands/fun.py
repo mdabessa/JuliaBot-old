@@ -7,7 +7,7 @@ category = 'Diversão'
 entity.Command.newcategory(category, ':game_die:Diversão.')
 
 
-async def cmdsay(message, commandpar, connection, bot):
+async def cmdsay(message, commandpar, bot):
     if commandpar != None:
         await message.channel.send(commandpar)
     else:
@@ -15,7 +15,7 @@ async def cmdsay(message, commandpar, connection, bot):
 entity.Command(name='say', func=cmdsay , category=category, desc=f'Fazer o bot dizer algo.', aliases=['dizer', 'falar'], args=[['texto', '*']], cost=500)
 
 
-async def _duel(message, commandpar, connection, bot):
+async def _duel(message, commandpar, bot):
     if commandpar == None:
         raise entity.CommandError('Falta parametros!')
 
@@ -29,10 +29,10 @@ async def _duel(message, commandpar, connection, bot):
 
     vs = message.mentions[0]
 
-    if db.getpoints(vs.id, message.guild.id, connection) < points:
+    if db.getpoints(vs.id, message.guild.id, bot.db_connection) < points:
         raise entity.CommandError(f'{vs.name} não possui pontos suficientes!')
 
-    if db.getpoints(message.author.id, message.guild.id, connection) < points:
+    if db.getpoints(message.author.id, message.guild.id, bot.db_connection) < points:
         raise entity.CommandError(f'{message.author.mention} Você não possui pontos suficientes!')
 
 
