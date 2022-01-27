@@ -2,7 +2,7 @@ import modules.database as db
 import modules.entity as entity
 import modules.utils as utils
 from discord import Embed
-from random import randint, shuffle, choice
+from random import randint
 import jikanpy as jk
 from time import sleep
 
@@ -326,3 +326,23 @@ async def list_animes(cache, par, bot):
         else:
             await m.edit(embed=None, content='Sua lista esta vazia!')
 entity.Script.new_function(list_animes, tag='command', limit_by_name=2)
+
+
+async def pin(cache, par, bot):
+    if cache['status'] == 'created':
+        cache['channel'] = par[0]
+        cache['embed'] = par[1]
+        cache['message'] = await cache['channel'].send(embed=cache['embed'])
+        cache['status'] = 'started'
+
+    else:
+        channel = par[0].channel
+        m = cache['message']
+
+        if channel.id == m.channel.id:
+            await m.delete()
+            
+            emb = cache['embed']
+            m = await channel.send(embed=emb)
+            cache['message'] = m
+entity.Script.new_function(pin, tag='command', limit_by_name=1, triggers=['message'])

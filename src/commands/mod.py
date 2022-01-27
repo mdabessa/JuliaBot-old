@@ -1,5 +1,6 @@
 import modules.database as db
 import modules.entity as entity
+from discord import Embed
 
 
 category = 'Moderação'
@@ -153,3 +154,26 @@ async def shopdelitem(message, commandpar, bot):
     else:
         raise entity.CommandError(f'{message.author.mention} o item `{commandpar}` não existe.')
 entity.Command(name='delitem', func=shopdelitem, category=category, desc=f'Deletar itens da loja.', aliases=['deleteitem', 'deletaritem', 'removeritem', 'removeitem'], args=[['id do item', '*']], perm=1)
+
+
+async def pin(message, commandpar, bot):
+    if commandpar == None:
+        raise entity.CommandError('Está faltando parâmetros neste comando!')
+    
+    else:
+        emb = Embed(title='Mensagem Fixada!', description=commandpar, color=bot.color)
+        scr = entity.Script(f'pinned_message_{message.guild.id}', 'pin', message.guild.id, time_out=86400)
+        await scr.execute([message.channel, emb], bot)
+entity.Command(name='pin', func=pin, category=category, desc=f'Fixar uma mensagem no servidor.', aliases=['pinar', 'fix', 'fixar'], args=[['Mensagem', '*']], perm=1)
+
+
+async def unpin(message, commandpar, bot):
+    scr = entity.Script.fetch_script(f'pinned_message_{message.guild.id}', by='refname')
+    if len(scr) > 0:
+        scr = scr[0]
+        scr.close()
+        await message.channel.send('Menssagem desfixada!')
+
+    else:
+        raise entity.CommandError('Não existe nenhuma mensagem fixada!')
+entity.Command(name='unpin', func=unpin, category=category, desc=f'Desfixar uma mensagem fixada com o comando "pin".', aliases=['despinar', 'unfix', 'desfixar'], args=[['Mensagem', '*']], perm=1)
