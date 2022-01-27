@@ -1,5 +1,5 @@
 import sys
-sys.path.insert(0, 'D:/Users/mdabe/Documentos/GitHub/JuliaBot/src/')
+sys.path.insert(0, './src/')
 
 import modules.database as db
 import modules.entity as entity
@@ -54,7 +54,7 @@ for category in entity.Command.getcategories():
             content += f'|{prefix}{command.name}|{command.desc}|{args}|{perm}|'+ '\n'
     
 
-f = open('D:/Users/mdabe/Documentos/GitHub/JuliaBot/README.md', 'w', encoding='utf8')
+f = open('./README.md', 'w', encoding='utf8')
 f.write(content)
 print(content)
 f.close()

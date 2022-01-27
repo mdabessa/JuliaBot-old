@@ -76,3 +76,5 @@ Clique [aqui](https://discord.com/oauth2/authorize?client_id=483054181176049685&
 |j!subcoins|Remover pontos.|`<coins>`* `<pessoa>`º |Admin.|
 |j!additem|Adicionar um item a loja.|`<preço>`* `<item>`* |Admin.|
 |j!delitem|Deletar itens da loja.|`<id_do_item>`* |Admin.|
+|j!pin|Fixar uma mensagem no servidor.|`<Mensagem>`* |Admin.|
+|j!unpin|Desfixar uma mensagem fixada com o comando "pin".|`<Mensagem>`* |Admin.|
