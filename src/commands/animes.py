@@ -156,7 +156,7 @@ async def anime_list(message, commandpar, bot):
         if len(animes) <= 0:
             raise entity.CommandError('Sua lista esta vazia!')
 
-        scr = entity.Script(f'list_animes_{message.guild.id}', 'list_animes', message.guild.id, time_out=120)
+        scr = entity.Script(f'list_animes_{message.guild.id}', 'list_animes', message.guild.id, time_out=300)
         await scr.execute([message.channel, message.author, animes], bot)
     else:
         if len(message.mentions) != 0:
