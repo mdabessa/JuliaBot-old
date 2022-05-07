@@ -491,7 +491,8 @@ class Client(discord.Client):
             for user in users:
                 try:
                     _user = await self.fetch_user(int(user['userid']))
-                    await _user.send(embed=embed)
+                    msg = await _user.send(embed=embed)
+                    await msg.add_reaction('👍')
                 except:
                     pass
 
