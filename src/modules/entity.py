@@ -380,7 +380,7 @@ class Client(discord.Client):
                 db.editserver(message.guild.id, self.db_connection, 'commandchannel', None)
                 cmdchannel = None
 
-            if message.content == f'<@!{self.user.id}>':
+            if message.content == self.user.mention:
                 helpstr = f'{prefix}help para lista de comandos.'
                 
 
